@@ -1,0 +1,102 @@
+input:valid {
+  border-color: green;
+  height: 34px;
+}
+
+input:invalid {
+  border-color: red;
+  height: 34px;
+}
+
+textarea:invalid {
+  border-color: red;
+}
+
+textarea:valid {
+  border-color: green;
+}
+
+.h-tooltip {
+  z-index: 99999 !important;
+}
+
+.ribbon-wrapper.ribbon-xl {
+  height: 100%;
+  width: 175px;
+}
+
+.btn-default {
+  background-color: #f8f9fa;
+  border-color: #ddd;
+  color: #444;
+}
+
+.btn-app {
+  border-radius: 3px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  color: #6c757d;
+  font-size: 12px;
+  height: 60px;
+  margin: 0 0 10px 10px;
+  min-width: 80px;
+  padding: 15px 5px;
+  position: relative;
+  text-align: center;
+}
+
+.nuevo-input {
+  display: inline-block;
+  margin-top: 0;
+  margin-bottom: 0;
+  vertical-align: middle;
+  font-size: 1em;
+  margin: 0;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  outline: 0;
+  -webkit-appearance: none;
+  line-height: 1.21428571em;
+  padding: .67857143em 1em;
+  font-size: 1em;
+  background: #fff;
+  border: 1px solid rgba(34, 36, 38, .15);
+  color: rgba(0, 0, 0, .87);
+  border-radius: .28571429rem;
+  box-shadow: 0 0 0 0 transparent inset;
+  -webkit-transition: color .1s ease, border-color .1s ease;
+  transition: color .1s ease, border-color .1s ease;
+  width: 100%;
+}
+
+.cropper {
+  width: 870px;
+  height: 620px;
+  background: transparent;
+}
+
+.tamanio_error {
+  font-size: 12px;
+  text-transform: lowercase;
+  font-weight: bold;
+}
+
+.text-danger {
+  color: red;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-justify {
+  text-align: justify;
+}
