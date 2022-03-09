@@ -27,6 +27,7 @@
     "moment": "^2.27.0",
     "regenerator-runtime": "^0.13.9",
     "toastr": "^2.1.4",
+    "uuid": "^8.3.2",
     "vee-validate": "^2.1.7",
     "vue": "^2.6.12",
     "vue-advanced-cropper": "^0.16.10",

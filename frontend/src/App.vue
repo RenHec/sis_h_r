@@ -367,7 +367,7 @@ export default {
 
       if (self.$store.state.is_login) {
         this.drawer = true
-        this.$vuetify.theme.dark = true
+        this.$vuetify.theme.dark = false
       } else {
         this.drawer = null
         this.$vuetify.theme.dark = false

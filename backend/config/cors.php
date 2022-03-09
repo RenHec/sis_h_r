@@ -19,7 +19,7 @@ return [
         'service/passport/*',
         'servicio/compartido/version_uno/*',
         'servicio/hotel/version_uno/*',
-        'servicio/restaurante/version_uno/*'
+        'api/v1/restaurante/*'
     ],
 
     'allowed_methods' => ['*'],

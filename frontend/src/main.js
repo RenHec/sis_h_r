@@ -40,6 +40,9 @@ import 'vue-toastr-2/dist/vue-toastr-2.min.css'
 window.toastr = require('toastr')
 Vue.use(VueToastr2)
 
+import { v4 as uuidv4 } from 'uuid'
+Vue.use(uuidv4)
+
 Vue.config.productionTip = false
 // set default config
 window.events = new Vue();

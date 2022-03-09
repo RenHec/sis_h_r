@@ -1,0 +1,107 @@
+<template>
+  <v-row>
+    <v-col md='12'>
+      <v-card>
+          <v-toolbar>
+            <v-toolbar-title style="padding:2px;" v-text="'Listado de ordenes para preparar'"></v-toolbar-title>
+          </v-toolbar>
+          <div style="background-color:#e3f2fd; height:85vh; overflow-y:scroll">
+              <v-row>
+                <template v-for="orden in ordenes">
+                  <OrdenComponent v-bind:key="orden.id" :item="orden"/>
+                </template>
+              </v-row>
+          </div>
+        </v-card>
+    </v-col>
+  </v-row>
+</template>
+
+<script>
+import OrdenComponent from './OrdenComponent.vue'
+
+export default{
+  components:{
+    OrdenComponent,
+  },
+  data(){
+    return{
+      ordenes:[
+        {
+          'id':1,
+          'fecha':'08/03/2022',
+          'hora':'08:52',
+          'total':'15.00',
+          'estado':'Pendiente',
+          'items':[
+            {'id':11,'cantidad':2,'nombre':'Hamburguesa','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'},
+            {'id':12,'cantidad':2,'nombre':'Horneado','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'},
+            {'id':13,'cantidad':2,'nombre':'Horneado','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'},
+            {'id':14,'cantidad':2,'nombre':'Horneado','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'}
+          ]
+        },
+        {
+          'id':2,
+          'fecha':'08/03/2022',
+          'hora':'08:52',
+          'total':'15.00',
+          'estado':'Pendiente',
+          'items':[
+            {'id':11,'cantidad':2,'nombre':'Hamburguesa','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'}
+          ]
+        },
+        {
+          'id':3,
+          'fecha':'08/03/2022',
+          'hora':'08:52',
+          'total':'15.00',
+          'estado':'Pendiente',
+          'items':[
+            {'id':11,'cantidad':2,'nombre':'Hamburguesa','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'},
+            {'id':12,'cantidad':2,'nombre':'Horneado','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'}
+          ]
+        },
+        {
+          'id':4,
+          'fecha':'08/03/2022',
+          'hora':'08:52',
+          'total':'15.00',
+          'estado':'Pendiente',
+          'items':[
+            {'id':11,'cantidad':2,'nombre':'Hamburguesa','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'},
+            {'id':12,'cantidad':2,'nombre':'Horneado','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'}
+          ]
+        },
+        {
+          'id':5,
+          'fecha':'08/03/2022',
+          'hora':'08:52',
+          'total':'15.00',
+          'estado':'Pendiente',
+          'items':[
+            {'id':11,'cantidad':2,'nombre':'Hamburguesa','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'},
+            {'id':12,'cantidad':2,'nombre':'Horneado','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'}
+          ]
+        },
+        {
+          'id':6,
+          'fecha':'08/03/2022',
+          'hora':'08:52',
+          'total':'15.00',
+          'estado':'Pendiente',
+          'items':[
+            {'id':11,'cantidad':2,'nombre':'Hamburguesa','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'},
+            {'id':12,'cantidad':2,'nombre':'Horneado','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'}
+          ]
+        },
+      ],
+    }
+  },
+  mounted(){
+  },
+  created(){
+  },
+  methods:{
+  },
+}
+</script>

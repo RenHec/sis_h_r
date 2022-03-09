@@ -37,6 +37,18 @@ import Ventasdiarias from '@/components/reporte/VentasdiariasComponent'
 import Gananciasdiariasymensuales from '@/components/reporte/GananciasdiariasymensualesComponent'
 import Movimientoenbodegas from '@/components/reporte/MovimientoenbodegasComponent'
 import Logdeaccesos from '@/components/reporte/LogdeaccesosComponent'
+/*
+|--------------------------------------------------------------------------
+| Restaurant Components
+|--------------------------------------------------------------------------
+|
+|
+*/
+import Mesero from '@/components/restaurante/mesero/MeseroComponent'
+import Cocina from '@/components/restaurante/cocina/CocinaComponent'
+import EstadoOrden from '@/components/restaurante/estado-orden/IndexComponent'
+import TipoOrden from '@/components/restaurante/tipo-orden/IndexComponent'
+import CategoriaComida from '@/components/restaurante/categoria-comida/IndexComponent'
 
 Vue.use(Router)
 
@@ -67,7 +79,7 @@ const isLoggedIn = async (to, from, next) => {
   /*const options = { from: from.fullPath, to: to.fullPath, route: to.fullPath };
   try {
     const result = await this.authProvider.getClient().ensureLoggedIn(options);
-    
+
     if (!result || !result.success) {
       next(false);
       return;
@@ -267,10 +279,46 @@ const routes = [
     name: 'Rol',
     component: Rol,
     beforeEnter: multiguard([isLoggedIn])
-  }, {
+  },
+  {
     path: '/usuarios',
     name: 'Usuario',
     component: Usuario,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  /*
+|--------------------------------------------------------------------------
+| Restaurant Components
+|--------------------------------------------------------------------------
+*/
+  {
+    path: '/mesero',
+    name: 'Mesero',
+    component: Mesero,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/cocina',
+    name: 'Cocina',
+    component: Cocina,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/estado_orden',
+    name: 'EstadoOrden',
+    component: EstadoOrden,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/tipo_orden',
+    name: 'TipoOrden',
+    component: TipoOrden,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/categoria_comida',
+    name: 'CategoriaComida',
+    component: CategoriaComida,
     beforeEnter: multiguard([isLoggedIn])
   },
 ]

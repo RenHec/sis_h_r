@@ -104,7 +104,10 @@ export default {
           auth.getUser()
           self.$router.push('/')
         })
-        .catch((e) => {})
+        .catch((e) => {
+            this.$toastr.error(e, 'Error')
+        })
+        .finally(()=>{self.loading = false})
     },
 
     beforeLogin() {

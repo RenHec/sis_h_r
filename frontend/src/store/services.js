@@ -32,11 +32,21 @@ import ProductoController from '../services/principal/ProductoControllerService'
 import StockController from '../services/principal/StockControllerService'
 import TrasladoStockController from '../services/principal/TrasladoStockControllerService'
 import ReporteController from '../services/principal/ReporteControllerService'
+
+/*
+|--------------------------------------------------------------------------
+| Restaurant Services
+|--------------------------------------------------------------------------
+*/
+import EstadoOrdenService from '../services/restaurante/EstadoOrdenService'
+import TipoOrdenService from '../services/restaurante/TipoOrdenService'
+import CategoriaComidaService from '../services/restaurante/CategoriaComidaService'
 /* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
 
 let baseUrl = 'http://localhost:8001/hotel_restuarante/backend/public/'
 //let baseUrl = 'http://64.225.43.65/multi_api/'
 let token_data = $cookies.get('token_data')
+let restaurantUrl = 'api/v1/restaurante/'
 
 // Axios Configuration
 Axios.defaults.headers.common.Accept = 'application/json'
@@ -112,5 +122,14 @@ export default {
   productoController: new ProductoController(Axios, baseUrl),
   stockController: new StockController(Axios, baseUrl),
   trasladoStockController: new TrasladoStockController(Axios, baseUrl),
-  reporteController: new ReporteController(Axios, baseUrl)
+  reporteController: new ReporteController(Axios, baseUrl),
+
+/*
+|--------------------------------------------------------------------------
+| Restaurant Services
+|--------------------------------------------------------------------------
+*/
+  statusOrderService: new EstadoOrdenService(Axios, baseUrl, restaurantUrl),
+  orderTypeService: new TipoOrdenService(Axios, baseUrl, restaurantUrl),
+  foodCategoryService: new CategoriaComidaService(Axios, baseUrl, restaurantUrl),
 }

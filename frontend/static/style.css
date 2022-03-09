@@ -100,3 +100,13 @@ textarea:valid {
 .text-justify {
   text-align: justify;
 }
+
+.theme--light.v-data-table > .v-data-table__wrapper > table > thead > tr > th,
+.theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
+  border: thin solid rgba(0, 0, 0, 0.08);
+}
+
+.v-data-table__wrapper {
+  margin-left: 10px;
+  margin-right: 10px;
+}

@@ -54,15 +54,20 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace('App\\Http\\Controllers\\V1\\Hotel')
                 ->group(base_path('routes/apis/v1/api_hotel.php'));
 
-            Route::prefix('servicio/restaurante/version_uno')
-                ->middleware('restaurante')
-                ->namespace('App\\Http\\Controllers\\V1\\Restaurante')
-                ->group(base_path('routes/apis/v1/api_restaurante.php'));
-
             /*Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));*/
         });
+
+        $this->mapRestaurantRoutes();
+    }
+
+    protected function mapRestaurantRoutes()
+    {
+        Route::prefix('api/v1/restaurante')
+                ->middleware('restaurante')
+                ->namespace('App\\Http\\Controllers\\V1\\Restaurante')
+                ->group(base_path('routes/apis/v1/api_restaurante.php'));
     }
 
     /**

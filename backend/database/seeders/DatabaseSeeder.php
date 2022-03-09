@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call([RestauranteSeeder::class]);
         //Migrando data para los roles, menus y asociando menu al rol correspondiente
         Excel::import(new RolMenuImport, 'database/seeders/Catalogos/RolMenu.xlsx');
 
