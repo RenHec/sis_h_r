@@ -18,4 +18,9 @@ use Illuminate\Support\Facades\Route;
 Route::resource('/menus','Menu\MenuController');
 Route::resource('/estado-orden','EstadoOrden\EstadoOrdenController',['except' => ['create','edit']]);
 Route::resource('/tipo-orden','TipoOrden\TipoOrdenController',['except' => ['create','edit']]);
+
 Route::resource('/categoria-comida','CategoriaComida\CategoriaComidaController',['except' => ['create','edit']]);
+Route::get('/categoria-comida-list','CategoriaComida\CategoriaComidaController@listFoodCategory');
+
+Route::resource('/productos','Producto\ProductoController',['except' => ['create','edit']]);
+Route::get('/productos-list','Producto\ProductoController@productsList');

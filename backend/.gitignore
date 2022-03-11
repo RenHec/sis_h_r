@@ -1,5 +1,9 @@
 /node_modules
 /public/hot
+/public/img-restaurant/*.jpg
+/public/img-restaurant/*.png
+/public/img-restaurant/*.gif
+/public/img-restaurant/*.jpeg
 /public/storage
 /storage/*.key
 /vendor

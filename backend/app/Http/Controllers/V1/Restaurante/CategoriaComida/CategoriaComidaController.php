@@ -16,32 +16,28 @@ class CategoriaComidaController extends ApiController
      */
     public function index(Request $request)
     {
-        $columna = $request['sortBy'] ? $request['sortBy'] : "nombre";
-
-        $criterio = $request['search'];
-
-        $orden = $request['sortDesc'] ? 'desc' : 'asc';
-
-        $filas = $request['perPage'];
-
-        $pagina = $request['page'];
+        $columna    = $request['sortBy'] ? $request['sortBy'] : "nombre";
+        $criterio   = $request['search'];
+        $orden      = $request['sortDesc'] ? 'desc' : 'asc';
+        $filas      = $request['perPage'];
+        $pagina     = $request['page'];
 
         $categoriasComida = DB::table('categoria_comida')
-                ->select('id','nombre','icono','orden')
-                ->where($columna, 'LIKE', '%' . $criterio . '%')
-                ->orderBy($columna, $orden)
-                ->skip($pagina)
-                ->take($filas)
-                ->get();
+                            ->select('id','nombre','icono','orden')
+                            ->where($columna, 'LIKE', '%' . $criterio . '%')
+                            ->orderBy($columna, $orden)
+                            ->skip($pagina)
+                            ->take($filas)
+                            ->get();
 
-        $count = DB::table('categoria_comida')
-                ->where($columna, 'LIKE', '%' . $criterio . '%')
-                ->count();
+        $count            = DB::table('categoria_comida')
+                            ->where($columna, 'LIKE', '%' . $criterio . '%')
+                            ->count();
 
-        $data = array(
-            'total' => $count,
-            'data' => $categoriasComida,
-        );
+        $data             = array(
+                                'total' => $count,
+                                'data' => $categoriasComida,
+                            );
 
         return response()->json($data, 200);
     }
@@ -66,9 +62,9 @@ class CategoriaComidaController extends ApiController
     {
         $rules = [
 
-            'nombre' => 'required|string',
-            'icono' => 'required|string',
-            'orden' => 'required|numeric|min:1'
+            'nombre'    => 'required|string',
+            'icono'     => 'required|string',
+            'orden'     => 'required|numeric|min:1'
         ];
 
         $this->validate($request, $rules);
@@ -142,5 +138,14 @@ class CategoriaComidaController extends ApiController
         $registro->delete();
 
         return $this->showMessage('',210);
+    }
+
+    public function listFoodCategory()
+    {
+        $foodCategories = CategoriaComida::select('id','nombre','icono')
+                        ->orderBy('orden','asc')
+                        ->get();
+
+        return response()->json(['data' => $foodCategories],200);
     }
 }

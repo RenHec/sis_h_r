@@ -12,4 +12,9 @@ class ProductoCategoriaComida extends Model
     protected $table = 'producto_categoria_comida';
 
     protected $fillable = ['id','categoria_comida_id','producto_id'];
+
+    public function producto()
+    {
+    	return $this->belongsTo(Producto::class);
+    }
 }
