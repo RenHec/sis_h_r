@@ -13,14 +13,15 @@ class CreateRestauranteOrdenProducto extends Migration
      */
     public function up()
     {
-        Schema::create('orden_producto', function (Blueprint $table) {
+        Schema::create('r_orden_producto', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->smallInteger('cantidad')->default(1);
             $table->text('notas')->nullable();
             $table->uuid('orden_id')->nullable(false);
+            $table->decimal('precio',9,2);
             $table->bigInteger('producto_id')->unsigned();
-            $table->foreign('producto_id')->references('id')->on('producto');
-            $table->foreign('orden_id')->references('id')->on('orden');
+            $table->foreign('producto_id')->references('id')->on('r_producto');
+            $table->foreign('orden_id')->references('id')->on('r_orden');
             $table->timestamps();
         });
     }
@@ -32,6 +33,6 @@ class CreateRestauranteOrdenProducto extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orden_producto');
+        Schema::dropIfExists('r_orden_producto');
     }
 }

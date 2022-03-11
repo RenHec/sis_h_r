@@ -5,6 +5,7 @@ import auth from '../auth'
 import Axios from 'axios'
 import router from '../router'
 import global from '../components/sharedjs/global'
+import restaurantStore from './restaurant'
 
 Vue.use(Vuex)
 
@@ -106,7 +107,11 @@ const actions = {
 }
 
 export default new Vuex.Store({
+  strict: true,
   state,
   mutations,
-  actions
+  actions,
+  modules: {
+    restaurant: restaurantStore
+  }
 })

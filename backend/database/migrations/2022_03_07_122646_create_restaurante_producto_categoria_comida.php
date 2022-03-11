@@ -13,12 +13,12 @@ class CreateRestauranteProductoCategoriaComida extends Migration
      */
     public function up()
     {
-        Schema::create('producto_categoria_comida', function (Blueprint $table) {
+        Schema::create('r_producto_categoria_comida', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('categoria_comida_id')->unsigned();
             $table->bigInteger('producto_id')->unsigned();
-            $table->foreign('categoria_comida_id')->references('id')->on('categoria_comida');
-            $table->foreign('producto_id')->references('id')->on('producto');
+            $table->foreign('categoria_comida_id')->references('id')->on('r_categoria_comida');
+            $table->foreign('producto_id')->references('id')->on('r_producto');
             $table->timestamps();
         });
     }

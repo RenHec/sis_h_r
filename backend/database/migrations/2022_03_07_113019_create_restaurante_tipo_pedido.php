@@ -13,7 +13,7 @@ class CreateRestauranteTipoPedido extends Migration
      */
     public function up()
     {
-        Schema::create('tipo_orden', function (Blueprint $table) {
+        Schema::create('r_tipo_orden', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nombre');
             $table->smallInteger('orden')->default(0);
@@ -28,6 +28,6 @@ class CreateRestauranteTipoPedido extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipo_pedido');
+        Schema::dropIfExists('r_tipo_orden');
     }
 }

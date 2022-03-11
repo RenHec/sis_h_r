@@ -24,7 +24,7 @@ class RestauranteSeeder extends Seeder
         ]);
 
         TipoOrden::insert([
-            ['nombre'=>'Consumo','orden' => 1],
+            ['nombre'=>'Consumo local','orden' => 1],
             ['nombre'=>'Para llevar','orden' => 2]
         ]);
 

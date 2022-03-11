@@ -9,7 +9,7 @@ class CategoriaComida extends Model
 {
     use HasFactory;
 
-    protected $table = 'categoria_comida';
+    protected $table = 'r_categoria_comida';
 
     protected $fillable = ['id','nombre'];
 }

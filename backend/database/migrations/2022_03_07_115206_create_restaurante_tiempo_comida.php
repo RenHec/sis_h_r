@@ -13,7 +13,7 @@ class CreateRestauranteTiempoComida extends Migration
      */
     public function up()
     {
-        Schema::create('categoria_comida', function (Blueprint $table) {
+        Schema::create('r_categoria_comida', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nombre');
             $table->string('icono');
@@ -29,6 +29,6 @@ class CreateRestauranteTiempoComida extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categoria_comida');
+        Schema::dropIfExists('r_categoria_comida');
     }
 }

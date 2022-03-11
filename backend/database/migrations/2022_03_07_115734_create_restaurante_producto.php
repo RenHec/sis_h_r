@@ -13,7 +13,7 @@ class CreateRestauranteProducto extends Migration
      */
     public function up()
     {
-        Schema::create('producto', function (Blueprint $table) {
+        Schema::create('r_producto', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nombre');
             $table->decimal('precio',9,2);
@@ -30,6 +30,6 @@ class CreateRestauranteProducto extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('producto');
+        Schema::dropIfExists('r_producto');
     }
 }

@@ -9,7 +9,7 @@ class Orden extends Model
 {
     use HasFactory;
 
-    protected $table = 'orden';
+    protected $table = 'r_orden';
     protected $primaryKey = 'id';
     public $incrementing = false;
 

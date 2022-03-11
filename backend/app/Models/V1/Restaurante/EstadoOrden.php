@@ -9,7 +9,7 @@ class EstadoOrden extends Model
 {
     use HasFactory;
 
-    protected $table = 'estado_orden';
+    protected $table = 'r_estado_orden';
 
     protected $fillable = ['id','nombre','icono','inicia','finaliza','color'];
 }

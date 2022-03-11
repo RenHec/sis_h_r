@@ -22,7 +22,7 @@ class CategoriaComidaController extends ApiController
         $filas      = $request['perPage'];
         $pagina     = $request['page'];
 
-        $categoriasComida = DB::table('categoria_comida')
+        $categoriasComida = DB::table('r_categoria_comida')
                             ->select('id','nombre','icono','orden')
                             ->where($columna, 'LIKE', '%' . $criterio . '%')
                             ->orderBy($columna, $orden)
@@ -30,7 +30,7 @@ class CategoriaComidaController extends ApiController
                             ->take($filas)
                             ->get();
 
-        $count            = DB::table('categoria_comida')
+        $count            = DB::table('r_categoria_comida')
                             ->where($columna, 'LIKE', '%' . $criterio . '%')
                             ->count();
 

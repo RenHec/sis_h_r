@@ -13,17 +13,17 @@ class CreateRestauranteOrden extends Migration
      */
     public function up()
     {
-        Schema::create('orden', function (Blueprint $table) {
+        Schema::create('r_orden', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->decimal('monto',9,2);
             $table->bigInteger('estado_orden_id')->unsigned();
             $table->bigInteger('tipo_orden_id')->unsigned();
             $table->date('fecha');
             $table->string('hora');
-            $table->bigInteger('cliente_id')->unsigned();
+            $table->bigInteger('cliente_id')->unsigned()->nullable();
             $table->bigInteger('usuario_id')->unsigned();
-            $table->foreign('estado_orden_id')->references('id')->on('estado_orden');
-            $table->foreign('tipo_orden_id')->references('id')->on('tipo_orden');
+            $table->foreign('estado_orden_id')->references('id')->on('r_estado_orden');
+            $table->foreign('tipo_orden_id')->references('id')->on('r_tipo_orden');
             $table->timestamps();
         });
     }
@@ -35,6 +35,6 @@ class CreateRestauranteOrden extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orden');
+        Schema::dropIfExists('r_orden');
     }
 }

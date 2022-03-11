@@ -16,17 +16,13 @@ class TipoOrdenController extends ApiController
      */
     public function index(Request $request)
     {
-        $columna = $request['sortBy'] ? $request['sortBy'] : "nombre";
+        $columna    = $request['sortBy'] ? $request['sortBy'] : "nombre";
+        $criterio   = $request['search'];
+        $orden      = $request['sortDesc'] ? 'desc' : 'asc';
+        $filas      = $request['perPage'];
+        $pagina     = $request['page'];
 
-        $criterio = $request['search'];
-
-        $orden = $request['sortDesc'] ? 'desc' : 'asc';
-
-        $filas = $request['perPage'];
-
-        $pagina = $request['page'];
-
-        $tipoOrdenes = DB::table('tipo_orden')
+        $tipoOrdenes = DB::table('r_tipo_orden')
                 ->select('id','nombre','orden')
                 ->where($columna, 'LIKE', '%' . $criterio . '%')
                 ->orderBy($columna, $orden)
@@ -34,7 +30,7 @@ class TipoOrdenController extends ApiController
                 ->take($filas)
                 ->get();
 
-        $count = DB::table('tipo_orden')
+        $count = DB::table('r_tipo_orden')
                 ->where($columna, 'LIKE', '%' . $criterio . '%')
                 ->count();
 
@@ -138,5 +134,14 @@ class TipoOrdenController extends ApiController
         $registro->delete();
 
         return $this->showMessage('',210);
+    }
+
+    public function listOrderType()
+    {
+        $orderTypes = TipoOrden::select('id','nombre')
+                        ->orderBy('orden','asc')
+                        ->get();
+
+        return response()->json(['data' => $orderTypes],200);
     }
 }

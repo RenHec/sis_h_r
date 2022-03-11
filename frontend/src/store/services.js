@@ -41,6 +41,8 @@ import ReporteController from '../services/principal/ReporteControllerService'
 import EstadoOrdenService from '../services/restaurante/EstadoOrdenService'
 import TipoOrdenService from '../services/restaurante/TipoOrdenService'
 import CategoriaComidaService from '../services/restaurante/CategoriaComidaService'
+import ProductoService from '../services/restaurante/ProductoService'
+import MeseroService from '../services/restaurante/MeseroService'
 /* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
 
 let baseUrl = 'http://localhost:8001/hotel_restuarante/backend/public/'
@@ -132,4 +134,6 @@ export default {
   statusOrderService: new EstadoOrdenService(Axios, baseUrl, restaurantUrl),
   orderTypeService: new TipoOrdenService(Axios, baseUrl, restaurantUrl),
   foodCategoryService: new CategoriaComidaService(Axios, baseUrl, restaurantUrl),
+  productService: new ProductoService(Axios, baseUrl, restaurantUrl),
+  waiterService: new MeseroService(Axios, baseUrl, restaurantUrl),
 }

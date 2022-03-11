@@ -9,7 +9,7 @@ class OrdenProducto extends Model
 {
     use HasFactory;
 
-    protected $table = 'orden_producto';
+    protected $table = 'r_orden_producto';
 
-    protected $fillable = ['id','pedido_id','producto_id','cantidad','notas'];
+    protected $fillable = ['id','orden_id','precio','producto_id','cantidad','notas'];
 }

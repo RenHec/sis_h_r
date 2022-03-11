@@ -16,17 +16,13 @@ class EstadoOrdenController extends ApiController
      */
     public function index(Request $request)
     {
-        $columna = $request['sortBy'] ? $request['sortBy'] : "nombre";
+        $columna    = $request['sortBy'] ? $request['sortBy'] : "nombre";
+        $criterio   = $request['search'];
+        $orden      = $request['sortDesc'] ? 'desc' : 'asc';
+        $filas      = $request['perPage'];
+        $pagina     = $request['page'];
 
-        $criterio = $request['search'];
-
-        $orden = $request['sortDesc'] ? 'desc' : 'asc';
-
-        $filas = $request['perPage'];
-
-        $pagina = $request['page'];
-
-        $estadoOrdenes = DB::table('estado_orden')
+        $estadoOrdenes = DB::table('r_estado_orden')
                 ->select('id','nombre','icono','inicia','finaliza','orden','color')
                 ->where($columna, 'LIKE', '%' . $criterio . '%')
                 ->orderBy($columna, $orden)
@@ -34,7 +30,7 @@ class EstadoOrdenController extends ApiController
                 ->take($filas)
                 ->get();
 
-        $count = DB::table('estado_orden')
+        $count = DB::table('r_estado_orden')
                 ->where($columna, 'LIKE', '%' . $criterio . '%')
                 ->count();
 

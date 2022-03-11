@@ -27,7 +27,7 @@ class ProductoController extends ApiController
         $filas      = $request['perPage'];
         $pagina     = $request['page'];
 
-        $productos  = DB::table('producto')
+        $productos  = DB::table('r_producto')
                     ->select('id','nombre','precio','img')
                     ->where($columna, 'LIKE', '%' . $criterio . '%')
                     ->orderBy($columna, $orden)
@@ -35,7 +35,7 @@ class ProductoController extends ApiController
                     ->take($filas)
                     ->get();
 
-        $count      = DB::table('producto')
+        $count      = DB::table('r_producto')
                     ->where($columna, 'LIKE', '%' . $criterio . '%')
                     ->count();
 
@@ -213,7 +213,7 @@ class ProductoController extends ApiController
     {
         $registros =  Producto::select('id','nombre','precio','img')
                         ->with('producto_categoria_comida')
-                        ->where('producto.activo',1)
+                        ->where('r_producto.activo',1)
                         ->get();
 
         return response()->json(['data' => $registros]);

@@ -41,14 +41,13 @@ import Logdeaccesos from '@/components/reporte/LogdeaccesosComponent'
 |--------------------------------------------------------------------------
 | Restaurant Components
 |--------------------------------------------------------------------------
-|
-|
 */
 import Mesero from '@/components/restaurante/mesero/MeseroComponent'
 import Cocina from '@/components/restaurante/cocina/CocinaComponent'
 import EstadoOrden from '@/components/restaurante/estado-orden/IndexComponent'
 import TipoOrden from '@/components/restaurante/tipo-orden/IndexComponent'
 import CategoriaComida from '@/components/restaurante/categoria-comida/IndexComponent'
+import ProductoRestaurante from '@/components/restaurante/producto/IndexComponent'
 
 Vue.use(Router)
 
@@ -319,6 +318,12 @@ const routes = [
     path: '/categoria_comida',
     name: 'CategoriaComida',
     component: CategoriaComida,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/productos_restaurante',
+    name: 'ProductoRestaurante',
+    component: ProductoRestaurante,
     beforeEnter: multiguard([isLoggedIn])
   },
 ]

@@ -13,7 +13,7 @@ class CreateRestauranteEstadoPedido extends Migration
      */
     public function up()
     {
-        Schema::create('estado_orden', function (Blueprint $table) {
+        Schema::create('r_estado_orden', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nombre');
             $table->string('icono');
@@ -32,6 +32,6 @@ class CreateRestauranteEstadoPedido extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('estado_pedido');
+        Schema::dropIfExists('r_estado_orden');
     }
 }

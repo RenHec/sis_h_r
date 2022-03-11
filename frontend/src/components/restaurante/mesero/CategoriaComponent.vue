@@ -6,8 +6,8 @@
     >
       <v-slide-group show-arrows>
         <v-slide-item
-          v-for="categoria in mycategorias"
-          :key="categoria.id"
+          v-for="category in categories"
+          :key="category.id"
           v-slot="{ active, toggle }"
         >
           <v-btn
@@ -17,9 +17,9 @@
             depressed
             rounded
             outlined
-            @click="toggle"
+            @click="categoryFilter(category.id)"
           >
-            <v-icon>{{ categoria.icono }}</v-icon>&nbsp;{{ categoria.nombre }}
+            <v-icon>{{ category.icono }}</v-icon>&nbsp;{{ category.nombre }}
           </v-btn>
         </v-slide-item>
       </v-slide-group>
@@ -33,20 +33,24 @@ export default{
   components:{
   },
   props:{
-    categorias:[]
+    categories:{}
   },
   data(){
     return{
-      mycategoria:[]
+
     }
   },
   mounted(){
 
   },
   created(){
-    this.mycategorias = this.categorias
+
   },
   methods:{
+    categoryFilter(item)
+    {
+      events.$emit("filter_menus",item)
+    }
   },
 }
 </script>

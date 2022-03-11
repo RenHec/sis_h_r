@@ -9,7 +9,7 @@ class TipoOrden extends Model
 {
     use HasFactory;
 
-    protected $table = 'tipo_orden';
+    protected $table = 'r_tipo_orden';
 
     protected $fillable = ['id','nombre'];
 }

@@ -15,6 +15,10 @@ class TipoOrdenService {
     return this.axios.get(`${this.baseUrl}/${id}`)
   }
 
+  getListOrderType () {
+    return this.axios.get(`${this.baseUrl}-list`)
+  }
+
   storeOrderType (data) {
     return this.axios.post(`${this.baseUrl}`, data)
   }

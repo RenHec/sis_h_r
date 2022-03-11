@@ -15,6 +15,10 @@ class CategoriaComidaService {
     return this.axios.get(`${this.baseUrl}/${id}`)
   }
 
+  getListFoodCategory () {
+    return this.axios.get(`${this.baseUrl}-list`)
+  }
+
   storeFoodCategory (data) {
     return this.axios.post(`${this.baseUrl}`, data)
   }
