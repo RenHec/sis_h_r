@@ -43,8 +43,8 @@ import TipoOrdenService from '../services/restaurante/TipoOrdenService'
 import CategoriaComidaService from '../services/restaurante/CategoriaComidaService'
 import ProductoService from '../services/restaurante/ProductoService'
 import MeseroService from '../services/restaurante/MeseroService'
+import OrdenService from '../services/restaurante/OrdenService'
 /* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
-
 let baseUrl = 'http://localhost:8001/hotel_restuarante/backend/public/'
 //let baseUrl = 'http://64.225.43.65/multi_api/'
 let token_data = $cookies.get('token_data')
@@ -136,4 +136,5 @@ export default {
   foodCategoryService: new CategoriaComidaService(Axios, baseUrl, restaurantUrl),
   productService: new ProductoService(Axios, baseUrl, restaurantUrl),
   waiterService: new MeseroService(Axios, baseUrl, restaurantUrl),
+  orderService: new OrdenService(Axios, baseUrl, restaurantUrl),
 }

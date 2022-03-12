@@ -6,7 +6,7 @@
           <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
           <v-toolbar>
-            <v-toolbar-title style="padding:2px;" v-text="'Listado de ordenes para preparar'"></v-toolbar-title>
+            <v-toolbar-title style="padding:2px;" v-text="'Listado de órdenes para preparar'"></v-toolbar-title>
           </v-toolbar>
           <div style="background-color:#e3f2fd; height:85vh; overflow-y:scroll">
               <v-row>

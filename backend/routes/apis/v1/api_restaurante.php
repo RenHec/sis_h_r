@@ -28,3 +28,4 @@ Route::resource('/productos','Producto\ProductoController',['except' => ['create
 Route::get('/productos-list','Producto\ProductoController@productsList');
 
 Route::resource('/ordenes','Orden\OrdenController',['except' => ['create','edit']]);
+Route::get('/ordenes-list','Orden\OrdenController@orderList');

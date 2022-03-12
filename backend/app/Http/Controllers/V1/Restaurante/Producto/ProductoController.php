@@ -111,7 +111,7 @@ class ProductoController extends ApiController
     public function show($id)
     {
         $registro = Producto::with('producto_categoria_comida')
-                        ->where('producto.id',$id)
+                        ->where('r_producto.id',$id)
                         ->first();
 
         return $this->showOne($registro);

@@ -48,6 +48,7 @@ import EstadoOrden from '@/components/restaurante/estado-orden/IndexComponent'
 import TipoOrden from '@/components/restaurante/tipo-orden/IndexComponent'
 import CategoriaComida from '@/components/restaurante/categoria-comida/IndexComponent'
 import ProductoRestaurante from '@/components/restaurante/producto/IndexComponent'
+import Ordenes from '@/components/restaurante/ordenes/IndexComponent'
 
 Vue.use(Router)
 
@@ -324,6 +325,12 @@ const routes = [
     path: '/productos_restaurante',
     name: 'ProductoRestaurante',
     component: ProductoRestaurante,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/ordenes',
+    name: 'Ordenes',
+    component: Ordenes,
     beforeEnter: multiguard([isLoggedIn])
   },
 ]

@@ -150,4 +150,36 @@ class OrdenController extends ApiController
     {
         //
     }
+
+    public function orderList(Request $request)
+    {
+        $columna    = $request['sortBy'] ? $request['sortBy'] : "monto";
+        $criterio   = $request['search'];
+        $orden      = $request['sortDesc'] ? 'desc' : 'asc';
+        $filas      = $request['perPage'];
+        $pagina     = $request['page'];
+
+        $ordenes    = DB::table('r_orden as o')
+                            ->join('r_estado_orden as eo','eo.id','o.estado_orden_id')
+                            ->join('r_tipo_orden as to','to.id','o.tipo_orden_id')
+                            ->select('o.id','o.monto','o.fecha','o.hora','eo.nombre as estado_orden','to.nombre as tipo_orden','eo.color','eo.icono')
+                            ->where($columna, 'LIKE', '%' . $criterio . '%')
+                            ->orderBy($columna, $orden)
+                            ->skip($pagina)
+                            ->take($filas)
+                            ->get();
+
+        $count      = DB::table('r_orden as o')
+                        ->join('r_estado_orden as eo','eo.id','o.estado_orden_id')
+                        ->join('r_tipo_orden as to','to.id','o.tipo_orden_id')
+                        ->where($columna, 'LIKE', '%' . $criterio . '%')
+                        ->count();
+
+        $data       = array(
+                        'total' => $count,
+                        'data' => $ordenes,
+                    );
+
+        return response()->json($data, 200);
+    }
 }
