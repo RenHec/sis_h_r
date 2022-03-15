@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\V1\Restaurante\CategoriaComida;
-use App\Models\V1\Restaurante\EstadoOrden;
-use App\Models\V1\Restaurante\TipoOrden;
 use Illuminate\Database\Seeder;
+use App\Models\V1\Restaurante\Mesa;
+use App\Models\V1\Restaurante\TipoOrden;
+use App\Models\V1\Restaurante\EstadoOrden;
+use App\Models\V1\Restaurante\CategoriaComida;
 
 class RestauranteSeeder extends Seeder
 {
@@ -36,6 +37,13 @@ class RestauranteSeeder extends Seeder
             ['nombre'=>'Bebidas','orden'=>5,'icono'=>'mdi-bottle-soda'],
         ]);
 
-
+        Mesa::insert([
+            ['nombre'=>'Mesa 1','icono'=>'fas fa-cutlery'],
+            ['nombre'=>'Mesa 2','icono'=>'fas fa-cutlery'],
+            ['nombre'=>'Mesa 3','icono'=>'fas fa-cutlery'],
+            ['nombre'=>'Mesa 4','icono'=>'fas fa-cutlery'],
+            ['nombre'=>'Mesa 5','icono'=>'fas fa-cutlery'],
+            ['nombre'=>'Mesa 6','icono'=>'fas fa-cutlery'],
+        ]);
     }
 }
