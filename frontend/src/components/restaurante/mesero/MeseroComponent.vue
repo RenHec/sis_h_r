@@ -19,7 +19,11 @@
       <v-col md='4'>
         <v-card>
           <v-toolbar>
-            <v-toolbar-title style="padding:2px;" v-text="'Detalle de la orden'"></v-toolbar-title>
+            <v-toolbar-title style="padding:2px;">Detalle de la orden: {{ tableName }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn icon @click="returnToTables()">
+              <v-icon dark>close</v-icon>
+            </v-btn>
           </v-toolbar>
           <DetalleOrden />
         </v-card>
@@ -31,6 +35,14 @@
 import Categoria from './CategoriaComponent.vue'
 import Platillo from './PlatilloComponent.vue'
 import DetalleOrden from './DetalleOrden.vue'
+
+import { createNamespacedHelpers } from 'vuex'
+
+const {
+  mapGetters: restaurantMapGetter,
+  mapMutations: restaurantMapMutations,
+  mapActions: restaurantMapActions
+} = createNamespacedHelpers('restaurant')
 
 export default{
   components:{
@@ -45,12 +57,6 @@ export default{
        categories:[],
        menus:[],
        auxiliaryMenu:[],
-       ordenes:[
-        {'id':11,'cantidad':1,'nombre':'Hamburguesa','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'},
-        {'id':12,'cantidad':1,'nombre':'platillo 1','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'},
-        {'id':13,'cantidad':1,'nombre':'Hamburguesa','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'},
-        {'id':14,'cantidad':1,'nombre':'platillo 1','precio':'15.00','img':'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20191011-apple-cider-brined-turkey-delish-ehg-2689-1571251679.jpg?crop=1.00xw:0.716xh;0,0.0644xh&resize=768:*'}
-       ],
     }
   },
   mounted(){
@@ -64,6 +70,19 @@ export default{
     events.$off('filter_menus')
   },
   methods:{
+    ...restaurantMapActions([
+      'UPDATE_SELECTED_TABLE'
+    ]),
+    ...restaurantMapMutations([
+      'SET_AMOUNT_ORDER',
+      'SET_LIST_ITEMS'
+    ]),
+    returnToTables()
+    {
+      this.SET_AMOUNT_ORDER(0)
+      this.SET_LIST_ITEMS([])
+      this.UPDATE_SELECTED_TABLE({'id':0,'name':'','selected':false})
+    },
     eventFilterMenusList(categoryFilter)
     {
       this.menus = []
@@ -117,6 +136,13 @@ export default{
           this.loading = false
         })
     },
+  },
+   computed:{
+    ...restaurantMapGetter([
+      'selectedTable',
+      'isTableSelected',
+      'tableName'
+    ]),
   },
 }
 </script>

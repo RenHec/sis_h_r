@@ -44,6 +44,7 @@ import CategoriaComidaService from '../services/restaurante/CategoriaComidaServi
 import ProductoService from '../services/restaurante/ProductoService'
 import MeseroService from '../services/restaurante/MeseroService'
 import OrdenService from '../services/restaurante/OrdenService'
+import MesaService from '../services/restaurante/MesaService'
 /* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
 let baseUrl = 'http://localhost:8001/hotel_restuarante/backend/public/'
 //let baseUrl = 'http://64.225.43.65/multi_api/'
@@ -137,4 +138,5 @@ export default {
   productService: new ProductoService(Axios, baseUrl, restaurantUrl),
   waiterService: new MeseroService(Axios, baseUrl, restaurantUrl),
   orderService: new OrdenService(Axios, baseUrl, restaurantUrl),
+  tableService: new MesaService(Axios, baseUrl, restaurantUrl),
 }

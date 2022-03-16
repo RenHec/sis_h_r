@@ -3,6 +3,8 @@
     <v-overlay :value="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
+    <NuevoComponent v-if="showFormNewRecord"/>
+    <EditarComponent :item="itemUpdate" v-if="showFormUpdateRecord"/>
     <v-data-table
       :page="page"
       :options.sync="options"
@@ -30,20 +32,24 @@
     <template v-slot:item.id="{ item }">
       <span>{{ item.id }}</span>
     </template>
-    <template v-slot:item.fecha="{ item }">
-      <span>{{ setFormatDate(item.fecha) }}</span>
-    </template>
-    <template v-slot:item.monto="{ item }">
-      <span>{{ getAmountTitle(item.monto) }}</span>
-    </template>
-    <template v-slot:item.estado_orden="{ item }">
-      <v-chip :color="item.color" dark><v-icon>{{ item.icono }}</v-icon>&nbsp;{{ item.estado_orden }}</v-chip>
+    <template v-slot:item.icono="{ item }">
+      <v-icon>{{ item.icono }}</v-icon>
     </template>
     <!--  -->
     <template v-slot:top>
         <v-toolbar flat color="white">
-        <v-toolbar-title>Listado de órdenes</v-toolbar-title>
+        <v-toolbar-title>Mesas</v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-text-field class="text-xs-center" outlined dense v-model="search" :label="'Buscar'" single-line hide-details v-on:keyup.enter="searching">
+            <v-icon slot="append">search</v-icon>
+        </v-text-field>
+        <v-spacer></v-spacer>
+        <v-btn
+            color="primary"
+            dark
+            class="mb-2"
+            @click="newRecord()"
+        >Nuevo registro</v-btn>
         </v-toolbar>
         <!--  -->
             <v-card
@@ -90,10 +96,13 @@
 </template>
 
 <script>
-import moment from 'moment'
+import NuevoComponent from './NuevoComponent.vue'
+import EditarComponent from './EditarComponent.vue'
 
 export default{
   components:{
+    NuevoComponent,
+    EditarComponent,
   },
   data(){
     return{
@@ -113,34 +122,30 @@ export default{
       formUpdateRecord:false,
 
       headers:[
-        { text: 'Mesa', value: 'mesa' },
-        { text: 'Monto', value: 'monto' },
-        { text: 'Fecha', value: 'fecha', sortable:false },
-        { text: 'Hora', value: 'hora' },
-        { text: 'Tipo orden', value: 'tipo_orden' },
-        { text: 'Estado', value: 'estado_orden' },
+        { text: 'Nombre', value: 'nombre' },
+        { text: 'Icono', value: 'icono', sortable:false }
       ],
       singleSelect: true,
       selected:[],
     }
   },
   mounted(){
-    this.getAllFoodCategory()
+    this.getAllTable()
   },
   created(){
-    events.$on('close_form_new_food_category',this.eventCloseFormNewFoodCategory)
-    events.$on('close_form_update_food_category',this.eventCloseFormUpdateFoodCategory)
+    events.$on('close_form_new_table',this.eventCloseFormNewTable)
+    events.$on('close_form_update_table',this.eventCloseFormUpdateTable)
   },
   beforeDestroy(){
-    events.$off('close_form_new_food_category')
-    events.$off('close_form_update_food_category')
+    events.$off('close_form_new_table')
+    events.$off('close_form_update_table')
   },
   watch: {
     options: {
       handler() {
         if(this.recordList.length > 0 && this.syncronize)
         {
-          this.getAllFoodCategory();
+          this.getAllTable();
         }
       },
     },
@@ -152,27 +157,36 @@ export default{
       this.formUpdateRecord = false
       this.mainTable = true
     },
-    eventCloseFormNewFoodCategory(){
+    eventCloseFormNewTable(){
       this.initializeView()
       this.recharge()
     },
-    eventCloseFormUpdateFoodCategory(){
+    eventCloseFormUpdateTable(){
       this.initializeView()
       this.recharge()
     },
     updateRecord(item){
-      /* this.itemUpdate = item
+      this.itemUpdate = item
       this.formUpdateRecord = true
-      this.mainTable = false */
+      this.mainTable = false
+    },
+    newRecord(){
+      this.formNewRecord = true
+      this.mainTable = false
+    },
+
+    searching (){
+      this.syncronize = false
+      this.getAllTable()
     },
 
     recharge() {
       this.syncronize = false
-      this.getAllFoodCategory()
+      this.getAllTable()
       this.selected = []
     },
 
-    getAllFoodCategory() {
+    getAllTable() {
       this.loading = true
 
       const { sortBy, sortDesc, page, itemsPerPage } = this.options;
@@ -187,8 +201,8 @@ export default{
           'search':this.search
       }
 
-      this.$store.state.services.orderService
-        .getAllOrders(data)
+      this.$store.state.services.tableService
+        .getAllTables(data)
         .then((r) => {
           this.recordList = r.data.data
           this.syncronize = true
@@ -201,14 +215,12 @@ export default{
           this.loading = false
         })
     },
-    setFormatDate(data){
-      return moment(data).format('D-MM-YYYY')
-    },
-    getAmountTitle (item){
-      return 'Q. ' + item
+    getTextTitle (item){
+      if (item === 1) return 'Si'
+        else return 'No'
     },
     deleteRecord(item) {
-      /* this.$swal({
+      this.$swal({
         title: 'Eliminar',
         text: '¿Está seguro de realizar esta acción?',
         type: 'question',
@@ -216,8 +228,8 @@ export default{
       }).then((result) => {
         if (result.value) {
           this.loading = true
-          this.$store.state.services.foodCategoryService
-            .deleteFoodCategory(item)
+          this.$store.state.services.tableService
+            .deleteTables(item)
             .then((r) => {
               this.loading = false
               if (r.response) {
@@ -247,7 +259,7 @@ export default{
         } else {
           this.close()
         }
-      }) */
+      })
     },
   },
   computed:{

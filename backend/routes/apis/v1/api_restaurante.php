@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 
 /* Prefix route: api/v1/restaurante */
 
+Route::resource('/mesas','Mesa\MesaController', ['except' => ['create','edit']]);
+Route::get('/mesas-list','Mesa\MesaController@listTables');
+
 Route::resource('/menus','Menu\MenuController');
 Route::resource('/estado-orden','EstadoOrden\EstadoOrdenController',['except' => ['create','edit']]);
 

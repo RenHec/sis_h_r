@@ -27,7 +27,8 @@ class OrdenController extends ApiController
         $registros = DB::table('r_orden as o')
                         ->join('r_tipo_orden as to','o.tipo_orden_id','to.id')
                         ->join('r_estado_orden as eo','o.estado_orden_id','eo.id')
-                        ->select('o.id','o.monto','o.fecha','o.hora','to.nombre as tipo_orden','eo.nombre as estado_orden','eo.icono')
+                        ->join('r_mesa as m','o.mesa_id','m.id')
+                        ->select('o.id','o.monto','o.fecha','o.hora','to.nombre as tipo_orden','eo.nombre as estado_orden','eo.icono','m.nombre as mesa')
                         ->where('eo.id','<>',$finaliza->id)
                         ->get();
         $datos = array();
@@ -71,7 +72,8 @@ class OrdenController extends ApiController
             'tipo_orden_id' => 'required|numeric',
             'fecha'         => 'required|date',
             'hora'          => 'required',
-            'detalle'       => 'required|array'
+            'detalle'       => 'required|array',
+            'mesa_id'       => 'required|numeric|min:1'
         ];
 
         $this->validate($request, $rules);
@@ -89,6 +91,7 @@ class OrdenController extends ApiController
             $registro->tipo_orden_id    = $request->get('tipo_orden_id');
             $registro->fecha            = $request->get('fecha');
             $registro->hora             = $request->get('hora');
+            $registro->mesa_id          = $request->get('mesa_id');
             $registro->usuario_id       = $request->user()->id;
             $registro->estado_orden_id  = $estado->id;
             $registro->save();
@@ -162,7 +165,8 @@ class OrdenController extends ApiController
         $ordenes    = DB::table('r_orden as o')
                             ->join('r_estado_orden as eo','eo.id','o.estado_orden_id')
                             ->join('r_tipo_orden as to','to.id','o.tipo_orden_id')
-                            ->select('o.id','o.monto','o.fecha','o.hora','eo.nombre as estado_orden','to.nombre as tipo_orden','eo.color','eo.icono')
+                            ->join('r_mesa as m','o.mesa_id','m.id')
+                            ->select('o.id','o.monto','o.fecha','o.hora','eo.nombre as estado_orden','to.nombre as tipo_orden','eo.color','eo.icono','m.nombre as mesa')
                             ->where($columna, 'LIKE', '%' . $criterio . '%')
                             ->orderBy($columna, $orden)
                             ->skip($pagina)
@@ -172,6 +176,7 @@ class OrdenController extends ApiController
         $count      = DB::table('r_orden as o')
                         ->join('r_estado_orden as eo','eo.id','o.estado_orden_id')
                         ->join('r_tipo_orden as to','to.id','o.tipo_orden_id')
+                        ->join('r_mesa as m','o.mesa_id','m.id')
                         ->where($columna, 'LIKE', '%' . $criterio . '%')
                         ->count();
 

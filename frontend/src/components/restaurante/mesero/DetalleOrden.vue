@@ -97,7 +97,8 @@ export default{
       'SET_LIST_ITEMS'
     ]),
     ...restaurantMapActions([
-      'UPDATE_AMOUNT_ORDER'
+      'UPDATE_AMOUNT_ORDER',
+      'UPDATE_SELECTED_TABLE'
     ]),
 
     validateForm(){
@@ -117,7 +118,8 @@ export default{
         'tipo_orden_id': this.orderType,
         'fecha': moment().format('YYYY-MM-D'),
         'hora': moment().format('h:mm a'),
-        'detalle':this.ordersRestaurant
+        'detalle':this.ordersRestaurant,
+        'mesa_id':this.selectedTable
        }
 
        this.$store.state.services.waiterService
@@ -126,6 +128,7 @@ export default{
             this.$toastr.success('Orden guardada con éxito','Mensaje')
             this.orderId = uuidv4()
             this.SET_LIST_ITEMS([])
+            this.UPDATE_SELECTED_TABLE({'id':0,'name':'','selected':false})
             this.$validator.reset()
           })
           .catch((e)=>{
@@ -217,7 +220,8 @@ export default{
   computed:{
     ...restaurantMapGetter([
       'ordersRestaurant',
-      'totalAmountOrdersRestaurant'
+      'totalAmountOrdersRestaurant',
+      'selectedTable'
     ]),
   },
 }

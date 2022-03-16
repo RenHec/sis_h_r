@@ -4,7 +4,7 @@
       <v-toolbar>
         <v-toolbar-title class="p-2">
           <div class="d-flex flex-column">
-            <strong>Pedido #</strong>
+            <strong>Pedido de {{ item.mesa }}</strong>
             <div>{{ setFormatDate(item.fecha) }} {{ item.hora }}</div>
           </div>
         </v-toolbar-title>
