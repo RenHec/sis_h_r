@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTiposPagosTable extends Migration
+class CreateHHabitacionesFotosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateTiposPagosTable extends Migration
      */
     public function up()
     {
-        Schema::create('tipos_pagos', function (Blueprint $table) {
+        Schema::create('h_habitaciones_fotos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 20);
-
+            $table->string('foto', 100)->nullable(); //Guardaremos la imagen en el local storage
+            $table->foreignId('h_habitaciones_id')->constrained('h_habitaciones');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateTiposPagosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipos_pagos');
+        Schema::dropIfExists('h_habitaciones_fotos');
     }
 }

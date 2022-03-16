@@ -43,6 +43,7 @@ Route::name('select.cliente')->get('select/cliente', 'Catalogo\SelectController@
 Route::name('select.proveedor')->get('select/proveedor', 'Catalogo\SelectController@proveedor');
 Route::name('select.mes')->get('select/mes', 'Catalogo\SelectController@mes');
 Route::name('select.tipo_pago')->get('select/tipo_pago/{movimiento}', 'Catalogo\SelectController@tipo_pago');
+Route::name('select.tipo_cama')->get('select/tipo_cama', 'Catalogo\SelectController@tipo_cama');
 
 //rutas para PresentacionController
 Route::resource('presentacion', 'Catalogo\PresentacionController')->only(['index', 'store', 'update', 'destroy']);

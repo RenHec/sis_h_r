@@ -12,3 +12,10 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+/* Prefix route: servicio/hotel/version_uno */
+
+Route::resource('/tipo_cama', 'Habitacion\TipoCama')->only('index', 'store', 'show', 'destroy');
+Route::resource('/habitacion', 'Habitacion\Habitacion')->only('index', 'store', 'update', 'destroy');
+Route::resource('/habitacion_foto', 'Habitacion\HabitacionFoto')->only('show', 'update', 'destroy');
+Route::resource('/habitacion_precio', 'Habitacion\HabitacionPrecio')->only('update', 'destroy');

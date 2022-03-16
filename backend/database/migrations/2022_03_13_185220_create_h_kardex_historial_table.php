@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBitacorasTable extends Migration
+class CreateHKardexHistorialTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateBitacorasTable extends Migration
      */
     public function up()
     {
-        Schema::create('bitacoras', function (Blueprint $table) {
+        Schema::create('h_kardex_historial', function (Blueprint $table) {
             $table->id();
-            $table->string('tabla', 100);
-            $table->string('accion', 100);
-            $table->json('descripcion');
-            $table->string('usuario', 150);
-            $table->string('controlador', 500);
+            $table->char('signo', 1);
+            $table->text('descripcion');
+            $table->unsignedBigInteger('h_insumos_detalles_id')->nullable();
+            $table->unsignedBigInteger('h_check_in_id')->nullable();
+            $table->foreignId('h_kardex_id')->constrained('h_kardex');
             $table->foreignId('usuarios_id')->constrained('usuarios');
             $table->timestamps();
         });
@@ -32,6 +32,6 @@ class CreateBitacorasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bitacoras');
+        Schema::dropIfExists('h_kardex_historial');
     }
 }

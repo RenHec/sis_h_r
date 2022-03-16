@@ -49,31 +49,17 @@ return [
             'visibility' => 'public',
         ],
 
+        'habitacion' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/pictures_room'),
+            'url' => env('APP_URL') . '/storage/pictures_room',
+            'visibility' => 'public',
+        ],
+
         'logo' => [
             'driver' => 'local',
             'root' => storage_path('app/public/pictures_logos'),
             'url' => env('APP_URL') . '/storage/pictures_logos',
-            'visibility' => 'public',
-        ],
-
-        'porducto' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public/pictures_porductos'),
-            'url' => env('APP_URL') . '/storage/pictures_porductos',
-            'visibility' => 'public',
-        ],
-
-        'reportes_excel' => [
-            'driver' => 'local',
-            'root' => public_path('reportes_excel'),
-            'url' => env('APP_URL') . '/reportes_excel',
-            'visibility' => 'public',
-        ],
-
-        'reportes_pdf' => [
-            'driver' => 'local',
-            'root' => public_path('reportes_pdf'),
-            'url' => env('APP_URL') . '/reportes_pdf',
             'visibility' => 'public',
         ],
 

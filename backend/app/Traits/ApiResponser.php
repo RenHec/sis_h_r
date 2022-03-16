@@ -43,11 +43,6 @@ trait ApiResponser
 		return response()->json(['data' => $instance], $code);
 	}
 
-	protected function showMessage($message, $code = 210)
-	{
-		return $this->successResponse($message, $code);
-	}
-
 	protected function getB64Image($base64_image)
 	{
 		// Obtener el String base-64 de los datos         

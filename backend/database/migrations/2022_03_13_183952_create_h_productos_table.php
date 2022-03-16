@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTiposPagosTable extends Migration
+class CreateHProductosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,13 @@ class CreateTiposPagosTable extends Migration
      */
     public function up()
     {
-        Schema::create('tipos_pagos', function (Blueprint $table) {
+        Schema::create('h_productos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 20);
-
+            $table->string('name', 75);
+            $table->longText('description');
+            $table->boolean('consumible')->default(true);
+            $table->boolean('activo')->default(true);
+            $table->foreignId('usuarios_id')->constrained('usuarios');
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ class CreateTiposPagosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipos_pagos');
+        Schema::dropIfExists('h_productos');
     }
 }

@@ -4,11 +4,13 @@ namespace App\Http\Controllers\V1\Compartido\Catalogo;
 
 use App\Models\V1\Catalogo\Mes;
 use App\Models\V1\Catalogo\TipoPago;
-use App\Models\V1\Principal\Persona;
 use App\Models\V1\Catalogo\Municipio;
 use App\Http\Controllers\ApiController;
 use App\Models\V1\Catalogo\Departamento;
 use App\Models\V1\Catalogo\Presentacion;
+use App\Models\V1\Hotel\HTipoCama;
+use App\Models\V1\Principal\Cliente;
+use App\Models\V1\Principal\Proveedor;
 
 class SelectController extends ApiController
 {
@@ -34,12 +36,12 @@ class SelectController extends ApiController
 
     public function cliente()
     {
-        return $this->showAll(Persona::with('municipios')->whereNull('deleted_at')->orderBy('completo')->get());
+        return $this->showAll(Cliente::with('municipios')->whereNull('deleted_at')->orderBy('nombre')->get());
     }
 
     public function proveedor()
     {
-        return $this->showAll(Persona::whereNull('deleted_at')->where('es_proveedor', true)->orderBy('completo')->get());
+        return $this->showAll(Proveedor::whereNull('deleted_at')->orderBy('nombre')->get());
     }
 
     public function mes()
@@ -50,5 +52,10 @@ class SelectController extends ApiController
     public function tipo_pago()
     {
         return $this->showAll(TipoPago::orderBy('nombre')->get());
+    }
+
+    public function tipo_cama()
+    {
+        return $this->showAll(HTipoCama::orderBy('nombre')->get());
     }
 }

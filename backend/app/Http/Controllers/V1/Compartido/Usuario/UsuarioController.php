@@ -144,17 +144,6 @@ class UsuarioController extends ApiController
                 }
             }
 
-            if ($this->traInformacion($request->empresas_id)) {
-                UsuarioEmpresa::where('usuarios_id', $user->id)->delete();
-                $empresa = UsuarioEmpresa::create(
-                    [
-                        'empresas_id' => $request->empresas_id['id'],
-                        'usuarios_id' => $user->id
-                    ]
-                );
-                $this->bitacora_general('usuarios_empresas', $this->acciones(0), $empresa, "{$this->controlador_principal}@store");
-            }
-
             DB::commit();
 
             return $this->successResponse('Registro agregado.');
