@@ -140,7 +140,7 @@ export default {
   },
 
   created() {
-    this.initialize()
+    //this.initialize()
   },
 
   methods: {

@@ -45,11 +45,23 @@ import ProductoService from '../services/restaurante/ProductoService'
 import MeseroService from '../services/restaurante/MeseroService'
 import OrdenService from '../services/restaurante/OrdenService'
 import MesaService from '../services/restaurante/MesaService'
+
+/*
+|--------------------------------------------------------------------------
+| Restaurant Services
+|--------------------------------------------------------------------------
+*/
+import TipoCamaService from '../services/hotel/TipoCamaService'
+import HabitacionService from '../services/hotel/HabitacionService'
+import HabitacionFotoService from '../services/hotel/HabitacionFotoService'
+import HabitacionPrecioService from '../services/hotel/HabitacionPrecioService'
 /* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
+
 let baseUrl = 'http://localhost:8001/hotel_restuarante/backend/public/'
 //let baseUrl = 'http://64.225.43.65/multi_api/'
 let token_data = $cookies.get('token_data')
 let restaurantUrl = 'api/v1/restaurante/'
+let hotelUrl = 'servicio/hotel/version_uno/'
 
 // Axios Configuration
 Axios.defaults.headers.common.Accept = 'application/json'
@@ -127,11 +139,11 @@ export default {
   trasladoStockController: new TrasladoStockController(Axios, baseUrl),
   reporteController: new ReporteController(Axios, baseUrl),
 
-/*
-|--------------------------------------------------------------------------
-| Restaurant Services
-|--------------------------------------------------------------------------
-*/
+  /*
+  |--------------------------------------------------------------------------
+  | Restaurant Services
+  |--------------------------------------------------------------------------
+  */
   statusOrderService: new EstadoOrdenService(Axios, baseUrl, restaurantUrl),
   orderTypeService: new TipoOrdenService(Axios, baseUrl, restaurantUrl),
   foodCategoryService: new CategoriaComidaService(Axios, baseUrl, restaurantUrl),
@@ -139,4 +151,14 @@ export default {
   waiterService: new MeseroService(Axios, baseUrl, restaurantUrl),
   orderService: new OrdenService(Axios, baseUrl, restaurantUrl),
   tableService: new MesaService(Axios, baseUrl, restaurantUrl),
+
+  /*
+  |--------------------------------------------------------------------------
+  | Hotel Services
+  |--------------------------------------------------------------------------
+  */
+  TipoCamaService: new TipoCamaService(Axios, baseUrl, hotelUrl),
+  HabitacionService: new HabitacionService(Axios, baseUrl, hotelUrl),
+  HabitacionFotoService: new HabitacionFotoService(Axios, baseUrl, hotelUrl),
+  HabitacionPrecioService: new HabitacionPrecioService(Axios, baseUrl, hotelUrl),
 }

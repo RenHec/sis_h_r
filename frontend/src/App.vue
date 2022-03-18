@@ -295,7 +295,7 @@ export default {
     }
   },
   created() {
-    this.initialize()
+    //this.initialize()
   },
 
   methods: {
@@ -349,7 +349,7 @@ export default {
 
     mostar() {
       let self = this
-      this.initialize()
+      //this.initialize()
       self.drawer = self.drawer ? false : true
     },
 

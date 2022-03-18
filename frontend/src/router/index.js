@@ -50,6 +50,15 @@ import CategoriaComida from '@/components/restaurante/categoria-comida/IndexComp
 import ProductoRestaurante from '@/components/restaurante/producto/IndexComponent'
 import Ordenes from '@/components/restaurante/ordenes/IndexComponent'
 import Mesa from '@/components/restaurante/mesa/IndexComponent'
+/*
+|--------------------------------------------------------------------------
+| Hotel Components
+|--------------------------------------------------------------------------
+*/
+import HTipoCama from '@/components/hotel/habitacion/tipo-cama/IndexComponent'
+import HHabitacion from '@/components/hotel/habitacion/IndexComponent'
+import HFotografia from '@/components/hotel/habitacion/fotografias/IndexComponent'
+import HPrecio from '@/components/hotel/habitacion/precios/IndexComponent'
 
 Vue.use(Router)
 
@@ -291,7 +300,7 @@ const routes = [
 |--------------------------------------------------------------------------
 | Restaurant Components
 |--------------------------------------------------------------------------
-*/
+  */
   {
     path: '/mesero',
     name: 'Mesero',
@@ -338,6 +347,35 @@ const routes = [
     path: '/mesas',
     name: 'Mesa',
     component: Mesa,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  /*
+|--------------------------------------------------------------------------
+| Restaurant Components
+|--------------------------------------------------------------------------
+  */
+  {
+    path: '/tipo_cama',
+    name: 'HTipoCama',
+    component: HTipoCama,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/habitacion',
+    name: 'HHabitacion',
+    component: HHabitacion,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/habitacion_fotografia/:id',
+    name: 'HFotografia',
+    component: HFotografia,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/habitacion_precio/:id',
+    name: 'HPrecio',
+    component: HPrecio,
     beforeEnter: multiguard([isLoggedIn])
   },
 ]

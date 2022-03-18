@@ -305,7 +305,7 @@ export default {
 
   created() {
     this.initialize()
-    this.getSelects()
+    //this.getSelects()
   },
 
   methods: {
