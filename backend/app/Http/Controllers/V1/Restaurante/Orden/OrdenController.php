@@ -19,17 +19,12 @@ class OrdenController extends ApiController
      */
     public function index()
     {
-        $finaliza = DB::table('r_estado_orden')
-                        ->select('id')
-                        ->where('finaliza', 1)
-                        ->first();
-
         $registros = DB::table('r_orden as o')
                         ->join('r_tipo_orden as to','o.tipo_orden_id','to.id')
                         ->join('r_estado_orden as eo','o.estado_orden_id','eo.id')
                         ->join('r_mesa as m','o.mesa_id','m.id')
-                        ->select('o.id','o.monto','o.fecha','o.hora','to.nombre as tipo_orden','eo.nombre as estado_orden','eo.icono','m.nombre as mesa')
-                        ->where('eo.id','<>',$finaliza->id)
+                        ->select('o.id','o.monto','o.fecha','o.hora','to.nombre as tipo_orden','eo.nombre as estado_orden','eo.id as estado_orden_id','eo.icono','m.nombre as mesa','eo.finaliza','eo.color')
+                        //->where('eo.id','<>',$finaliza->id)
                         ->get();
         $datos = array();
 
@@ -117,7 +112,29 @@ class OrdenController extends ApiController
      */
     public function show($id)
     {
-        //
+        $registros = DB::table('r_orden as o')
+                        ->join('r_tipo_orden as to','o.tipo_orden_id','to.id')
+                        ->join('r_estado_orden as eo','o.estado_orden_id','eo.id')
+                        ->join('r_mesa as m','o.mesa_id','m.id')
+                        ->select('o.id','o.monto','o.fecha','o.hora','to.nombre as tipo_orden','eo.nombre as estado_orden','eo.id as estado_orden_id','eo.icono','m.nombre as mesa','eo.finaliza','eo.color')
+                        ->where('o.id',$id)
+                        ->where('o.activo',1)
+                        ->get();
+        $datos = array();
+
+        foreach ($registros as $key => $value) {
+
+            $detalle = DB::table('r_orden_producto as op')
+                        ->join('r_producto as p','op.producto_id','p.id')
+                        ->select('op.id','op.cantidad','op.notas','p.nombre as producto','p.img','op.precio')
+                        ->where('op.orden_id',$value->id)
+                        ->get();
+
+            $datos            = (array)$value;
+            $datos['detalle'] = $detalle;
+        }
+
+        return response()->json(['data' => $datos],200);
     }
 
     /**
@@ -154,37 +171,31 @@ class OrdenController extends ApiController
         //
     }
 
-    public function orderList(Request $request)
+    public function orderList()
     {
-        $columna    = $request['sortBy'] ? $request['sortBy'] : "monto";
-        $criterio   = $request['search'];
-        $orden      = $request['sortDesc'] ? 'desc' : 'asc';
-        $filas      = $request['perPage'];
-        $pagina     = $request['page'];
-
         $ordenes    = DB::table('r_orden as o')
                             ->join('r_estado_orden as eo','eo.id','o.estado_orden_id')
                             ->join('r_tipo_orden as to','to.id','o.tipo_orden_id')
                             ->join('r_mesa as m','o.mesa_id','m.id')
-                            ->select('o.id','o.monto','o.fecha','o.hora','eo.nombre as estado_orden','to.nombre as tipo_orden','eo.color','eo.icono','m.nombre as mesa')
-                            ->where($columna, 'LIKE', '%' . $criterio . '%')
-                            ->orderBy($columna, $orden)
-                            ->skip($pagina)
-                            ->take($filas)
+                            ->select('o.id','o.monto','o.fecha','o.hora','eo.nombre as estado_orden','to.nombre as tipo_orden','eo.color','eo.icono','eo.finaliza','m.nombre as mesa')
                             ->get();
 
-        $count      = DB::table('r_orden as o')
-                        ->join('r_estado_orden as eo','eo.id','o.estado_orden_id')
-                        ->join('r_tipo_orden as to','to.id','o.tipo_orden_id')
-                        ->join('r_mesa as m','o.mesa_id','m.id')
-                        ->where($columna, 'LIKE', '%' . $criterio . '%')
-                        ->count();
+        return response()->json(['data' => $ordenes], 200);
+    }
 
-        $data       = array(
-                        'total' => $count,
-                        'data' => $ordenes,
-                    );
+    public function updateOrderStatus(Request $request)
+    {
+        $rules = [
+            'orden'            => 'required',
+            'estado'           => 'required'
+        ];
 
-        return response()->json($data, 200);
+        $this->validate($request, $rules);
+
+        $registro = Orden::findOrFail($request->get('orden'));
+        $registro->estado_orden_id = $request->get('estado');
+        $registro->save();
+
+        return $this->showMessage('',204);
     }
 }

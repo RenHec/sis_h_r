@@ -23,6 +23,10 @@ class MeseroService {
     return this.axios.put(`${this.baseUrl}/${data.id}`, data)
   }
 
+  updateWaiterOrderStatus (data) {
+    return this.axios.post(`${this.baseUrl}-status`, data)
+  }
+
   deleteWaitersOrder (data) {
     return this.axios.delete(`${this.baseUrl}/${data.id}`)
   }

@@ -76,16 +76,21 @@ export default{
   },
   mounted(){
     this.getListTables()
+    this.SET_LIST_ITEMS([])
   },
   created(){
 
   },
   beforeDestroy(){
     this.UPDATE_SELECTED_TABLE({'id':0,'name':'','selected':false})
+
   },
   methods:{
     ...restaurantMapActions([
       'UPDATE_SELECTED_TABLE'
+    ]),
+    ...restaurantMapMutations([
+      'SET_LIST_ITEMS'
     ]),
     checkTable(item)
     {
