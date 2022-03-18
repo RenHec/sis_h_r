@@ -26,49 +26,11 @@ class Habitacion extends ApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
         try {
-            $otras_tablas = array('estado', 'precio_habitacion', 'habitacion');
-            $columna    = $this->traInformacion($request['sortBy']) ? $request['sortBy'] : "description";
-            $criterio   = $this->traInformacion($request['search']) ? $request['search'] : null;
-            $orden      = $this->traInformacion($request['sortDesc']) ? $request['sortDesc'] : 'asc';
-            $filas      = $request['perPage'];
-            $pagina     = $request['page'];
-
-            $consulta = HHabitacion::with('estado', 'precios.tipo_cama')
-                ->when(!is_null($criterio) && !in_array($criterio, $otras_tablas), function ($query) use ($columna, $criterio) {
-                    $query->where($columna, 'LIKE', "%{$criterio}%");
-                })
-                ->when(!is_null($criterio) && $criterio == 'estado', function ($query) use ($criterio) {
-                    $query->whereHas('estado', function (Builder $query) use ($criterio) {
-                        $query->where('nombre', 'LIKE', "%{$criterio}%");
-                    });
-                })
-                ->when(!is_null($criterio) && $criterio == 'precio_habitacion', function ($query) use ($criterio) {
-                    $query->whereHas('precios', function (Builder $query) use ($criterio) {
-                        $query->where('precio', 'LIKE', "%{$criterio}%");
-                    });
-                })
-                ->when(!is_null($criterio) && $criterio == 'habitacion', function ($query) use ($criterio) {
-                    $query->whereHas('precios', function (Builder $query) use ($criterio) {
-                        $query->with('tipo_cama')->whereHas('tipo_cama', function (Builder $query) use ($criterio) {
-                            $query->where('nombre', 'LIKE', "%{$criterio}%");
-                        });
-                    });
-                })
-                ->orderBy($columna, $orden)
-                ->skip($pagina)
-                ->take($filas)
-                ->get();
-
-            $data = array(
-                'total' => count($consulta),
-                'data' => $consulta,
-            );
-
-            return $this->successResponse($data);
-        } catch (\Throwable $th) {
+            return $this->successResponse(HHabitacion::with('estado', 'precios.tipo_cama', 'imagenes')->get());
+        } catch (\Exception $e) {
             return $this->errorResponse('Error en el controlador');
         }
     }
@@ -97,27 +59,19 @@ class Habitacion extends ApiController
             $habitacion = new HHabitacion();
             $habitacion->foto = $path;
             $habitacion->numero = $cantidad + 1;
-            $habitacion->huespedes = 0;
-            $habitacion->description = $request->description;
+            $habitacion->huespedes = HTipoCama::find($request->h_tipos_camas_id['id'])->cantidad;
+            $habitacion->descripcion = $request->descripcion;
             $habitacion->h_estados_id = HEstado::DISPONIBLE;
             $habitacion->save();
 
-            $huespedes = 0;
-            foreach ($request->precios as $value) {
-                $huespedes += HTipoCama::find($value['h_tipos_camas_id'])->cantidad;
-
-                HHabitacionPrecio::create(
-                    ['price' => $value['price'], 'activo' => true, 'h_tipos_camas_id' => $value['h_tipos_camas_id'], 'h_habitaciones_id' => $habitacion->id]
-                );
-            }
-
-            $habitacion->huespedes = $huespedes;
-            $habitacion->save();
+            HHabitacionPrecio::create(
+                ['precio' => $request->precio, 'activo' => true, 'h_tipos_camas_id' => $request->h_tipos_camas_id['id'], 'h_habitaciones_id' => $habitacion->id]
+            );
 
             HHabitacionFoto::create(['foto' => $habitacion->foto, 'h_habitaciones_id' => $habitacion->id]);
 
             DB::commit();
-            return $this->successResponse("Habitación: {$habitacion->description} fue registrado.");
+            return $this->successResponse("Habitación: {$habitacion->descripcion} fue registrado.");
         } catch (\Exception $e) {
             DB::rollBack();
             if ($e instanceof ImageException) {
@@ -139,11 +93,11 @@ class Habitacion extends ApiController
     public function update(Request $request, HHabitacion $habitacion)
     {
         try {
-            $habitacion->description = $request->description;
-            $habitacion->h_estados_id = $request->h_estados_id;
+            $habitacion->descripcion = $request->descripcion;
+            $habitacion->h_estados_id = $request->h_estados_id['id'];
             $habitacion->save();
-            $estado = HEstado::find($habitacion->h_estados_id)->nommbre;
-            return $this->successResponse("Habitación: {$habitacion->description} fue actualizada y se encuentra en estado {$estado}.");
+
+            return $this->successResponse("Habitación: {$habitacion->descripcion} fue actualizada y se encuentra en estado {$request->h_estados_id['nombre']}.");
         } catch (\Exception $e) {
             return $this->errorResponse('Error en el controlador');
         }
@@ -171,7 +125,7 @@ class Habitacion extends ApiController
             }
 
             $habitacion->delete();
-            return $this->successResponse("Habitación: {$habitacion->nombre} fue eliminado.");
+            return $this->successResponse("Habitación: {$habitacion->descripcion} fue eliminado.");
         } catch (\Exception $e) {
             if ($e instanceof QueryException) {
                 return $this->errorResponse('El registro se encuentra en uso');

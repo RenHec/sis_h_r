@@ -6,15 +6,17 @@ use App\Imports\RolMenuImport;
 use App\Models\V1\Catalogo\Mes;
 use Illuminate\Database\Seeder;
 use App\Imports\MunicipioImport;
+use App\Models\V1\Principal\Caja;
+use Database\Seeders\HotelSeeder;
 use Illuminate\Support\Facades\DB;
 use App\Imports\DepartamentoImport;
 use App\Models\V1\Catalogo\TipoPago;
 use App\Models\V1\Seguridad\Usuario;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\V1\Seguridad\UsuarioRol;
+use Database\Seeders\RestauranteSeeder;
 use Illuminate\Support\Facades\Artisan;
 use App\Models\V1\Catalogo\Presentacion;
-use App\Models\V1\Principal\Caja;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,7 +27,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call([RestauranteSeeder::class]);
         //Migrando data para los roles, menus y asociando menu al rol correspondiente
         Excel::import(new RolMenuImport, 'database/seeders/Catalogos/RolMenu.xlsx');
 
@@ -158,5 +159,8 @@ class DatabaseSeeder extends Seeder
             'meses_id' => date('n'),
             'usuarios_id' => 1
         ]);
+
+        $this->call([RestauranteSeeder::class]);
+        $this->call([HotelSeeder::class]);
     }
 }

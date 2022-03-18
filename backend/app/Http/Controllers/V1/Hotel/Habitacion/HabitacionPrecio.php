@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\V1\Hotel\Habitacion;
 
+use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use App\Models\V1\Hotel\HTipoCama;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use App\Models\V1\Hotel\HHabitacion;
 use Illuminate\Database\QueryException;
 use App\Models\V1\Hotel\HHabitacionPrecio;
 
-class HabitacionPrecio extends Controller
+class HabitacionPrecio extends ApiController
 {
     /**
      * Update the specified resource in storage.
@@ -22,14 +22,13 @@ class HabitacionPrecio extends Controller
     public function update(Request $request, HHabitacion $habitacion_precio)
     {
         try {
-
             DB::beginTransaction();
 
             HHabitacionPrecio::create(
-                ['price' => $request->price, 'activo' => true, 'h_tipos_camas_id' => $request->h_tipos_camas_id, 'h_habitaciones_id' => $habitacion_precio->id]
+                ['precio' => $request->precio, 'activo' => true, 'h_tipos_camas_id' => $request->h_tipos_camas_id['id'], 'h_habitaciones_id' => $habitacion_precio->id]
             );
 
-            $habitacion_precio->huespedes += HTipoCama::find($request->h_tipos_camas_id)->cantidad;
+            $habitacion_precio->huespedes += HTipoCama::find($request->h_tipos_camas_id['id'])->cantidad;
             $habitacion_precio->save();
 
             DB::commit();
@@ -52,9 +51,17 @@ class HabitacionPrecio extends Controller
     public function destroy(HHabitacionPrecio $habitacion_precio)
     {
         try {
-            $habitacion_precio->delete();
+            DB::beginTransaction();
+            $habitacion = HHabitacion::find($habitacion_precio->h_habitaciones_id);
+            $habitacion->huespedes = $habitacion->huespedes - HTipoCama::find($habitacion_precio->h_tipos_camas_id)->cantidad;
+            $habitacion->save();
+
+            $habitacion_precio->activo = $habitacion_precio->activo ? false : true;
+            $habitacion_precio->save();
+            DB::commit();
             return $this->successResponse("El precio de la habitación fue eliminado.");
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->errorResponse('Error en el controlador');
         }
     }

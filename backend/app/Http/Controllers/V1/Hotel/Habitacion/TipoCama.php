@@ -15,29 +15,10 @@ class TipoCama extends ApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
         try {
-            $columna    = $this->traInformacion($request['sortBy']) ? $request['sortBy'] : "nombre";
-            $criterio   = $this->traInformacion($request['search']) ? $request['search'] : null;
-            $orden      = $this->traInformacion($request['sortDesc']) ? $request['sortDesc'] : 'asc';
-            $filas      = $request['perPage'];
-            $pagina     = $request['page'];
-
-            $consulta = HTipoCama::when(!is_null($criterio), function ($query) use ($columna, $criterio) {
-                $query->where($columna, 'LIKE', "%{$criterio}%");
-            })
-                ->orderBy($columna, $orden)
-                ->skip($pagina)
-                ->take($filas)
-                ->get();
-
-            $data = array(
-                'total' => count($consulta),
-                'data' => $consulta,
-            );
-
-            return $this->successResponse($data);
+            return $this->successResponse(HTipoCama::get());
         } catch (\Throwable $th) {
             return $this->errorResponse('Error en el controlador');
         }

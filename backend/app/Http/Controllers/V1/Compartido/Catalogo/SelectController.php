@@ -8,9 +8,11 @@ use App\Models\V1\Catalogo\Municipio;
 use App\Http\Controllers\ApiController;
 use App\Models\V1\Catalogo\Departamento;
 use App\Models\V1\Catalogo\Presentacion;
+use App\Models\V1\Hotel\HEstado;
 use App\Models\V1\Hotel\HTipoCama;
 use App\Models\V1\Principal\Cliente;
 use App\Models\V1\Principal\Proveedor;
+use Illuminate\Support\Facades\DB;
 
 class SelectController extends ApiController
 {
@@ -56,6 +58,11 @@ class SelectController extends ApiController
 
     public function tipo_cama()
     {
-        return $this->showAll(HTipoCama::orderBy('nombre')->get());
+        return $this->showAll(HTipoCama::select('id', DB::RAW("CONCAT(nombre,' | Persona ',cantidad) AS nombre"))->orderBy('nombre')->get());
+    }
+
+    public function estado_habitacion()
+    {
+        return $this->showAll(HEstado::orderBy('nombre')->get());
     }
 }

@@ -12,7 +12,7 @@ class HHabitacionPrecio extends Model
 
     protected $table = 'h_habitaciones_precios';
 
-    protected $fillable = ['price', 'activo', 'h_tipos_camas_id', 'h_habitaciones_id'];
+    protected $fillable = ['precio', 'activo', 'h_tipos_camas_id', 'h_habitaciones_id'];
 
     /**
      * The attributes that should be cast to native types.
@@ -22,7 +22,7 @@ class HHabitacionPrecio extends Model
     protected $casts = [
         'created_at' => 'datetime:d/m/Y h:i:s a',
         'activo' => 'boolean',
-        'price' => 'float'
+        'precio' => 'float'
     ];
 
     /**
@@ -32,6 +32,6 @@ class HHabitacionPrecio extends Model
      */
     public function tipo_cama()
     {
-        return $this->hasOne(HTipoCama::class, 'h_tipos_camas_id', 'id');
+        return $this->hasOne(HTipoCama::class, 'id', 'h_tipos_camas_id');
     }
 }

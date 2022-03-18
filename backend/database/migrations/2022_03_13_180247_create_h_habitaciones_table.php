@@ -18,7 +18,7 @@ class CreateHHabitacionesTable extends Migration
             $table->string('foto', 100)->nullable(); //Guardaremos la imagen en el local storage
             $table->smallInteger('numero');
             $table->smallInteger('huespedes');
-            $table->longText('description');
+            $table->longText('descripcion');
             $table->foreignId('h_estados_id')->constrained('h_estados');
             $table->timestamps();
         });

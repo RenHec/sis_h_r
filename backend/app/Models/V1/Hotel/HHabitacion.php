@@ -15,7 +15,7 @@ class HHabitacion extends Model
 
     protected $table = 'h_habitaciones';
 
-    protected $fillable = ['foto', 'numero', 'huespedes', 'description', 'h_estados_id'];
+    protected $fillable = ['foto', 'numero', 'huespedes', 'descripcion', 'h_estados_id'];
 
     /**
      * The attributes that should be cast to native types.

@@ -30,6 +30,6 @@ class CreateRestauranteProductoCategoriaComida extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('producto_categoria_comida');
+        Schema::dropIfExists('r_producto_categoria_comida');
     }
 }
