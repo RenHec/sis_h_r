@@ -7,8 +7,8 @@ class OrdenServices {
     this.baseUrl = baseUrl + urlRestaurant + 'ordenes'
   }
 
-  getAllOrders (data) {
-    return this.axios.get(`${this.baseUrl}-list?sortBy=${data.sortBy}&sortDesc=${data.sortDesc}&perPage=${data.perPage}&page=${data.page}&search=${data.search}`)
+  getAllOrders () {
+    return this.axios.get(`${this.baseUrl}-list`)
   }
 
   getOneOrders (id) {

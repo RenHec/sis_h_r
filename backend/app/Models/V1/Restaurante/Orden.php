@@ -13,5 +13,5 @@ class Orden extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
 
-    protected $fillable = ['id','monto','estado_pedido_id','fecha','hora','cliente_id','mesa_id','usuario_id'];
+    protected $fillable = ['id','monto','estado_pedido_id','fecha','hora','cliente_id','mesa_id','usuario_id','activo'];
 }

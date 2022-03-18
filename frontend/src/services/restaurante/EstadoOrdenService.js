@@ -11,6 +11,9 @@ class EstadoOrdenService {
     return this.axios.get(`${this.baseUrl}?sortBy=${data.sortBy}&sortDesc=${data.sortDesc}&perPage=${data.perPage}&page=${data.page}&search=${data.search}`)
   }
 
+  getListOrderStatus () {
+    return this.axios.get(`${this.baseUrl}-list`)
+  }
   getOneOrderStatus (id) {
     return this.axios.get(`${this.baseUrl}/${id}`)
   }

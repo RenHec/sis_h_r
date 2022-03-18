@@ -19,7 +19,9 @@ Route::resource('/mesas','Mesa\MesaController', ['except' => ['create','edit']])
 Route::get('/mesas-list','Mesa\MesaController@listTables');
 
 Route::resource('/menus','Menu\MenuController');
+
 Route::resource('/estado-orden','EstadoOrden\EstadoOrdenController',['except' => ['create','edit']]);
+Route::get('/estado-orden-list','EstadoOrden\EstadoOrdenController@getAllOrderStatus');
 
 Route::resource('/tipo-orden','TipoOrden\TipoOrdenController',['except' => ['create','edit']]);
 Route::get('/tipo-orden-list','TipoOrden\TipoOrdenController@listOrderType');
@@ -32,3 +34,4 @@ Route::get('/productos-list','Producto\ProductoController@productsList');
 
 Route::resource('/ordenes','Orden\OrdenController',['except' => ['create','edit']]);
 Route::get('/ordenes-list','Orden\OrdenController@orderList');
+Route::post('/ordenes-status','Orden\OrdenController@updateOrderStatus');

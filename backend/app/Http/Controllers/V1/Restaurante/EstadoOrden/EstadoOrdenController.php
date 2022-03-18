@@ -150,4 +150,13 @@ class EstadoOrdenController extends ApiController
 
         return $this->showMessage('',210);
     }
+
+    public function getAllOrderStatus()
+    {
+        $registro = EstadoOrden::select('id','nombre','color','icono','finaliza')
+                    ->orderBy('orden','asc')
+                    ->get();
+
+        return $this->showAll($registro);
+    }
 }

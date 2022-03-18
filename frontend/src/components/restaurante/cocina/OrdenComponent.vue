@@ -47,7 +47,7 @@
       <v-card-actions class="d-flex flex-row">
         <v-card-title>{{ item.tipo_orden }}</v-card-title>
         <v-spacer></v-spacer>
-        <v-btn class="red darken-1" dark><v-icon>{{ item.icono }}</v-icon>&nbsp;{{ item.estado_orden }}</v-btn>
+        <v-btn :class="item.color" dark @click="setNextState(item)"><v-icon>{{ item.icono }}</v-icon>&nbsp;{{ item.estado_orden }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-col>
@@ -61,7 +61,8 @@ export default{
   components:{
   },
   props:{
-    item:{}
+    item:{},
+    listStatus:{}
   },
   data(){
     return{
@@ -72,6 +73,19 @@ export default{
   created(){
   },
   methods:{
+    setNextState(item){
+      if(item.finaliza !== 1)
+      {
+        for (let index = 0; index < this.listStatus.length; index++) {
+          if(item.estado_orden_id === this.listStatus[index].id)
+          {
+            let data = { 'orden': item.id, 'estado':this.listStatus[index+1].id}
+            events.$emit('update_order_state',data)
+            break
+          }
+        }
+      }
+    },
     setFormatDate(data){
       return moment(data).format('D-MM-YYYY')
     },
