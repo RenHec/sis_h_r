@@ -15,8 +15,8 @@ class CreateHProductosTable extends Migration
     {
         Schema::create('h_productos', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 75);
-            $table->longText('description');
+            $table->string('nombre', 75);
+            $table->longText('descripcion');
             $table->boolean('consumible')->default(true);
             $table->boolean('activo')->default(true);
             $table->foreignId('usuarios_id')->constrained('usuarios');

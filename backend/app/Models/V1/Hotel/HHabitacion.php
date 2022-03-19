@@ -41,7 +41,7 @@ class HHabitacion extends Model
      */
     public function getPictureAttribute()
     {
-        return Storage::disk('habitacion')->exists($this->foto) ? Storage::disk('habitacion')->url($this->foto) : null;
+        return Storage::disk('habitacion')->exists($this->foto) ? Storage::disk('habitacion')->url($this->foto) : Storage::disk('habitacion')->url('default.jpg');
     }
 
     /**
@@ -51,7 +51,7 @@ class HHabitacion extends Model
      */
     public function estado()
     {
-        return $this->belongsTo(HEstado::class, 'h_estados_id', 'id');
+        return $this->hasOne(HEstado::class, 'id', 'h_estados_id');
     }
 
     /**

@@ -2,24 +2,16 @@
 
 namespace App\Traits;
 
-use App\Models\V1\Catalogo\Estado;
-use App\Models\V1\Principal\Stock;
+use Illuminate\Http\Request;
+use App\Models\V1\Hotel\HKardex;
 use Illuminate\Support\Collection;
-use App\Models\V1\Catalogo\TipoPago;
-use App\Models\V1\Principal\Cliente;
-use App\Models\V1\Principal\Persona;
 use Illuminate\Support\Facades\Auth;
 use App\Models\V1\Principal\CajaPago;
 use App\Models\V1\Seguridad\Bitacora;
-use App\Models\V1\Catalogo\Movimiento;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\V1\Principal\StockVencido;
-use Illuminate\Support\Facades\Validator;
-use App\Models\V1\Principal\Configuracion;
-use App\Models\V1\Principal\StockHistorial;
-use App\Models\V1\Seguridad\UsuarioEmpresa;
-use Illuminate\Pagination\LengthAwarePaginator;
-use App\Models\V1\Principal\AsignarPresentacion;
+use App\Models\V1\Hotel\HKardexHistorial;
+use App\Models\V1\Principal\Cliente;
+use App\Models\V1\Principal\Proveedor;
 
 trait ApiResponser
 {
@@ -42,7 +34,7 @@ trait ApiResponser
 	{
 		return response()->json(['data' => $instance], $code);
 	}
-    protected function showMessage($message, $code = 210)
+	protected function showMessage($message, $code = 210)
 	{
 		return $this->successResponse($message, $code);
 	}
@@ -115,6 +107,62 @@ trait ApiResponser
 		return $message;
 	}
 
+	protected function historial_kardex(string $signo, int $stock, int $cantidad, int $id_tabla, HKardex $h_kardex_id, string $producto)
+	{
+		/*
+			$signo, indica el tipo de operación de quede de hacer para registrar el historial
+			$stock, es la cantidad de stock actual en el kardex
+			$cantidad, es la cantidad que esta sumando o restando en el kardex
+			$id_tabla, es el registro ID de la tabla que esta produciendo la acción
+			$h_kardex_id, contiene la información del kardex que se encuentra procesando la acción
+		*/
+
+		$data['stock_anterior'] = 0;
+		$data['signo'] = $signo;
+		$data['stock_nuevo'] = $stock;
+		$data['h_insumos_detalles_id'] = 0;
+		$data['h_check_in_id'] = 0;
+		$data['h_kardex_id'] = $h_kardex_id->id;
+		$data['usuarios_id'] = Auth::user()->id;
+
+		switch ($signo) {
+			case '=':
+				$data['documento'] = "Kardex - {$id_tabla}";
+				$data['descripcion'] = "Se creo el inventario para el producto {$producto}";
+				break;
+
+			case '+':
+				$data['documento'] = "Insumo - {$id_tabla}";
+				$data['descripcion'] = "Al producto {$producto} se le sumaron {$cantidad}";
+				$data['stock_anterior'] = $stock - $cantidad;
+				$data['stock_nuevo'] = $stock;
+				$data['h_insumos_detalles_id'] = $id_tabla;
+				break;
+
+			case '-':
+				$data['documento'] = "Reservacion - {$id_tabla}";
+				$data['descripcion'] = "Al producto {$producto} se le restaron {$cantidad}";
+				$data['stock_anterior'] = $stock + $cantidad;
+				$data['stock_nuevo'] = $stock;
+				$data['h_check_in_id'] = $id_tabla;
+				break;
+
+			case 'a':
+				$data['documento'] = "Insumo - {$id_tabla}";
+				$data['descripcion'] = "Al producto {$producto} se le restaron {$cantidad} por anulación";
+				$data['stock_anterior'] = $stock + $cantidad;
+				$data['stock_nuevo'] = $stock;
+				$data['h_insumos_detalles_id'] = $id_tabla;
+				break;
+
+			default:
+				throw new \Exception("Error al guardar el historial del kardex", 1);
+				break;
+		}
+
+		HKardexHistorial::create($data);
+	}
+
 	/*protected function generadorCodigoEmpresa($id)
 	{
 		$prefijo = Configuracion::find(1);
@@ -139,6 +187,32 @@ trait ApiResponser
 		];
 
 		return is_null($key) ? $acciones : $acciones[$key];
+	}
+
+	protected function cliente_proveedor(Request $request, bool $cliente = true, string $controlador = null)
+	{
+		if ($cliente) {
+			$persona = Cliente::where('nit', $request->nit)->first();
+			if (is_null($persona)) {
+				$persona = new Cliente();
+			}
+		} else {
+			$persona = Proveedor::where('nit', $request->nit)->first();
+			if (is_null($persona)) {
+				$persona = new Proveedor();
+			}
+		}
+
+		$persona->nit = $request->nit;
+		$persona->nombre = $request->nombre;
+		$persona->telefonos = $request->telefonos;
+		$persona->emails = $request->emails;
+		$persona->direcciones = $request->direcciones;
+		$persona->departamentos_id = $request->direcciones;
+		$persona->municipios_id = $request->direcciones;
+		$persona->usuarios_id = Auth::user()->id;
+
+		return $persona;
 	}
 
 	/*protected function crear_cliente_proveedor($persona, $controlador, $request_normal)

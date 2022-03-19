@@ -19,9 +19,16 @@ class HabitacionFoto extends ApiController
      * @param  \App\Models\V1\Hotel\HHabitacion  $habitacion_foto
      * @return \Illuminate\Http\Response
      */
-    public function show(HHabitacion $habitacion_foto)
+    public function show(HHabitacionFoto $habitacion_foto)
     {
-        return $this->showAll(HHabitacionFoto::where('h_habitaciones_id', $habitacion_foto->id)->get());
+        try {
+            $habitacion = HHabitacion::find($habitacion_foto->h_habitaciones_id);
+            $habitacion->foto = $habitacion_foto->foto;
+            $habitacion->save();
+            return $this->successResponse("Fotografía principal actualizada.");
+        } catch (\Exception $e) {
+            return $this->errorResponse('Error en el controlador');
+        }
     }
 
     /**

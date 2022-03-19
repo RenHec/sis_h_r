@@ -19,6 +19,7 @@ class CreateHKardexTable extends Migration
             $table->smallInteger('stock_inicial');
             $table->smallInteger('stock_consumido');
             $table->boolean('activo')->default(true);
+            $table->boolean('check_in')->default(false);
             $table->foreignId('h_productos_id')->constrained('h_productos');
             $table->foreignId('usuarios_id')->constrained('usuarios');
             $table->timestamps();

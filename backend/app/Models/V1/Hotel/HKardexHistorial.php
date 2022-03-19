@@ -14,7 +14,18 @@ class HKardexHistorial extends Model
 
     protected $table = 'h_kardex_historial';
 
-    protected $fillable = ['signo', 'descripcion', 'h_insumos_detalles_id', 'h_check_in_id', 'h_kardex_id', 'usuarios_id'];
+    protected $fillable = ['documento', 'stock_anterior', 'signo', 'stock_nuevo', 'descripcion', 'h_insumos_detalles_id', 'h_check_in_id', 'h_kardex_id', 'usuarios_id'];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'created_at' => 'datetime:d/m/Y h:i:s a',
+        'stock_anterior' => 'integer',
+        'stock_nuevo' => 'integer'
+    ];
 
     /**
      * Get the insumo associated.

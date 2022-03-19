@@ -16,6 +16,7 @@ class CreateHInsumosDetallesTable extends Migration
         Schema::create('h_insumos_detalles', function (Blueprint $table) {
             $table->id();
             $table->string('documento');
+            $table->string('producto');
             $table->smallInteger('cantidad');
             $table->decimal('precio', 10, 2);
             $table->decimal('descuento', 10, 2);

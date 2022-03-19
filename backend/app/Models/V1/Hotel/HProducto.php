@@ -13,7 +13,7 @@ class HProducto extends Model
 
     protected $table = 'h_productos';
 
-    protected $fillable = ['name', 'description', 'consumible', 'activo', 'usuarios_id'];
+    protected $fillable = ['nombre', 'descripcion', 'consumible', 'activo', 'usuarios_id'];
 
     /**
      * The attributes that should be cast to native types.

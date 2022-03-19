@@ -1,34 +1,38 @@
 <template>
   <v-row>
-      <v-overlay :value="loading">
-        <v-progress-circular indeterminate size="64"></v-progress-circular>
-      </v-overlay>
-      <v-col md='8'>
-        <v-card>
-          <Categoria :categories="categories"/>
-          <v-container style="background-color:#e3f2fd; height:85vh; overflow-y:scroll">
-            <v-row>
-              <template v-for="menu in menus">
-                <Platillo v-bind:key="menu.id" :platillo="menu"/>
-              </template>
-            </v-row>
-          </v-container>
-        </v-card>
-      </v-col>
+    <v-overlay :value="loading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+    <v-col cols="12" md="8">
+      <v-card>
+        <Categoria :categories="categories" />
+        <v-container
+          style="background-color: #e3f2fd; height: 85vh; overflow-y: scroll;"
+        >
+          <v-row>
+            <template v-for="menu in menus">
+              <Platillo v-bind:key="menu.id" :platillo="menu" />
+            </template>
+          </v-row>
+        </v-container>
+      </v-card>
+    </v-col>
 
-      <v-col md='4'>
-        <v-card>
-          <v-toolbar>
-            <v-toolbar-title style="padding:2px;">Detalle de la orden: {{ tableName }}</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="returnToTables()">
-              <v-icon dark>close</v-icon>
-            </v-btn>
-          </v-toolbar>
-          <DetalleOrden />
-        </v-card>
-      </v-col>
-    </v-row>
+    <v-col cols="12" md="4">
+      <v-card>
+        <v-toolbar>
+          <v-toolbar-title style="padding: 2px;">
+            Detalle de la orden: {{ tableName }}
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="returnToTables()">
+            <v-icon dark>close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <DetalleOrden />
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -41,108 +45,99 @@ import { createNamespacedHelpers } from 'vuex'
 const {
   mapGetters: restaurantMapGetter,
   mapMutations: restaurantMapMutations,
-  mapActions: restaurantMapActions
+  mapActions: restaurantMapActions,
 } = createNamespacedHelpers('restaurant')
 
-export default{
-  components:{
+export default {
+  components: {
     Categoria,
     Platillo,
-    DetalleOrden
+    DetalleOrden,
   },
-  data(){
-    return{
-      loading:false,
+  data() {
+    return {
+      loading: false,
 
-       categories:[],
-       menus:[],
-       auxiliaryMenu:[],
+      categories: [],
+      menus: [],
+      auxiliaryMenu: [],
     }
   },
-  mounted(){
+  mounted() {
     this.getAllFoodCategories()
     this.getAllMenu()
   },
-  created(){
-    events.$on('filter_menus',this.eventFilterMenusList)
+  created() {
+    events.$on('filter_menus', this.eventFilterMenusList)
   },
-  beforeDestroy(){
+  beforeDestroy() {
     events.$off('filter_menus')
   },
-  methods:{
-    ...restaurantMapActions([
-      'UPDATE_SELECTED_TABLE'
-    ]),
-    ...restaurantMapMutations([
-      'SET_AMOUNT_ORDER',
-      'SET_LIST_ITEMS'
-    ]),
-    returnToTables()
-    {
+  methods: {
+    ...restaurantMapActions(['UPDATE_SELECTED_TABLE']),
+    ...restaurantMapMutations(['SET_AMOUNT_ORDER', 'SET_LIST_ITEMS']),
+    returnToTables() {
       this.SET_AMOUNT_ORDER(0)
       this.SET_LIST_ITEMS([])
-      this.UPDATE_SELECTED_TABLE({'id':0,'name':'','selected':false})
+      this.UPDATE_SELECTED_TABLE({ id: 0, name: '', selected: false })
     },
-    eventFilterMenusList(categoryFilter)
-    {
+    eventFilterMenusList(categoryFilter) {
       this.menus = []
-      this.auxiliaryMenu.forEach((item)=>{
-        if(this.isMenuCategory(item.producto_categoria_comida, categoryFilter)){
+      this.auxiliaryMenu.forEach((item) => {
+        if (
+          this.isMenuCategory(item.producto_categoria_comida, categoryFilter)
+        ) {
           this.menus.push(item)
         }
       })
     },
 
-    isMenuCategory(item, filter){
+    isMenuCategory(item, filter) {
       let isEqualCategory = false
 
-      for(let category of item){
-        if(category.categoria_comida_id === filter){
+      for (let category of item) {
+        if (category.categoria_comida_id === filter) {
           isEqualCategory = true
-          break;
+          break
         }
       }
 
       return isEqualCategory
     },
-    getAllFoodCategories(){
+    getAllFoodCategories() {
       this.loading = true
 
       this.$store.state.services.foodCategoryService
         .getListFoodCategory()
-        .then((r)=>{
+        .then((r) => {
           this.categories = r.data.data
         })
-        .catch((e)=>{
-          this.$toastr.error(e,'Error')
+        .catch((e) => {
+          this.$toastr.error(e, 'Error')
         })
-        .finally(()=>{
+        .finally(() => {
           this.loading = false
         })
     },
-    getAllMenu(){
+    getAllMenu() {
       this.loading = true
 
       this.$store.state.services.productService
         .getProductsList()
-        .then((r)=>{
+        .then((r) => {
           this.menus = r.data.data
           this.auxiliaryMenu = r.data.data
         })
         .catch((e) => {
-          this.$toastr.error(e,'Error')
+          this.$toastr.error(e, 'Error')
         })
-        .finally(()=>{
+        .finally(() => {
           this.loading = false
         })
     },
   },
-   computed:{
-    ...restaurantMapGetter([
-      'selectedTable',
-      'isTableSelected',
-      'tableName'
-    ]),
+  computed: {
+    ...restaurantMapGetter(['selectedTable', 'isTableSelected', 'tableName']),
   },
 }
 </script>

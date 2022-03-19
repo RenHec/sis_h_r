@@ -15,7 +15,10 @@ class CreateHKardexHistorialTable extends Migration
     {
         Schema::create('h_kardex_historial', function (Blueprint $table) {
             $table->id();
+            $table->string('documento', 25);
+            $table->smallInteger('stock_anterior');
             $table->char('signo', 1);
+            $table->smallInteger('stock_nuevo');
             $table->text('descripcion');
             $table->unsignedBigInteger('h_insumos_detalles_id')->nullable();
             $table->unsignedBigInteger('h_check_in_id')->nullable();

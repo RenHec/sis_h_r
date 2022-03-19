@@ -9,7 +9,6 @@ use App\Models\V1\Hotel\HTipoCama;
 use Illuminate\Support\Facades\DB;
 use App\Models\V1\Hotel\HHabitacion;
 use Intervention\Image\Facades\Image;
-use Illuminate\Database\Query\Builder;
 use App\Http\Controllers\ApiController;
 use App\Models\V1\Hotel\HHabitacionFoto;
 use Illuminate\Database\QueryException;
@@ -112,12 +111,13 @@ class Habitacion extends ApiController
     public function destroy(HHabitacion $habitacion)
     {
         try {
-            if (HReservacionDetalle::where('h_reservaciones_id', $habitacion->id)->count() > 0) {
+            DB::beginTransaction();
+            if (HReservacionDetalle::whereIn('h_habitaciones_precios_id', HHabitacionPrecio::where('h_habitaciones_id', $habitacion->id)->pluck('id'))->count() > 0) {
                 return $this->errorResponse('La habitación no puede eliminarse.');
             }
 
-            HHabitacionPrecio::where('h_reservaciones_id', $habitacion->id)->delete();
-            $fotografias = HHabitacionFoto::where('h_reservaciones_id', $habitacion->id)->get();
+            HHabitacionPrecio::where('h_habitaciones_id', $habitacion->id)->delete();
+            $fotografias = HHabitacionFoto::where('h_habitaciones_id', $habitacion->id)->get();
 
             foreach ($fotografias as $value) {
                 Storage::disk('habitacion')->exists($value->foto) ? Storage::disk('habitacion')->delete($value->foto) : null;
@@ -125,10 +125,12 @@ class Habitacion extends ApiController
             }
 
             $habitacion->delete();
+            DB::commit();
             return $this->successResponse("Habitación: {$habitacion->descripcion} fue eliminado.");
         } catch (\Exception $e) {
+            DB::rollBack();
             if ($e instanceof QueryException) {
-                return $this->errorResponse('El registro se encuentra en uso');
+                return $this->errorResponse($e->getMessage());
             }
             return $this->errorResponse('Error en el controlador');
         }

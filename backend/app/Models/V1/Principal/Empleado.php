@@ -122,7 +122,7 @@ class Empleado extends Model
      */
     public function departamento()
     {
-        return $this->belongsTo(Departamento::class, 'departamento_id', 'id');
+        return $this->hasOne(Departamento::class, 'id', 'departamento_id');
     }
 
     /**
@@ -132,6 +132,6 @@ class Empleado extends Model
      */
     public function municipio()
     {
-        return $this->belongsTo(Municipio::class, 'municipio_id', 'id');
+        return $this->hasOne(Municipio::class, 'id', 'municipio_id');
     }
 }

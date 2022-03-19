@@ -12,7 +12,7 @@ class HInsumoDetalle extends Model
 
     protected $table = 'h_insumos_detalles';
 
-    protected $fillable = ['documento', 'cantidad', 'precio', 'descuento', 'sub_total', 'h_insumos_id', 'h_productos_id'];
+    protected $fillable = ['documento', 'producto', 'cantidad', 'precio', 'descuento', 'sub_total', 'h_insumos_id', 'h_productos_id'];
 
     /**
      * The attributes that should be cast to native types.
