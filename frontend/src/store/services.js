@@ -55,6 +55,8 @@ import TipoCamaService from '../services/hotel/TipoCamaService'
 import HabitacionService from '../services/hotel/HabitacionService'
 import HabitacionFotoService from '../services/hotel/HabitacionFotoService'
 import HabitacionPrecioService from '../services/hotel/HabitacionPrecioService'
+import InsumoService from '../services/hotel/InsumoService'
+import KardexService from '../services/hotel/KardexService'
 /* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
 
 let baseUrl = 'http://localhost:8001/hotel_restuarante/backend/public/'
@@ -161,4 +163,6 @@ export default {
   HabitacionService: new HabitacionService(Axios, baseUrl, hotelUrl),
   HabitacionFotoService: new HabitacionFotoService(Axios, baseUrl, hotelUrl),
   HabitacionPrecioService: new HabitacionPrecioService(Axios, baseUrl, hotelUrl),
+  InsumoService: new InsumoService(Axios, baseUrl, hotelUrl),
+  KardexService: new KardexService(Axios, baseUrl, hotelUrl),
 }

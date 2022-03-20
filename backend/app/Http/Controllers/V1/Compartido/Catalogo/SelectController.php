@@ -9,6 +9,7 @@ use App\Http\Controllers\ApiController;
 use App\Models\V1\Catalogo\Departamento;
 use App\Models\V1\Catalogo\Presentacion;
 use App\Models\V1\Hotel\HEstado;
+use App\Models\V1\Hotel\HKardex;
 use App\Models\V1\Hotel\HTipoCama;
 use App\Models\V1\Principal\Cliente;
 use App\Models\V1\Principal\Proveedor;
@@ -64,5 +65,38 @@ class SelectController extends ApiController
     public function estado_habitacion()
     {
         return $this->showAll(HEstado::orderBy('nombre')->get());
+    }
+
+    public function producto_insumo()
+    {
+        $data = DB::table('h_productos')
+            ->join('h_kardex', 'h_kardex.h_productos_id', 'h_productos.id')
+            ->select(
+                'h_kardex.id AS h_productos_id',
+                'h_productos.nombre AS producto',
+                'h_kardex.stock_actual AS stock_actual'
+            )
+            ->where('h_productos.activo', true)
+            ->where('h_kardex.activo', true)
+            ->get();
+
+        return $this->showAll($data);
+    }
+
+    public function producto_check_in()
+    {
+        $data = DB::table('h_productos')
+            ->join('h_kardex', 'h_kardex.h_productos_id', 'h_productos.id')
+            ->select(
+                'h_kardex.id AS h_productos_id',
+                'h_productos.nombre AS producto',
+                'h_kardex.stock_actual AS stock_actual'
+            )
+            ->where('h_productos.activo', true)
+            ->where('h_kardex.activo', true)
+            ->where('h_kardex.check_in', true)
+            ->get();
+
+        return $this->showAll($data);
     }
 }

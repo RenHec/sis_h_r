@@ -56,6 +56,16 @@ class SelectControllerService {
         let self = this;
         return self.axios.get(`${self.baseUrl}/estado_habitacion`);
     }
+
+    producto_insumo() {
+        let self = this;
+        return self.axios.get(`${self.baseUrl}/producto_insumo`);
+    }
+
+    producto_check_in() {
+        let self = this;
+        return self.axios.get(`${self.baseUrl}/producto_check_in`);
+    }
 }
 
 export default SelectControllerService

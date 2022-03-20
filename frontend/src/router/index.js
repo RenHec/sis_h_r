@@ -57,8 +57,8 @@ import Mesa from '@/components/restaurante/mesa/IndexComponent'
 */
 import HTipoCama from '@/components/hotel/habitacion/tipo-cama/IndexComponent'
 import HHabitacion from '@/components/hotel/habitacion/IndexComponent'
-import HFotografia from '@/components/hotel/habitacion/fotografias/IndexComponent'
-import HPrecio from '@/components/hotel/habitacion/precios/IndexComponent'
+import HInsumo from '@/components/hotel/insumo/IndexComponent'
+import HKardex from '@/components/hotel/insumo/kardex/IndexComponent'
 
 Vue.use(Router)
 
@@ -367,15 +367,15 @@ const routes = [
     beforeEnter: multiguard([isLoggedIn])
   },
   {
-    path: '/habitacion_fotografia/:id',
-    name: 'HFotografia',
-    component: HFotografia,
+    path: '/insumo',
+    name: 'HInsumo',
+    component: HInsumo,
     beforeEnter: multiguard([isLoggedIn])
   },
   {
-    path: '/habitacion_precio/:id',
-    name: 'HPrecio',
-    component: HPrecio,
+    path: '/kardex',
+    name: 'HKardex',
+    component: HKardex,
     beforeEnter: multiguard([isLoggedIn])
   },
 ]

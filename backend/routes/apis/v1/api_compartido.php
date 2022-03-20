@@ -45,6 +45,8 @@ Route::name('select.mes')->get('select/mes', 'Catalogo\SelectController@mes');
 Route::name('select.tipo_pago')->get('select/tipo_pago/{movimiento}', 'Catalogo\SelectController@tipo_pago');
 Route::name('select.tipo_cama')->get('select/tipo_cama', 'Catalogo\SelectController@tipo_cama');
 Route::name('select.estado_habitacion')->get('select/estado_habitacion', 'Catalogo\SelectController@estado_habitacion');
+Route::name('select.producto_insumo')->get('select/producto_insumo', 'Catalogo\SelectController@producto_insumo');
+Route::name('select.producto_check_in')->get('select/producto_check_in', 'Catalogo\SelectController@producto_check_in');
 
 //rutas para PresentacionController
 Route::resource('presentacion', 'Catalogo\PresentacionController')->only(['index', 'store', 'update', 'destroy']);
