@@ -21,53 +21,36 @@
       <v-img :aspect-ratio="16 / 10" :src="logo"></v-img>
       <v-list dense>
         <v-list-item @click="redirect('/')" link>
-          <v-list-item-action>
+          <v-list-item-icon>
             <v-icon>home</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Inicio</v-list-item-title>
-          </v-list-item-content>
+          </v-list-item-icon>
+          <v-list-item-title>Inicio</v-list-item-title>
         </v-list-item>
 
-        <template v-for="item in getMenu">
+        <v-list-group
+          v-for="item in getMenu"
+          v-bind:key="item.text"
+          @click="redirect(item.path)"
+          link
+          :prepend-icon="item.icon"
+          :append-icon="item.childrens.length > 0 ? '$expand' : null"
+        >
+          <template v-slot:activator>
+            <v-list-item-title v-text="item.text"></v-list-item-title>
+          </template>
+
           <v-list-item
-            @click="redirect(item.path)"
+            v-for="subItem in item.childrens"
+            :key="subItem.path"
             link
-            v-if="item.path !== '#'"
-            v-bind:key="item.text"
+            @click="redirect(subItem.path)"
           >
-            <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.text }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-icon>
+              <v-icon v-text="subItem.icon"></v-icon>
+            </v-list-item-icon>
+            <v-list-item-title v-text="subItem.text"></v-list-item-title>
           </v-list-item>
-
-          <v-list-group
-            v-else
-            :key="item.text"
-            :prepend-icon="item.icon"
-            no-action
-          >
-            <template v-slot:activator>
-              <v-list-item-content>
-                <v-list-item-title v-text="item.text"></v-list-item-title>
-              </v-list-item-content>
-            </template>
-
-            <v-list-item
-              v-for="subItem in item.childrens"
-              :key="subItem.path"
-              link
-              @click="redirect(subItem.path)"
-            >
-              <v-list-item-content>
-                <v-list-item-title v-text="subItem.text"></v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-group>
-        </template>
+        </v-list-group>
       </v-list>
     </v-navigation-drawer>
 
