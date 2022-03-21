@@ -21,6 +21,7 @@ class HKardex extends Model
      * @var array
      */
     protected $casts = [
+        'created_at' => 'datetime:d/m/Y h:i:s a',
         'updated_at' => 'datetime:d/m/Y h:i:s a',
         'stock_actual' => 'integer',
         'stock_inicial' => 'integer',
@@ -28,6 +29,23 @@ class HKardex extends Model
         'activo' => 'boolean',
         'check_in' => 'boolean'
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['check_in_tag'];
+
+    /**
+     * Get the user's link base64 foto.
+     *
+     * @return string
+     */
+    public function getCheckInTagAttribute()
+    {
+        return $this->check_in ? 'SI, aplica para el check in' : 'NO, aplica para el check in';
+    }
 
     /**
      * Get the producto associated.
@@ -56,6 +74,6 @@ class HKardex extends Model
      */
     public function historial()
     {
-        return $this->hasMany(HKardexHistorial::class, 'h_kardex_id', 'id');
+        return $this->hasMany(HKardexHistorial::class, 'h_kardex_id', 'id')->orderBy('created_at', 'DESC');
     }
 }

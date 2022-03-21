@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\V1\Catalogo\Municipio;
 use Illuminate\Http\Request;
 use App\Models\V1\Hotel\HKardex;
 use Illuminate\Support\Collection;
@@ -208,9 +209,10 @@ trait ApiResponser
 		$persona->telefonos = $request->telefonos;
 		$persona->emails = $request->emails;
 		$persona->direcciones = $request->direcciones;
-		$persona->departamentos_id = $request->direcciones;
-		$persona->municipios_id = $request->direcciones;
+		$persona->departamentos_id = Municipio::find($request->municipios_id['id'])->departamento_id;
+		$persona->municipios_id = $request->municipios_id['id'];
 		$persona->usuarios_id = Auth::user()->id;
+		$persona->save();
 
 		return $persona;
 	}

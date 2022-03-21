@@ -21,11 +21,11 @@ class Insumo extends ApiController
     public function index()
     {
         try {
-            $no_anulados = HInsumo::with('proveedor', 'detalle', 'usuario')->where('anulado', false)->get();
+            $no_anulados = HInsumo::with('proveedor.municipio', 'detalle', 'usuario')->where('anulado', false)->get();
             $anulados = HInsumo::with('proveedor', 'detalle', 'usuario')->where('anulado', true)->get();
             return $this->successResponse(['no_anulados' => $no_anulados, 'anulados' => $anulados]);
         } catch (\Exception $e) {
-            return $this->errorResponse('Error en el controlador');
+            return $this->errorResponse($e->getMessage());
         }
     }
 
@@ -46,8 +46,7 @@ class Insumo extends ApiController
                 $persona->telefonos = $request->telefonos;
                 $persona->emails = $request->emails;
                 $persona->direcciones = $request->direcciones;
-                $persona->departamentos_id = $request->direcciones;
-                $persona->municipios_id = $request->direcciones;
+                $persona->municipios_id = $request->municipios_id['id];
                 $persona->usuarios_id = Auth::user()->id;            
             */
             $proveedor = $this->cliente_proveedor($request, false);
@@ -67,25 +66,25 @@ class Insumo extends ApiController
 
             $cantidad_registrados = 0;
             foreach ($request->h_insumos_detalles as $key => $value) {
-                $kardex = HKardex::find($value['h_productos_id']); // h_productos_id, en este valor viene el ID del kardex
+                $kardex = HKardex::find($value['h_productos_id']['id']); // h_productos_id, en este valor viene el ID del kardex
 
                 if (is_null($kardex)) {
-                    throw new \Exception("El producto {$value['producto']} no esta registrado y no cuenta con inventario registrado.", 1);
+                    throw new \Exception("El producto {$value['h_productos_id']['producto']} no esta registrado y no cuenta con inventario registrado.", 1);
                 }
 
                 if (intval($value['cantidad']) < 1) {
-                    throw new \Exception("El producto {$value['producto']} cuenta con la cantidad inválida de {$value['cantidad']}.", 1);
+                    throw new \Exception("El producto {$value['h_productos_id']['producto']} cuenta con la cantidad inválida de {$value['cantidad']}.", 1);
                 }
 
                 $cantidad = intval($value['cantidad']);
                 $precio = floatval($value['precio']);
                 $descuento = floatval($value['descuento']);
-                $sub_total = $cantidad * ($precio - $descuento);
+                $sub_total = ($cantidad * $precio) - $descuento;
 
                 $detalle = HInsumoDetalle::create(
                     [
                         'documento' => $insumo->documento,
-                        'producto' => $value['producto'],
+                        'producto' => $value['h_productos_id']['producto'],
                         'cantidad' => $cantidad,
                         'precio' => $precio,
                         'descuento' => $descuento,
@@ -100,7 +99,7 @@ class Insumo extends ApiController
                 $kardex->activo = $kardex->stock_actual > 0 ? true : false;
                 $kardex->save();
 
-                $this->historial_kardex("+", $kardex->stock_actual, $cantidad, $detalle->id, $kardex, $value['producto']);
+                $this->historial_kardex("+", $kardex->stock_actual, $cantidad, $detalle->id, $kardex, $detalle->producto);
 
                 $insumo->sub_total += ($cantidad * $precio);
                 $insumo->descuento += $detalle->descuento;

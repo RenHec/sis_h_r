@@ -39,12 +39,12 @@ class SelectController extends ApiController
 
     public function cliente()
     {
-        return $this->showAll(Cliente::with('municipios')->whereNull('deleted_at')->orderBy('nombre')->get());
+        return $this->showAll(Cliente::with('municipio')->whereNull('deleted_at')->orderBy('nombre')->get());
     }
 
     public function proveedor()
     {
-        return $this->showAll(Proveedor::whereNull('deleted_at')->orderBy('nombre')->get());
+        return $this->showAll(Proveedor::with('municipio')->whereNull('deleted_at')->orderBy('nombre')->get());
     }
 
     public function mes()
@@ -72,7 +72,7 @@ class SelectController extends ApiController
         $data = DB::table('h_productos')
             ->join('h_kardex', 'h_kardex.h_productos_id', 'h_productos.id')
             ->select(
-                'h_kardex.id AS h_productos_id',
+                'h_kardex.id AS id',
                 'h_productos.nombre AS producto',
                 'h_kardex.stock_actual AS stock_actual'
             )
@@ -88,7 +88,7 @@ class SelectController extends ApiController
         $data = DB::table('h_productos')
             ->join('h_kardex', 'h_kardex.h_productos_id', 'h_productos.id')
             ->select(
-                'h_kardex.id AS h_productos_id',
+                'h_kardex.id AS id',
                 'h_productos.nombre AS producto',
                 'h_kardex.stock_actual AS stock_actual'
             )

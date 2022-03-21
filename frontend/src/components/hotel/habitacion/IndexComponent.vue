@@ -182,7 +182,11 @@
         </template>
         <template v-slot:item.fotografia="{ item }">
           <br />
-          <v-card class="mx-auto" max-width="300" color="black lighten-1">
+          <v-card
+            class="mx-auto"
+            max-width="300"
+            :color="colorCardH(item.h_estados_id)"
+          >
             <v-img
               class="white--text align-end"
               height="200px"
@@ -207,7 +211,7 @@
 
             <v-divider></v-divider>
 
-            <v-list subheader two-line color="black lighten-2">
+            <v-list subheader two-line :color="colorCardH(item.h_estados_id)">
               <v-list-item
                 v-for="(habitacion_precio, key) in item.precios"
                 :key="`Precio#${key}`"
@@ -300,7 +304,7 @@
 
             <v-card-actions>
               <v-row justify="center" align="center">
-                <v-btn-toggle multiple>
+                <v-btn-toggle dark rounded>
                   <v-tooltip bottom color="orange lighten-2">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
@@ -642,6 +646,23 @@ export default {
   },
 
   methods: {
+    colorCardH(estado) {
+      let color = null
+      switch (estado) {
+        case 1:
+          color = 'light-blue darken-4'
+          break
+        case 2:
+          color = 'orange accent-4'
+          break
+        case 3:
+          color = 'blue-grey darken-4'
+          break
+      }
+
+      return color
+    },
+
     cargarImagen(e) {
       if (typeof e !== 'undefined') {
         if (this.accept.includes(e.type.toLowerCase())) {

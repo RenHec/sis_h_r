@@ -23,6 +23,7 @@ class HInsumo extends Model
      */
     protected $casts = [
         'created_at' => 'datetime:d/m/Y h:i:s a',
+        'updated_at' => 'datetime:d/m/Y h:i:s a',
         'sub_total' => 'float',
         'descuento' => 'float',
         'total' => 'float',
@@ -36,7 +37,7 @@ class HInsumo extends Model
      */
     public function proveedor()
     {
-        return $this->hasOne(Proveedor::class, 'proveedores_id', 'id');
+        return $this->hasOne(Proveedor::class, 'id', 'proveedores_id');
     }
 
     /**
@@ -46,7 +47,7 @@ class HInsumo extends Model
      */
     public function usuario()
     {
-        return $this->hasOne(Usuario::class, 'usuarios_id', 'id');
+        return $this->hasOne(Usuario::class, 'id', 'usuarios_id');
     }
 
     /**

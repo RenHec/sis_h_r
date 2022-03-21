@@ -111,8 +111,6 @@ class Kardex extends ApiController
             }
             $kardex->save();
 
-            $this->historial_kardex("=", $kardex->stock_inicial, $kardex->stock_inicial, 0, $kardex, $producto->nombre);
-
             DB::commit();
             return $this->successResponse("Producto: {$producto->nombre} fue registrado y con un stock inicial de {$kardex->stock_actual}.");
         } catch (\Exception $e) {

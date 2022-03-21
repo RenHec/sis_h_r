@@ -28,6 +28,23 @@ class HProducto extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['consumible_tag'];
+
+    /**
+     * Get the user's link base64 foto.
+     *
+     * @return string
+     */
+    public function getConsumibleTagAttribute()
+    {
+        return $this->consumible ? 'SI, es consumible' : 'NO, es consumible';
+    }
+
+    /**
      * Get the usuario associated.
      *
      * @return object
