@@ -26,7 +26,7 @@ class UsuarioFactory extends Factory
     {
         $empleado = Empleado::create(
             [
-                'cui' => $this->faker->unique()->randomElement(['0000000000001', '0000000000002', '0000000000003', '0000000000004', '0000000000005', '0000000000006', '0000000000007']),
+                'cui' => '0000000000001', //$this->faker->unique()->randomElement(['0000000000001', '0000000000002', '0000000000003', '0000000000004', '0000000000005', '0000000000006', '0000000000007']),
                 'primer_nombre' => $this->faker->randomElement([$this->faker->firstNameMale, $this->faker->firstNameFemale]),
                 'segundo_nombre' => $this->faker->randomElement([$this->faker->firstNameMale, $this->faker->firstNameFemale, null]),
                 'primer_apellido' => $this->faker->lastName,

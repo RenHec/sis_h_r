@@ -164,12 +164,12 @@ trait ApiResponser
 		HKardexHistorial::create($data);
 	}
 
-	/*protected function generadorCodigoEmpresa($id)
+	protected function generadorCodigo(string $palabra, int $correlativo)
 	{
-		$prefijo = Configuracion::find(1);
-		$codigo = str_pad(strval($id), 3, "0", STR_PAD_LEFT);
-		return "{$prefijo->pre_empresa}{$codigo}";
-	}*/
+		$codigo = str_pad(strval($correlativo), 5, "0", STR_PAD_LEFT);
+		$anio = date('Y');
+		return "{$palabra}{$codigo}{$anio}";
+	}
 
 	protected function acciones($key)
 	{

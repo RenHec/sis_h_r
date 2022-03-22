@@ -2,10 +2,11 @@
 
 namespace App\Models\V1\Hotel;
 
+use App\Models\V1\Hotel\HCheckIn;
 use App\Models\V1\Principal\Cliente;
 use App\Models\V1\Seguridad\Usuario;
-use App\Models\V1\Hotel\HReservacion;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\V1\Hotel\HReservacionDetalle;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class HReservacion extends Model
@@ -40,10 +41,22 @@ class HReservacion extends Model
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeReservacion($query)
+    public function scopeTodas($query) //Todas
     {
-        return $query->with('cliente', 'usuario')
-            ->where('reservacion', true)
+        return $query->with('cliente', 'usuario', 'detalle', 'check_in', 'check_out', 'pago')
+            ->where('anulado', false)
+            ->orderByDesc('id');
+    }
+
+    /**
+     * Scope a query to only include resarvacion
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeReservacion($query) //Lista para pasar a CheckIn
+    {
+        return $query->where('reservacion', true)
             ->where('check_in', false)
             ->where('check_out', false)
             ->where('anulado', false)
@@ -56,12 +69,12 @@ class HReservacion extends Model
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeCheckIn($query)
+    public function scopeIn($query) //Lista para pasar a CheckOut
     {
-        return $query->with('cliente', 'usuario')
-            ->where('reservacion', true)
+        return $query->where('reservacion', true)
             ->where('check_in', true)
             ->where('check_out', false)
+            ->where('anulado', false)
             ->orderByDesc('id');
     }
 
@@ -71,13 +84,13 @@ class HReservacion extends Model
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeCheckOut($query)
+    public function scopeOut($query) //Lista para pasar a Pago
     {
-        return $query->with('cliente', 'usuario')
-            ->where('reservacion', true)
+        return $query->where('reservacion', true)
             ->where('check_in', true)
             ->where('check_out', true)
             ->where('pagado', false)
+            ->where('anulado', false)
             ->orderByDesc('id');
     }
 
@@ -87,13 +100,25 @@ class HReservacion extends Model
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopePagado($query)
+    public function scopePagado($query) //Todas las que fueron pagadas
     {
-        return $query->with('cliente', 'usuario')
-            ->where('reservacion', true)
+        return $query->where('reservacion', false)
             ->where('check_in', true)
             ->where('check_out', true)
             ->where('pagado', true)
+            ->where('anulado', false)
+            ->orderByDesc('id');
+    }
+
+    /**
+     * Scope a query to only include pagado
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAnulado($query)
+    {
+        return $query->where('anulado', true)
             ->orderByDesc('id');
     }
 
@@ -104,7 +129,7 @@ class HReservacion extends Model
      */
     public function cliente()
     {
-        return $this->hasOne(Cliente::class, 'clientes_id', 'id');
+        return $this->hasOne(Cliente::class, 'id', 'clientes_id');
     }
 
     /**
@@ -114,7 +139,7 @@ class HReservacion extends Model
      */
     public function usuario()
     {
-        return $this->hasOne(Usuario::class, 'usuarios_id', 'id');
+        return $this->hasOne(Usuario::class, 'id', 'usuarios_id');
     }
 
     /**
@@ -124,6 +149,36 @@ class HReservacion extends Model
      */
     public function detalle()
     {
-        return $this->hasMany(HReservacion::class, 'h_reservaciones_id', 'id');
+        return $this->hasMany(HReservacionDetalle::class, 'h_reservaciones_id', 'id');
+    }
+
+    /**
+     * Get the check_in associated.
+     *
+     * @return array
+     */
+    public function check_in()
+    {
+        return $this->hasMany(HCheckIn::class, 'h_reservaciones_id', 'id');
+    }
+
+    /**
+     * Get the check_out associated.
+     *
+     * @return array
+     */
+    public function check_out()
+    {
+        return $this->hasMany(HCheckOut::class, 'h_reservaciones_id', 'id');
+    }
+
+    /**
+     * Get the pago associated.
+     *
+     * @return array
+     */
+    public function pago()
+    {
+        return $this->hasOne(HCheckOut::class, 'h_reservaciones_id', 'id');
     }
 }

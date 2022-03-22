@@ -15,7 +15,7 @@ class CreateHReservacionesTable extends Migration
     {
         Schema::create('h_reservaciones', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo', 10)->unique();
+            $table->string('codigo', 15)->unique();
             $table->string('nombre', 200);
             $table->decimal('sub_total', 11, 2); // +
             $table->decimal('extra', 11, 2); // +

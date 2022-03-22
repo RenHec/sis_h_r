@@ -47,6 +47,7 @@ Route::name('select.tipo_cama')->get('select/tipo_cama', 'Catalogo\SelectControl
 Route::name('select.estado_habitacion')->get('select/estado_habitacion', 'Catalogo\SelectController@estado_habitacion');
 Route::name('select.producto_insumo')->get('select/producto_insumo', 'Catalogo\SelectController@producto_insumo');
 Route::name('select.producto_check_in')->get('select/producto_check_in', 'Catalogo\SelectController@producto_check_in');
+Route::name('select.precios')->get('select/precios/{habitacion}', 'Catalogo\SelectController@precios');
 
 //rutas para PresentacionController
 Route::resource('presentacion', 'Catalogo\PresentacionController')->only(['index', 'store', 'update', 'destroy']);

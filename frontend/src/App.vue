@@ -12,9 +12,7 @@
       absolute
       dark
       clipped
-      width="15%"
       permanent
-      flat
       fixed
       height="100%"
     >
@@ -29,27 +27,48 @@
 
         <v-list-group
           v-for="item in getMenu"
-          v-bind:key="item.text"
+          v-bind:key="`Primer${item.text}`"
           @click="redirect(item.path)"
           link
+          no-action
           :prepend-icon="item.icon"
           :append-icon="item.childrens.length > 0 ? '$expand' : null"
         >
           <template v-slot:activator>
             <v-list-item-title v-text="item.text"></v-list-item-title>
           </template>
-
-          <v-list-item
-            v-for="subItem in item.childrens"
-            :key="subItem.path"
-            link
-            @click="redirect(subItem.path)"
-          >
-            <v-list-item-icon>
-              <v-icon v-text="subItem.icon"></v-icon>
-            </v-list-item-icon>
-            <v-list-item-title v-text="subItem.text"></v-list-item-title>
-          </v-list-item>
+          <v-list dense>
+            <v-list-group
+              v-for="subItem in item.childrens"
+              v-bind:key="`Segundo${subItem.text}`"
+              @click="redirect(subItem.path)"
+              link
+              no-action
+              :prepend-icon="subItem.icon"
+              :append-icon="subItem.childrens.length > 0 ? '$expand' : null"
+            >
+              <template v-slot:activator>
+                <v-list-item-title v-text="subItem.text"></v-list-item-title>
+              </template>
+              <v-list dense>
+                <v-list-group
+                  v-for="subbItem in subItem.childrens"
+                  v-bind:key="`Tercero${subbItem.text}`"
+                  @click="redirect(subbItem.path)"
+                  link
+                  no-action
+                  :prepend-icon="subbItem.icon"
+                  :append-icon="null"
+                >
+                  <template v-slot:activator>
+                    <v-list-item-title
+                      v-text="subbItem.text"
+                    ></v-list-item-title>
+                  </template>
+                </v-list-group>
+              </v-list>
+            </v-list-group>
+          </v-list>
         </v-list-group>
       </v-list>
     </v-navigation-drawer>

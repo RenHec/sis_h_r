@@ -569,6 +569,39 @@ export default {
 
       items.forEach(function (item) {
         if (item.menu.padre == 0 && item.menu.mostrar) {
+          var primer_nivel = new Object()
+          primer_nivel.id = item.id
+          primer_nivel.name = item.menu.nombre
+          primer_nivel.icon = item.menu.icono
+          primer_nivel.children = []
+          items.forEach(function (item2) {
+            if (item.menu.id == item2.menu.padre && item2.menu.mostrar) {
+              var segundo_nivel = new Object()
+              segundo_nivel.id = item2.id
+              segundo_nivel.name = item2.menu.nombre
+              segundo_nivel.icon = item2.menu.icono
+              segundo_nivel.children = []
+
+              items.forEach(function (item3) {
+                if (item2.menu.id == item3.menu.padre && item3.menu.mostrar) {
+                  var tercer_nivel = new Object()
+                  tercer_nivel.id = item3.id
+                  tercer_nivel.name = item3.menu.nombre
+                  tercer_nivel.icon = item3.menu.icono
+
+                  segundo_nivel.children.push(tercer_nivel)
+                }
+              })
+
+              primer_nivel.children.push(segundo_nivel)
+            }
+          })
+          temporal.push(primer_nivel)
+        }
+      })
+
+      items.forEach(function (item) {
+        if (item.menu.padre == 0 && item.menu.mostrar) {
           var object = new Object()
           object.id = item.id
           object.name = item.menu.nombre

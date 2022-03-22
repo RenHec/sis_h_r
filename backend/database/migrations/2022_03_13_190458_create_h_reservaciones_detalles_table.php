@@ -25,6 +25,7 @@ class CreateHReservacionesDetallesTable extends Migration
             $table->boolean('disponible')->default(false);
             $table->foreignId('h_reservaciones_id')->constrained('h_reservaciones');
             $table->foreignId('h_habitaciones_precios_id')->constrained('h_habitaciones_precios');
+            $table->foreignId('h_habitaciones_id')->constrained('h_habitaciones');
             $table->timestamps();
         });
     }

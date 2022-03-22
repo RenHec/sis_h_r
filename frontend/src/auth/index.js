@@ -56,34 +56,48 @@ export default {
   },
 
   mapMenu(items) {
-    var menu = []
-    var permisions = []
-    items.forEach(function (item) {
-      permisions.push(item.menu.nombre_ruta)
-      if (item.menu.padre == 0 && item.menu.mostrar) {
-        var object = new Object
-        object.icon = item.menu.icono
-        object.text = item.menu.nombre
-        object.path = item.menu.nombre_ruta
-        object.childrens = []
-        items.forEach(function (child, i) {
-          if (item.menu.id == child.menu.padre && child.menu.mostrar) {
-            var object2 = new Object()
-            object2.icon = child.menu.icono
-            object2.text = child.menu.nombre
-            object2.path = child.menu.nombre_ruta
+    try {
+      var menu = []
+      var permisions = []
+      items.forEach(function (item) {
+        permisions.push(item.menu.nombre_ruta)
+        if (item.menu.padre == 0 && item.menu.mostrar) {
+          var primer_nivel = new Object
+          primer_nivel.icon = item.menu.icono
+          primer_nivel.text = item.menu.nombre
+          primer_nivel.path = item.menu.nombre_ruta
+          primer_nivel.childrens = []
+          items.forEach(function (item2) {
+            if (item.menu.id == item2.menu.padre && item2.menu.mostrar) {
+              var segundo_nivel = new Object()
+              segundo_nivel.icon = item2.menu.icono
+              segundo_nivel.text = item2.menu.nombre
+              segundo_nivel.path = item2.menu.nombre_ruta
+              segundo_nivel.childrens = []
 
-            object.childrens.push(object2)
-          }
-        });
+              items.forEach(function (item3) {
+                if (item2.menu.id == item3.menu.padre && item3.menu.mostrar) {
+                  var tercer_nivel = new Object()
+                  tercer_nivel.icon = item3.menu.icono
+                  tercer_nivel.text = item3.menu.nombre
+                  tercer_nivel.path = item3.menu.nombre_ruta
 
-        menu.push(object)
-      }
-    })
+                  segundo_nivel.childrens.push(tercer_nivel)
+                }
+              });
+              primer_nivel.childrens.push(segundo_nivel)
+            }
+          });
+          menu.push(primer_nivel)
+        }
+      })
 
-    store.dispatch('setMenu', {
-      items: menu,
-      permissions: permisions
-    })
+      store.dispatch('setMenu', {
+        items: menu,
+        permissions: permisions
+      })
+    } catch (error) {
+      alert("Problema al cargar el menú")
+    }
   }
 }
