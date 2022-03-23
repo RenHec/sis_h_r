@@ -71,6 +71,12 @@ class SelectControllerService {
         let self = this;
         return self.axios.get(`${self.baseUrl}/precios/${habitacion}`);
     }
+
+    buscar_habitaciones(data) {
+        let self = this;
+        let parametros = `inicio=${data.inicio}&fin=${data.fin}&horas=${data.horas}`
+        return self.axios.get(`${self.baseUrl}/buscar_habitaciones?${parametros}`);
+    }
 }
 
 export default SelectControllerService

@@ -11,7 +11,7 @@ class HReservacionDetalle extends Model
 
     protected $table = 'h_reservaciones_detalles';
 
-    protected $fillable = ['codigo', 'inicio', 'fin', 'horas', 'huespedes', 'precio', 'descripcion', 'disponible', 'h_reservaciones_id', 'h_habitaciones_precios_id', 'h_habitaciones_id'];
+    protected $fillable = ['codigo', 'inicio', 'fin', 'dias', 'horas', 'huespedes', 'precio', 'sub_total', 'descripcion', 'disponible', 'h_reservaciones_id', 'h_habitaciones_precios_id', 'h_habitaciones_id'];
 
     /**
      * The attributes that should be cast to native types.
@@ -24,9 +24,11 @@ class HReservacionDetalle extends Model
         'inicio' => 'datetime:d/m/Y h:i:s a',
         'fin' => 'datetime:d/m/Y h:i:s a',
         'sub_total' => 'float',
+        'dias' => 'integer',
         'horas' => 'integer',
         'huespedes' => 'integer',
         'precio' => 'float',
+        'sub_total' => 'float',
         'disponible' => 'boolean'
     ];
 }

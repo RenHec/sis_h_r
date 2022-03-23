@@ -26,19 +26,19 @@ class Reservacion extends ApiController
                 case 'r': //devuelve todas las reservaciones que se encuentran 'reservada'
                     $data = HReservacion::reservacion()->get();
                     break;
-                case 'i': //devuelve todas las reservaciones que se encuentran 'reservada'
+                case 'i': //devuelve todas las reservaciones que se encuentran en check in
                     $data = HReservacion::in()->get();
                     break;
-                case 'o':
+                case 'o': //devuelve todas las reservaciones que se encuentran en check out
                     $data = HReservacion::out()->get();
                     break;
-                case 'p':
+                case 'p': //devuelve todas las reservaciones que fueron pagadas
                     $data = HReservacion::pagado()->get();
                     break;
-                case 'a':
+                case 'a': //devuelve todas las reservaciones que se encuentran anuladas
                     $data = HReservacion::anulado()->get();
                     break;
-                case 't':
+                case 't': //devuelve todas las reservaciones registradas
                     $data = HReservacion::todas()->get();
                     break;
             }
@@ -82,63 +82,86 @@ class Reservacion extends ApiController
                 ]
             );
 
-            $minutos = is_null($request->horas) ? 0 : intval($request->horas) * 60;
-            $inicio = is_null($request->horas) ? Carbon::createFromFormat('Y-m-d', "{$request->inicio} 12:00:00") : date('Y-m-d H:i:s', strtotime($request->inicio));
-            $fin = is_null($request->horas) ? Carbon::createFromFormat('Y-m-d', "{$request->fin} 12:00:00") : date('Y-m-d H:i:s', strtotime("+{$minutos} minute", strtotime($inicio)));
-            $dias = is_null($request->horas) ? $inicio->diffInDays($fin) : 0;
+            $inicio = null;
+            $fin = null;
+            $horas = null;
+
+            if ($this->traInformacion($request->inicio)) {
+                $inicio = date('Y-m-d H:i:s', strtotime("{$request->inicio} 12:00:00"));
+                $formato_inicio = date('d/m/Y H:i:s', strtotime("{$request->inicio} 12:00:00"));
+            }
+            if ($this->traInformacion($request->fin)) {
+                $fin = date('Y-m-d H:i:s', strtotime("{$request->fin} 12:00:00"));
+                $formato_fin = date('d/m/Y H:i:s', strtotime("{$request->fin} 12:00:00"));
+            }
+            if ($request->consulta_por_hora) {
+                $horas = intval($request->horas);
+                $minutos = intval($horas) * 60;
+                $inicio = date('Y-m-d');
+                $inicio = date('Y-m-d H:i:s', strtotime("{$inicio} {$request->inicio}"));
+                $fin = date('Y-m-d H:i:s', strtotime("+{$minutos} minute", strtotime($inicio)));
+                $formato_inicio = date('d/m/Y H:i:s', strtotime("{$inicio} {$request->inicio}"));
+                $formato_fin = date('d/m/Y H:i:s', strtotime("+{$minutos} minute", strtotime($inicio)));
+            }
+
+            $dias = $request->dias;
 
             $cantidad_personas = 0;
             $nuevo_array = array();
             foreach ($request->h_reservaciones_detalles as $key => $value) {
                 // h_reservaciones_detalles, en este valor viene el ID del precio de la habitación
-                $reservado = HReservacionDetalle::where('h_habitaciones_precios_id', $value['h_reservaciones_detalles']['id'])->where('disponible', false)->first();
+                $reservado = HReservacionDetalle::where('h_habitaciones_precios_id', $value['h_reservaciones_detalles']['id'])
+                    ->where('disponible', false)
+                    ->whereBetween(DB::RAW("'$inicio'"), [DB::RAW('inicio'), DB::RAW('fin')])
+                    ->whereBetween(DB::RAW("'$fin'"), [DB::RAW('inicio'), DB::RAW('fin')])
+                    ->first();
 
                 if (!is_null($reservado)) {
-                    throw new \Exception("La habitación {$value['h_reservaciones_detalles']['habitacion']} ya se encuentra en reservada.", 1);
+                    throw new \Exception("La habitación {$value['h_reservaciones_detalles']['habitacion']} ya se encuentra reservada.", 1);
                 }
 
                 $huespedes = intval($value['huespedes']);
                 $precio = floatval($value['precio']);
 
-                $mensaje_dia = $dias > 1 ? "{$dias} días" : "{$dias} día";
                 $mensaje_hora = "";
-                if (!is_null($request->horas)) {
-                    $horas = intval($request->horas);
+                if ($request->consulta_por_hora) {
                     $mensaje_hora = $horas > 1 ? "{$horas} horas" : "{$horas} hora";
+                } else {
+                    $mensaje_dia = $dias > 1 ? "{$dias} días" : "{$dias} día";
                 }
-                $formato_inicio = date('d/m/Y H:i:s', strtotime($inicio));
-                $formato_fin = date('d/m/Y H:i:s', strtotime($fin));
 
                 $detalle = HReservacionDetalle::create(
                     [
                         'codigo' => $reservacion->codigo,
                         'inicio' => $inicio,
                         'fin' => $fin,
-                        'horas' => is_null($request->horas) ? 0 : $request->horas,
+                        'dias' => $request->consulta_por_hora ? 0 : $dias,
+                        'horas' => $request->consulta_por_hora ? $horas : 0,
                         'huespedes' => $huespedes,
                         'precio' => $precio,
-                        'descripcion' => is_null($request->horas) ? "La habitación #{$value['h_reservaciones_detalles']['habitacion']} fue reservado por {$mensaje_dia}, fecha de ingreso {$formato_inicio} y fecha de egreso {$formato_fin}." : "La habitación #{$value['h_reservaciones_detalles']['habitacion']} fue reservado por {$mensaje_hora}, fecha de ingreso {$formato_inicio} y fecha de egreso {$formato_fin}.",
+                        'sub_total' => $request->consulta_por_hora ? $precio : $dias * $precio,
+                        'descripcion' => !$request->consulta_por_hora ? "La habitación #{$value['h_reservaciones_detalles']['habitacion']} fue reservado por {$mensaje_dia}, fecha de ingreso {$formato_inicio} y fecha de egreso {$formato_fin}." : "La habitación #{$value['h_reservaciones_detalles']['habitacion']} fue reservado por {$mensaje_hora}, fecha de ingreso {$formato_inicio} y fecha de egreso {$formato_fin}.",
                         'h_reservaciones_id' => $reservacion->id,
                         'h_habitaciones_precios_id' => $value['h_reservaciones_detalles']['id'],
                         'h_habitaciones_id' => $value['h_reservaciones_detalles']['habitacion_id']
                     ]
                 );
 
-                $reservacion->sub_total += $detalle->precio;
+                $reservacion->sub_total += $detalle->sub_total;
                 $reservacion->total = $reservacion->sub_total;
                 $reservacion->save();
 
                 $cantidad_personas += $detalle->huespedes;
                 array_push($nuevo_array, $value['h_reservaciones_detalles']['habitacion_id']);
             }
-            $cantidad_habitaciones = array_unique($nuevo_array);
+            $cantidad_habitaciones = count(array_unique($nuevo_array));
 
             DB::commit();
-            return $this->successResponse("Reservacion: la reservación #{$reservacion->codigo} fue con {count($cantidad_habitaciones)} habitaciones para {$cantidad_personas} personas.");
+            return $this->successResponse("Reservacion: la reservación #{$reservacion->codigo} fue con {$cantidad_habitaciones} habitaciones para {$cantidad_personas} personas.");
         } catch (\Exception $e) {
             DB::rollBack();
             if ($e instanceof QueryException) {
-                return $this->errorResponse('Ocurrio un problema al grabar la información de la reservación');
+                return $this->errorResponse($e->getMessage());
             }
             return $e->getCode() === 1 ? $this->errorResponse($e->getMessage()) : $this->errorResponse('Error en el controlador');
         }
@@ -153,10 +176,16 @@ class Reservacion extends ApiController
     public function destroy(HReservacion $reservacion)
     {
         try {
+            DB::beginTransaction();
+
+            HReservacionDetalle::where('h_reservaciones_id', $reservacion->id)->update(['disponible' => true]);
             $reservacion->anulado = true;
             $reservacion->save();
+
+            DB::commit();
             return $this->successResponse("La reservación con código {$reservacion->codigo} fue dado de anulada.");
         } catch (\Exception $e) {
+            DB::rollBack();
             return $this->errorResponse('Error en el controlador');
         }
     }

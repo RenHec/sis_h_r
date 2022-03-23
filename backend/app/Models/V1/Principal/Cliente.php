@@ -54,7 +54,7 @@ class Cliente extends Model
      */
     public function departamento()
     {
-        return $this->hasOne(Departamento::class, 'id', 'departamento_id');
+        return $this->hasOne(Departamento::class, 'id', 'departamentos_id');
     }
 
     /**
@@ -64,6 +64,6 @@ class Cliente extends Model
      */
     public function municipio()
     {
-        return $this->hasOne(Municipio::class, 'id', 'municipio_id');
+        return $this->hasOne(Municipio::class, 'id', 'municipios_id');
     }
 }

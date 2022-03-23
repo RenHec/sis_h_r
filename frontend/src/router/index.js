@@ -59,6 +59,12 @@ import HTipoCama from '@/components/hotel/habitacion/tipo-cama/IndexComponent'
 import HHabitacion from '@/components/hotel/habitacion/IndexComponent'
 import HInsumo from '@/components/hotel/insumo/IndexComponent'
 import HKardex from '@/components/hotel/insumo/kardex/IndexComponent'
+import HHistorial from '@/components/hotel/reservacion/HistorialComponent'
+import HRegistrar from '@/components/hotel/reservacion/RegistrarComponent'
+import HCheckIn from '@/components/hotel/reservacion/proceso/CheckInComponent'
+import HCheckOut from '@/components/hotel/reservacion/proceso/CheckOutComponent'
+import HPagos from '@/components/hotel/reservacion/proceso/PagosComponent'
+import HReservaciones from '@/components/hotel/reservacion/proceso/ReservacionesComponen'
 
 Vue.use(Router)
 
@@ -376,6 +382,42 @@ const routes = [
     path: '/kardex',
     name: 'HKardex',
     component: HKardex,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/registrar',
+    name: 'HRegistrar',
+    component: HRegistrar,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/reservacion',
+    name: 'HReservaciones',
+    component: HReservaciones,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/check_in',
+    name: 'HCheckIn',
+    component: HCheckIn,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/check_out',
+    name: 'HCheckOut',
+    component: HCheckOut,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/pago',
+    name: 'HPagos',
+    component: HPagos,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/reservaciones',
+    name: 'HHistorial',
+    component: HHistorial,
     beforeEnter: multiguard([isLoggedIn])
   },
 ]

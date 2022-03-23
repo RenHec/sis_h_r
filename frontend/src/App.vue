@@ -264,8 +264,8 @@
       </v-dialog>
     </v-app-bar>
 
-    <v-main>
-      <v-container class="fill-height" fluid :style="fondo">
+    <v-main :style="fondo">
+      <v-container fluid>
         <router-view></router-view>
       </v-container>
     </v-main>
@@ -435,8 +435,6 @@ export default {
       return `
           background-image: url('${this.$store.state.base_url}img/fondo.jpg');
           background-size: cover;
-          background-position: top center;
-          align-items: center;
         `
     },
   },

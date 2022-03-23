@@ -543,7 +543,7 @@
             <v-btn color="red darken-1" @click="form_foto.dialog = false">
               Cancelar
             </v-btn>
-            <v-btn color="blue darken-1" @click="agregar_foto('crear_precio')">
+            <v-btn color="blue darken-1" @click="agregar_foto('crear_foto')">
               Guardar
             </v-btn>
           </v-card-actions>

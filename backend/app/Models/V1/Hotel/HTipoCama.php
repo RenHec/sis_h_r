@@ -9,6 +9,8 @@ class HTipoCama extends Model
 {
     use HasFactory;
 
+    const DEFAULT = 1;
+
     protected $table = 'h_tipos_camas';
 
     protected $fillable = ['nombre', 'cantidad'];

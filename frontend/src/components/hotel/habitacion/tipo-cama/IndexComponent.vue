@@ -125,6 +125,7 @@
                 dark
                 v-bind="attrs"
                 v-on="on"
+                :disabled="item.id === 1 ? false : true"
               >
                 <v-icon>mdi-thumb-down</v-icon>
               </v-btn>

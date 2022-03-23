@@ -22,3 +22,5 @@ Route::resource('/habitacion_precio', 'Habitacion\HabitacionPrecio')->only('upda
 
 Route::resource('/insumo', 'Insumo\Insumo')->only('index', 'store', 'destroy');
 Route::resource('/kardex', 'Insumo\Kardex')->only('index', 'store', 'show', 'update', 'destroy');
+
+Route::resource('/reservacion', 'Reservacion\Reservacion')->only('index', 'store', 'destroy');
