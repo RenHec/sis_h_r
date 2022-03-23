@@ -20,6 +20,8 @@ Route::get('/mesas-list','Mesa\MesaController@listTables');
 
 Route::resource('/menus','Menu\MenuController');
 
+Route::resource('/tipos-pagos','TipoPago\TipoPagoController',['only' => ['index']]);
+
 Route::resource('/estado-orden','EstadoOrden\EstadoOrdenController',['except' => ['create','edit']]);
 Route::get('/estado-orden-list','EstadoOrden\EstadoOrdenController@getAllOrderStatus');
 

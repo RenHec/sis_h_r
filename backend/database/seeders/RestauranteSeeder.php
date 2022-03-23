@@ -38,12 +38,12 @@ class RestauranteSeeder extends Seeder
         ]);
 
         Mesa::insert([
-            ['nombre'=>'Mesa 1','icono'=>'fas fa-cutlery'],
-            ['nombre'=>'Mesa 2','icono'=>'fas fa-cutlery'],
-            ['nombre'=>'Mesa 3','icono'=>'fas fa-cutlery'],
-            ['nombre'=>'Mesa 4','icono'=>'fas fa-cutlery'],
-            ['nombre'=>'Mesa 5','icono'=>'fas fa-cutlery'],
-            ['nombre'=>'Mesa 6','icono'=>'fas fa-cutlery'],
+            ['nombre'=>'Mesa 1','icono'=>'restaurant'],
+            ['nombre'=>'Mesa 2','icono'=>'restaurant'],
+            ['nombre'=>'Mesa 3','icono'=>'restaurant'],
+            ['nombre'=>'Mesa 4','icono'=>'restaurant'],
+            ['nombre'=>'Mesa 5','icono'=>'restaurant'],
+            ['nombre'=>'Mesa 6','icono'=>'restaurant'],
         ]);
     }
 }

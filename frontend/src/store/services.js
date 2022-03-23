@@ -38,6 +38,7 @@ import ReporteController from '../services/principal/ReporteControllerService'
 | Restaurant Services
 |--------------------------------------------------------------------------
 */
+import TipoPagoService from '../services/restaurante/TipoPagoService'
 import EstadoOrdenService from '../services/restaurante/EstadoOrdenService'
 import TipoOrdenService from '../services/restaurante/TipoOrdenService'
 import CategoriaComidaService from '../services/restaurante/CategoriaComidaService'
@@ -59,7 +60,6 @@ import InsumoService from '../services/hotel/InsumoService'
 import KardexService from '../services/hotel/KardexService'
 import ReservacionService from '../services/hotel/ReservacionService'
 /* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
-
 let baseUrl = 'http://localhost:8001/hotel_restuarante/backend/public/'
 //let baseUrl = 'http://64.225.43.65/multi_api/'
 let token_data = $cookies.get('token_data')
@@ -147,6 +147,7 @@ export default {
   | Restaurant Services
   |--------------------------------------------------------------------------
   */
+  paymentMethodService: new TipoPagoService(Axios, baseUrl, restaurantUrl),
   statusOrderService: new EstadoOrdenService(Axios, baseUrl, restaurantUrl),
   orderTypeService: new TipoOrdenService(Axios, baseUrl, restaurantUrl),
   foodCategoryService: new CategoriaComidaService(Axios, baseUrl, restaurantUrl),
