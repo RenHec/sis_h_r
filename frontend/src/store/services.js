@@ -38,6 +38,7 @@ import ReporteController from '../services/principal/ReporteControllerService'
 | Restaurant Services
 |--------------------------------------------------------------------------
 */
+import TipoPagoService from '../services/restaurante/TipoPagoService'
 import EstadoOrdenService from '../services/restaurante/EstadoOrdenService'
 import TipoOrdenService from '../services/restaurante/TipoOrdenService'
 import CategoriaComidaService from '../services/restaurante/CategoriaComidaService'
@@ -55,10 +56,9 @@ import TipoCamaService from '../services/hotel/TipoCamaService'
 import HabitacionService from '../services/hotel/HabitacionService'
 import HabitacionFotoService from '../services/hotel/HabitacionFotoService'
 import HabitacionPrecioService from '../services/hotel/HabitacionPrecioService'
-import InsumoService from '../services/hotel/InsumoService'
-import KardexService from '../services/hotel/KardexService'
+//import InsumoService from '../services/hotel/InsumoService'
+//import KardexService from '../services/hotel/KardexService'
 /* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
-
 let baseUrl = 'http://localhost:8001/hotel_restuarante/backend/public/'
 //let baseUrl = 'http://64.225.43.65/multi_api/'
 let token_data = $cookies.get('token_data')
@@ -146,6 +146,7 @@ export default {
   | Restaurant Services
   |--------------------------------------------------------------------------
   */
+  paymentMethodService: new TipoPagoService(Axios, baseUrl, restaurantUrl),
   statusOrderService: new EstadoOrdenService(Axios, baseUrl, restaurantUrl),
   orderTypeService: new TipoOrdenService(Axios, baseUrl, restaurantUrl),
   foodCategoryService: new CategoriaComidaService(Axios, baseUrl, restaurantUrl),
@@ -163,6 +164,6 @@ export default {
   HabitacionService: new HabitacionService(Axios, baseUrl, hotelUrl),
   HabitacionFotoService: new HabitacionFotoService(Axios, baseUrl, hotelUrl),
   HabitacionPrecioService: new HabitacionPrecioService(Axios, baseUrl, hotelUrl),
-  InsumoService: new InsumoService(Axios, baseUrl, hotelUrl),
-  KardexService: new KardexService(Axios, baseUrl, hotelUrl),
+  //InsumoService: new InsumoService(Axios, baseUrl, hotelUrl),
+  //KardexService: new KardexService(Axios, baseUrl, hotelUrl),
 }

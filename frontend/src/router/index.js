@@ -57,8 +57,8 @@ import Mesa from '@/components/restaurante/mesa/IndexComponent'
 */
 import HTipoCama from '@/components/hotel/habitacion/tipo-cama/IndexComponent'
 import HHabitacion from '@/components/hotel/habitacion/IndexComponent'
-import HInsumo from '@/components/hotel/insumo/IndexComponent'
-import HKardex from '@/components/hotel/insumo/kardex/IndexComponent'
+//import HInsumo from '@/components/hotel/insumo/IndexComponent'
+//import HKardex from '@/components/hotel/insumo/kardex/IndexComponent'
 
 Vue.use(Router)
 
@@ -366,7 +366,7 @@ const routes = [
     component: HHabitacion,
     beforeEnter: multiguard([isLoggedIn])
   },
-  {
+  /* {
     path: '/insumo',
     name: 'HInsumo',
     component: HInsumo,
@@ -377,7 +377,7 @@ const routes = [
     name: 'HKardex',
     component: HKardex,
     beforeEnter: multiguard([isLoggedIn])
-  },
+  }, */
 ]
 
 export default new Router({
