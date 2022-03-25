@@ -62,7 +62,7 @@ import HabitacionPrecioService from '../services/hotel/HabitacionPrecioService'
 import InsumoService from '../services/hotel/InsumoService'
 import KardexService from '../services/hotel/KardexService'
 import ReservacionService from '../services/hotel/ReservacionService'
-import CheckInService from '../services/hotel/CheckInService'
+//import CheckInService from '../services/hotel/CheckInService'
 /* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
 let baseUrl = 'http://localhost:8001/hotel_restuarante/backend/public/'
 //let baseUrl = 'http://64.225.43.65/multi_api/'
@@ -175,5 +175,5 @@ export default {
   InsumoService: new InsumoService(Axios, baseUrl, hotelUrl),
   KardexService: new KardexService(Axios, baseUrl, hotelUrl),
   ReservacionService: new ReservacionService(Axios, baseUrl, hotelUrl),
-  CheckInService: new CheckInService(Axios, baseUrl, hotelUrl),
+  //CheckInService: new CheckInService(Axios, baseUrl, hotelUrl),
 }
