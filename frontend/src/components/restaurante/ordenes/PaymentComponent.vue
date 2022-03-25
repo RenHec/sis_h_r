@@ -1,6 +1,23 @@
 <template>
   <v-row  class="justify-center">
     <v-col md='12' sm='12'>
+        <v-dialog
+          persistent
+          v-model="dialog"
+          max-width="50%">
+            <v-card>
+              <v-toolbar>
+                <v-toolbar-title>Registrar nuevo cliente</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="closeCustomerForm()">
+                  <v-icon dark>close</v-icon>
+                </v-btn>
+              </v-toolbar>
+              <CustomerForm v-if="dialog"/>
+            </v-card>
+        </v-dialog>
+      </v-col>
+    <v-col md='12' sm='12'>
       <v-card class="mx-2 my-2">
         <v-overlay :value="loading">
           <v-progress-circular indeterminate size="64"></v-progress-circular>
@@ -52,26 +69,27 @@
                       {{ recordDetail.estado_orden }}
                     </v-chip>
                   <v-card-text>
-                    <v-text-field
-                      outlined
-                      dense
-                      name="cliente"
-                      v-model="cliente"
-                      v-validate="'required'"
-                      label="Cliente"
-                      append-outer-icon="search"
-                      @click:append-outer="searchClient">
-                    </v-text-field>
-                    <v-text-field
-                      outlined
-                      disabled
-                      dense
-                      name="nit"
-                      v-model="nit"
-                      label="NIT">
-                    </v-text-field>
+                    <div class="d-flex flex-row">
+                      <v-autocomplete
+                        outlined
+                        dense
+                        v-validate="'required'"
+                        name="cliente"
+                        v-model="cliente"
+                        :items="items"
+                        :search-input.sync="search"
+                        item-text="nombre"
+                        placeholder="Buscar cliente"
+                        @change="setPaymentCustomer"
+                        return-object>
+                      </v-autocomplete>
+                    <v-btn class="info" @click="newCustomer"><v-icon>add</v-icon></v-btn>
+                    </div>
+                    <form-error :attribute_name="'cliente'" :errors_form="errors"> </form-error>
+                    <v-card-text>NIT: {{ nit }}</v-card-text>
+                    <v-card-text>Dirección: {{ direccion }}</v-card-text>
                     <div class="d-flex flex-column">
-                      <v-radio-group name="tipo-orden" v-model="paymentMethodToPay" row v-validate="'required'">
+                      <v-radio-group name="metodo-pago" v-model="paymentMethodToPay" row v-validate="'required'">
                         <v-radio
                           v-for="item in paymentMethodList"
                           :key="item.id"
@@ -80,11 +98,11 @@
                         >
                         </v-radio>
                       </v-radio-group>
-                      <form-error :attribute_name="'tipo-orden'" :errors_form="errors"> </form-error>
+                      <form-error :attribute_name="'metodo-pago'" :errors_form="errors"> </form-error>
                     </div>
                     <v-card-title class="text-h4 justify-center">Q. {{ recordDetail.monto }}</v-card-title>
                     <br/>
-                    <v-btn rounded block color="primary" x-large class="float: bottom">
+                    <v-btn rounded block color="primary" x-large class="float: bottom" @click="validateForm()">
                       Generar pago
                     </v-btn>
                   </v-card-text>
@@ -92,29 +110,6 @@
               </v-card>
             </v-col>
           </v-row>
-          <!-- <v-simple-table>
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-                <th>Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-for="item in recordDetail.detalle">
-                <tr v-bind:key="item.id">
-                  <td>{{ item.producto }}</td>
-                  <td>Q. {{ item.precio }}</td>
-                  <td>{{ item.cantidad }}</td>
-                  <td>{{ getSubtotalOrder(item.precio,item.cantidad)}}</td>
-                </tr>
-              </template>
-            </tbody>
-          </v-simple-table> -->
-          <!-- Totales -->
-          <!-- <div class="d-flex flex-column">
-          </div> -->
         </div>
       </v-card>
     </v-col>
@@ -123,10 +118,13 @@
 
 <script>
 import FormError from '../../shared/FormError.vue'
+import CustomerForm from '../cliente/IndexComponent.vue'
+import { v4 as uuidv4 } from 'uuid'
 
 export default{
   components:{
     FormError,
+    CustomerForm
   },
   props:{
     item:{}
@@ -134,23 +132,97 @@ export default{
   data(){
     return{
       loading:false,
+      dialog:false,
+      search:'',
 
       cliente:'',
+      items:[],
       nit:'',
+      direccion:'',
       paymentMethodToPay:'',
       paymentMethodList:[],
+      paymentId:'',
 
       recordDetail:{}
     }
   },
   mounted(){
     this.getRecordDetail()
+    this.paymentId = uuidv4()
   },
   created(){
+    events.$on('close_customer_form',this.eventCloseCustomerForm)
+  },
+  beforeDestroy(){
+    events.$off('close_customer_form')
+  },
+  watch:{
+    search(query){
+      if(!query || query.length < 3) return
+
+      if(this.items.length > 0) return
+
+      this.$parent.$store.state.services.customerService
+          .searchCustomer(query)
+          .then(({data})=>{
+            this.items = data.data
+          })
+          .catch((e) =>{
+            this.$toastr.error(e,'Error')
+          })
+    }
   },
   methods:{
-    searchClient(){
+    validateForm()
+    {
+      this.$validator.validateAll().then((result) => {
+          if (result) {
+            this.savePayment()
+          }
+        })
+    },
+    savePayment(){
 
+      let data = {
+        'id': this.paymentId,
+        'orden_id':this.item,
+        'tipo_pago_id':this.paymentMethodToPay,
+        'cliente_id':this.cliente.id,
+        'monto':this.recordDetail.monto
+      }
+
+      this.loading = true
+
+      this.$parent.$store.state.services.orderService
+        .paymentOrders(data)
+        .then((r) =>{
+          this.$toastr.success('Registro generado con éxito','Mensaje')
+          this.closeForm()
+        })
+        .catch((e)=>{
+          this.$toastr.error(e,'Error')
+        })
+        .finally(()=>{
+          this.loading = false
+        })
+    },
+    setPaymentCustomer(data){
+
+      if(!data){
+        this.items = []
+        this.nit = ''
+        this.direccion = ''
+        return
+      }
+
+      this.nit = data.nit
+      this.direccion = data.direcciones
+    },
+    eventCloseCustomerForm(){
+      this.dialog = false
+    },
+    newCustomer(){
+      this.dialog = true
     },
     setSubtotalItem(item){
       return 'Q. '+parseFloat(item.precio * item.cantidad).toFixed(2)
@@ -163,6 +235,9 @@ export default{
       let total = price * quantity
 
       return 'Q. '+parseFloat(total).toFixed(2)
+    },
+    closeCustomerForm(){
+      this.dialog = false
     },
     closeForm()
     {

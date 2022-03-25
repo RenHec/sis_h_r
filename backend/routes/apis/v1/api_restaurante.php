@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 /* Prefix route: api/v1/restaurante */
+Route::get('/departamentos','Miscelaneo\DepartamentoController@index');
+Route::get('municipios/{id}','Miscelaneo\MunicipioController@show');
+Route::resource('clientes','Miscelaneo\ClienteController',['only'=>['store','show']]);
 
 Route::resource('/mesas','Mesa\MesaController', ['except' => ['create','edit']]);
 Route::get('/mesas-list','Mesa\MesaController@listTables');
@@ -36,4 +39,5 @@ Route::get('/productos-list','Producto\ProductoController@productsList');
 
 Route::resource('/ordenes','Orden\OrdenController',['except' => ['create','edit']]);
 Route::get('/ordenes-list','Orden\OrdenController@orderList');
+Route::post('/ordenes-payment','Orden\OrdenController@orderPayment');
 Route::post('/ordenes-status','Orden\OrdenController@updateOrderStatus');

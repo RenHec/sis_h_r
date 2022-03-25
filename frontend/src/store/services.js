@@ -38,6 +38,7 @@ import ReporteController from '../services/principal/ReporteControllerService'
 | Restaurant Services
 |--------------------------------------------------------------------------
 */
+import ClienteService from '../services/restaurante/ClienteService'
 import TipoPagoService from '../services/restaurante/TipoPagoService'
 import EstadoOrdenService from '../services/restaurante/EstadoOrdenService'
 import TipoOrdenService from '../services/restaurante/TipoOrdenService'
@@ -46,6 +47,8 @@ import ProductoService from '../services/restaurante/ProductoService'
 import MeseroService from '../services/restaurante/MeseroService'
 import OrdenService from '../services/restaurante/OrdenService'
 import MesaService from '../services/restaurante/MesaService'
+import DepartamentoService from '../services/restaurante/DepartamentoService'
+import MunicipioService from '../services/restaurante/MunicipioService'
 
 /*
 |--------------------------------------------------------------------------
@@ -147,6 +150,9 @@ export default {
   | Restaurant Services
   |--------------------------------------------------------------------------
   */
+  customerService: new ClienteService(Axios, baseUrl, restaurantUrl),
+  departamentoService: new DepartamentoService(Axios, baseUrl, restaurantUrl),
+  municipioService: new MunicipioService(Axios, baseUrl, restaurantUrl),
   paymentMethodService: new TipoPagoService(Axios, baseUrl, restaurantUrl),
   statusOrderService: new EstadoOrdenService(Axios, baseUrl, restaurantUrl),
   orderTypeService: new TipoOrdenService(Axios, baseUrl, restaurantUrl),
