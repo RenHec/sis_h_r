@@ -49,6 +49,7 @@ Route::name('select.producto_insumo')->get('select/producto_insumo', 'Catalogo\S
 Route::name('select.producto_check_in')->get('select/producto_check_in', 'Catalogo\SelectController@producto_check_in');
 Route::name('select.precios')->get('select/precios/{habitacion}', 'Catalogo\SelectController@precios');
 Route::name('select.buscar_habitaciones')->get('select/buscar_habitaciones', 'Catalogo\SelectController@buscar_habitaciones');
+Route::name('select.buscar_nit')->get('select/buscar_nit/{token}', 'Catalogo\SelectController@buscar_nit');
 
 //rutas para PresentacionController
 Route::resource('presentacion', 'Catalogo\PresentacionController')->only(['index', 'store', 'update', 'destroy']);

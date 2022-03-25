@@ -61,6 +61,7 @@ class Habitacion extends ApiController
             $habitacion->huespedes = HTipoCama::find($request->h_tipos_camas_id['id'])->cantidad;
             $habitacion->descripcion = $request->descripcion;
             $habitacion->h_estados_id = HEstado::DISPONIBLE;
+            $habitacion->created_at = date('Y-m-d H:i:s');
             $habitacion->save();
 
             HHabitacionPrecio::create(
@@ -94,6 +95,7 @@ class Habitacion extends ApiController
         try {
             $habitacion->descripcion = $request->descripcion;
             $habitacion->h_estados_id = $request->h_estados_id['id'];
+            $habitacion->updated_at = date('Y-m-d H:i:s');
             $habitacion->save();
 
             return $this->successResponse("Habitación: {$habitacion->descripcion} fue actualizada y se encuentra en estado {$request->h_estados_id['nombre']}.");

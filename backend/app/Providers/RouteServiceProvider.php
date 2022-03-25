@@ -65,9 +65,9 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapRestaurantRoutes()
     {
         Route::prefix('api/v1/restaurante')
-                ->middleware('restaurante')
-                ->namespace('App\\Http\\Controllers\\V1\\Restaurante')
-                ->group(base_path('routes/apis/v1/api_restaurante.php'));
+            ->middleware('restaurante')
+            ->namespace('App\\Http\\Controllers\\V1\\Restaurante')
+            ->group(base_path('routes/apis/v1/api_restaurante.php'));
     }
 
     /**
@@ -82,7 +82,7 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('compartido', function (Request $request) {
-            return Limit::perMinute(160)->by(optional($request->user())->id ?: $request->ip());
+            return Limit::perMinute(250)->by(optional($request->user())->id ?: $request->ip());
         });
 
         RateLimiter::for('hotel', function (Request $request) {

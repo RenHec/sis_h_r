@@ -60,7 +60,8 @@ class Insumo extends ApiController
                     'anulado' => false,
                     'nombre_proveedor' => $proveedor->nombre,
                     'proveedores_id' => $proveedor->id,
-                    'usuarios_id' => Auth::user()->id
+                    'usuarios_id' => Auth::user()->id,
+                    'created_at' => date('Y-m-d H:i:s')
                 ]
             );
 
@@ -90,13 +91,15 @@ class Insumo extends ApiController
                         'descuento' => $descuento,
                         'sub_total' => $sub_total,
                         'h_insumos_id' => $insumo->id,
-                        'h_productos_id' => $kardex->h_productos_id
+                        'h_productos_id' => $kardex->h_productos_id,
+                        'created_at' => date('Y-m-d H:i:s')
                     ]
                 );
 
                 $kardex->stock_inicial = $kardex->stock_inicial > 0 ? $kardex->stock_inicial : $cantidad;
                 $kardex->stock_actual += $cantidad;
                 $kardex->activo = $kardex->stock_actual > 0 ? true : false;
+                $kardex->updated_at = date('Y-m-d H:i:s');
                 $kardex->save();
 
                 $this->historial_kardex("+", $kardex->stock_actual, $cantidad, $detalle->id, $kardex, $detalle->producto);

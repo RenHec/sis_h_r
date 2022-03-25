@@ -140,10 +140,18 @@ trait ApiResponser
 				$data['h_insumos_detalles_id'] = $id_tabla;
 				break;
 
-			case '-':
+			case 'i':
 				$data['documento'] = "Reservacion - {$id_tabla}";
 				$data['descripcion'] = "Al producto {$producto} se le restaron {$cantidad}";
 				$data['stock_anterior'] = $stock + $cantidad;
+				$data['stock_nuevo'] = $stock;
+				$data['h_check_in_id'] = $id_tabla;
+				break;
+
+			case 'o':
+				$data['documento'] = "Reservacion - {$id_tabla}";
+				$data['descripcion'] = "Al producto {$producto} se le sumaron {$cantidad}";
+				$data['stock_anterior'] = $stock - $cantidad;
 				$data['stock_nuevo'] = $stock;
 				$data['h_check_in_id'] = $id_tabla;
 				break;

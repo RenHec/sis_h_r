@@ -139,6 +139,9 @@ class Handler extends ExceptionHandler
                 case 1241:
                     $message = "El operando debe contener 1 columna (s)";
                     break;
+                case 1604:
+                    $message = "Error en el query";
+                    break;
                 default:
                     $message = "BD";
                     break;

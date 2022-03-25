@@ -16,10 +16,12 @@ class MunicipioImport implements ToCollection
         foreach ($collection as $value) {
             if (!is_null($value)) {
                 $municipality = new Municipio();
-                $municipality->nombre = $value[0];
-                $municipality->departamento_id = $value[1];
+                $municipality->nombre = $value[1];
+                $municipality->codigo_original = $value[0];
+                $municipality->codigo = substr($value[0], 2);
+                $municipality->departamento_id = $value[2];
                 $municipality->save();
-                echo "{$value[0]}" . PHP_EOL;
+                echo "{$municipality->codigo_original} | {$municipality->codigo} - {$municipality->nombre}" . PHP_EOL;
             }
         }
     }

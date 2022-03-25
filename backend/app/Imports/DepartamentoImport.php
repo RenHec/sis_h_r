@@ -17,8 +17,10 @@ class DepartamentoImport implements ToCollection
             if (!is_null($value)) {
                 $deparamento = new Departamento();
                 $deparamento->nombre = $value[0];
+                $deparamento->codigo_original = $value[2];
+                $deparamento->codigo = $value[3];
                 $deparamento->save();
-                echo "{$value[0]} {$value[1]}" . PHP_EOL;
+                echo "{$deparamento->codigo_original} - {$deparamento->nombre}" . PHP_EOL;
             }
         }
     }

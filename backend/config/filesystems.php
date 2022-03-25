@@ -56,6 +56,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'firma' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/pictures_firma'),
+            'url' => env('APP_URL') . '/storage/pictures_firma',
+            'visibility' => 'public',
+        ],
+
         'logo' => [
             'driver' => 'local',
             'root' => storage_path('app/public/pictures_logos'),

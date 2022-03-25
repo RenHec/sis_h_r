@@ -25,7 +25,10 @@ class HabitacionPrecio extends ApiController
             DB::beginTransaction();
 
             HHabitacionPrecio::create(
-                ['precio' => $request->precio, 'activo' => true, 'h_tipos_camas_id' => $request->h_tipos_camas_id['id'], 'h_habitaciones_id' => $habitacion_precio->id]
+                [
+                    'precio' => $request->precio, 'activo' => true, 'h_tipos_camas_id' => $request->h_tipos_camas_id['id'], 'h_habitaciones_id' => $habitacion_precio->id,
+                    'created_at' => date('Y-m-d H:i:s')
+                ]
             );
 
             $habitacion_precio->huespedes += HTipoCama::find($request->h_tipos_camas_id['id'])->cantidad;

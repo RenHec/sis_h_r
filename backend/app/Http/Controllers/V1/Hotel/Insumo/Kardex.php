@@ -49,7 +49,8 @@ class Kardex extends ApiController
                     'h_productos_id' => $producto->id,
                     'usuarios_id' => $producto->usuarios_id,
                     'activo' => $request->stock_inicial > 0 ? true : false,
-                    'check_in' => $request->check_in
+                    'check_in' => $request->check_in,
+                    'created_at' => date('Y-m-d H:i:s')
                 ]
             );
 

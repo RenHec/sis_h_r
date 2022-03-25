@@ -56,7 +56,8 @@ class HReservacion extends Model
      */
     public function scopeReservacion($query) //Lista para pasar a CheckIn
     {
-        return $query->where('reservacion', true)
+        return $query->with('detalle.habitacion')
+            ->where('reservacion', true)
             ->where('check_in', false)
             ->where('check_out', false)
             ->where('anulado', false)
@@ -71,7 +72,8 @@ class HReservacion extends Model
      */
     public function scopeIn($query) //Lista para pasar a CheckOut
     {
-        return $query->where('reservacion', true)
+        return $query->with('check_in.detalle.habitacion')
+            ->where('reservacion', true)
             ->where('check_in', true)
             ->where('check_out', false)
             ->where('anulado', false)

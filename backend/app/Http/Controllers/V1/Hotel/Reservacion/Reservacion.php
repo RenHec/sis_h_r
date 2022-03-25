@@ -78,7 +78,8 @@ class Reservacion extends ApiController
                     'extra' => 0,
                     'total' => 0,
                     'clientes_id' => $ciente->id,
-                    'usuarios_id' => Auth::user()->id
+                    'usuarios_id' => Auth::user()->id,
+                    'created_at' => date('Y-m-d H:i:s')
                 ]
             );
 
@@ -143,12 +144,14 @@ class Reservacion extends ApiController
                         'descripcion' => !$request->consulta_por_hora ? "La habitación #{$value['h_reservaciones_detalles']['habitacion']} fue reservado por {$mensaje_dia}, fecha de ingreso {$formato_inicio} y fecha de egreso {$formato_fin}." : "La habitación #{$value['h_reservaciones_detalles']['habitacion']} fue reservado por {$mensaje_hora}, fecha de ingreso {$formato_inicio} y fecha de egreso {$formato_fin}.",
                         'h_reservaciones_id' => $reservacion->id,
                         'h_habitaciones_precios_id' => $value['h_reservaciones_detalles']['id'],
-                        'h_habitaciones_id' => $value['h_reservaciones_detalles']['habitacion_id']
+                        'h_habitaciones_id' => $value['h_reservaciones_detalles']['habitacion_id'],
+                        'created_at' => date('Y-m-d H:i:s')
                     ]
                 );
 
                 $reservacion->sub_total += $detalle->sub_total;
                 $reservacion->total = $reservacion->sub_total;
+                $reservacion->updated_at = date('Y-m-d H:i:s');
                 $reservacion->save();
 
                 $cantidad_personas += $detalle->huespedes;
@@ -178,7 +181,7 @@ class Reservacion extends ApiController
         try {
             DB::beginTransaction();
 
-            HReservacionDetalle::where('h_reservaciones_id', $reservacion->id)->update(['disponible' => true]);
+            HReservacionDetalle::where('h_reservaciones_id', $reservacion->id)->update(['disponible' => true, 'updated_at' => date('Y-m-d H:i:s')]);
             $reservacion->anulado = true;
             $reservacion->save();
 

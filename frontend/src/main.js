@@ -145,4 +145,5 @@ Vue.use(HighchartsVue)
 import exportingInit from 'highcharts/modules/exporting'
 exportingInit(Highcharts)
 
-//DatePicker Hotel
+//Animate
+import 'animate.css';

@@ -22,7 +22,7 @@ class Departamento extends Model
      *
      * @var array
      */
-    protected $fillable = ['nombre'];
+    protected $fillable = ['nombre', 'codigo_original', 'codigo'];
 
     /**
      * The attributes that should be cast to native types.

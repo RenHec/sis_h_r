@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\V1\Compartido\Catalogo;
 
-use Carbon\Carbon;
+use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Models\V1\Catalogo\Mes;
 use App\Models\V1\Hotel\HEstado;
 use App\Models\V1\Hotel\HTipoCama;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\V1\Catalogo\TipoPago;
 use App\Models\V1\Principal\Cliente;
 use App\Models\V1\Catalogo\Municipio;
@@ -17,14 +19,10 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\V1\Catalogo\Departamento;
 use App\Models\V1\Catalogo\Presentacion;
 use App\Models\V1\Hotel\HHabitacionFoto;
+use App\Models\V1\Catalogo\SAT as V1CatalogoSAT;
 
 class SelectController extends ApiController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function departamento()
     {
         return $this->showAll(Departamento::orderBy('nombre')->get());
@@ -81,6 +79,7 @@ class SelectController extends ApiController
             )
             ->where('h_productos.activo', true)
             ->where('h_kardex.activo', true)
+            ->orderBy('h_productos.nombre')
             ->get();
 
         return $this->showAll($data);
@@ -93,14 +92,18 @@ class SelectController extends ApiController
             ->select(
                 'h_kardex.id AS id',
                 'h_productos.nombre AS producto',
-                'h_kardex.stock_actual AS stock_actual'
+                'h_kardex.stock_actual AS stock_actual',
+                DB::RAW("0 AS cantidad"),
+                DB::RAW("false AS incluir"),
+                'h_productos.consumible'
             )
             ->where('h_productos.activo', true)
             ->where('h_kardex.activo', true)
             ->where('h_kardex.check_in', true)
+            ->orderBy('h_productos.nombre')
             ->get();
 
-        return $this->showAll($data);
+        return $this->successResponse($data);
     }
 
     public function precios($habitacion)
@@ -222,9 +225,111 @@ class SelectController extends ApiController
                 array_push($habitaciones, $info);
             }
 
-            return $this->successResponse([$habitaciones[0]]);
+            return $this->successResponse([$habitaciones]);
         } catch (\Throwable $th) {
             return $this->errorResponse("Ocurrio un error", 500);
+        }
+    }
+
+    public function buscar_nit($token)
+    {
+        try {
+            $http = new Client();
+
+            $ultimo_ingresado = V1CatalogoSAT::latest('id')->first();
+
+            $correlativo = 0;
+            $digito = 0;
+            $codigo_departamento = 0;
+            $codigo_municipio = 0;
+
+            $contador_insercion = 0;
+            $insertados = array();
+
+            Log::warning("Inicia el proceso SAT");
+            if (!is_null($ultimo_ingresado)) {
+                $correlativo = $ultimo_ingresado->correlativo;
+                $digito = $ultimo_ingresado->digito;
+                $codigo_departamento = $ultimo_ingresado->codigo_departamento;
+                $codigo_municipio = $ultimo_ingresado->codigo_municipio;
+            }
+
+            for ($i_codigo_departamento = $codigo_departamento; $i_codigo_departamento < 23; $i_codigo_departamento++) {
+                Log::warning("Departamento {$i_codigo_departamento}");
+
+                $municipios = Municipio::where('departamento_id', $i_codigo_departamento)->get();
+
+                foreach ($municipios as $i_codigo_municipio) {
+                    for ($i_digito = $digito; $i_digito < 10; $i_digito++) {
+                        for ($i_correlativo = $correlativo; $i_correlativo < 99999999; $i_correlativo++) {
+                            $c_correlativo = str_pad(strval($i_correlativo), 8, "0", STR_PAD_LEFT);
+                            $c_digito = $i_digito;
+                            $c_departamento = str_pad(strval($i_codigo_departamento), 2, "0", STR_PAD_LEFT);
+                            $c_municipio = str_pad(strval($i_codigo_municipio->codigo), 2, "0", STR_PAD_LEFT);
+
+                            $cui = "{$c_correlativo}{$c_digito}{$c_departamento}{$c_municipio}";
+
+                            if (is_null(V1CatalogoSAT::where('cui', $cui)->first())) {
+                                Log::warning("Buscando CUI {$cui}");
+                                $newresponse = $http->request(
+                                    'GET',
+                                    "https://svc.c.sat.gob.gt/api/sat_rtu/contribuyentesIndividuales/cuis/{$cui}",
+                                    [
+                                        'headers' =>
+                                        [
+                                            'Authorization' => "Bearer {$token}"
+                                        ]
+                                    ]
+                                )->getBody();
+
+                                $informacion = json_decode((string) $newresponse, true);
+                                Log::warning((string) $newresponse);
+
+                                if (count($informacion) > 0) {
+                                    Log::info("CUI {$cui} registrado");
+
+                                    $sat = V1CatalogoSAT::create(
+                                        [
+                                            'nit' => $informacion[0]['nit'],
+                                            'cui' => $informacion[0]['cui'],
+                                            'primerNombre' => $informacion[0]['primerNombre'],
+                                            'segundoNombre' => $informacion[0]['segundoNombre'],
+                                            'tercerNombre' => $informacion[0]['tercerNombre'],
+                                            'primerApellido' => $informacion[0]['primerApellido'],
+                                            'segundoApellido' => $informacion[0]['segundoApellido'],
+                                            'apellidoCasada' => $informacion[0]['apellidoCasada'],
+                                            'fechaModifico' => date('Y-m-d H:i:s', strtotime($informacion[0]['fechaModifico'])),
+                                            'correlativo' => $c_correlativo,
+                                            'digito' => $c_digito,
+                                            'codigo_departamento' => $c_departamento,
+                                            'codigo_municipio' => $c_municipio
+                                        ]
+                                    );
+
+                                    array_push($insertados, $sat->cui);
+                                    $contador_insercion += 1;
+                                } else {
+                                    Log::error("CUI {$cui} no encontrado");
+                                }
+                            } else {
+                                Log::warning("CUI {$cui} ya existe");
+                            }
+                        }
+                        $correlativo = 0;
+                    }
+                    $i_digito = 0;
+                }
+            }
+
+            return $this->successResponse(['insertados' => $contador_insercion]);
+        } catch (\GuzzleHttp\Exception\ClientException  $e) {
+            $response = $e->getResponse();
+            $responseBodyAsString = $response->getBody()->getContents();
+            $responseBodyAsString = $this->traInformacion($responseBodyAsString) ? json_decode((string) $responseBodyAsString, true) : null;
+            $mensaje = is_null($responseBodyAsString) ? null : "SAT: {$responseBodyAsString['error']} | {$responseBodyAsString['error_description']}";
+            return $this->errorResponse($mensaje);
+        } catch (Exception $e) {
+            return $this->errorResponse($e->getMessage());
         }
     }
 }

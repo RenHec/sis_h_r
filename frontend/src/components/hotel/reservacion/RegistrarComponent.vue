@@ -10,7 +10,10 @@
           <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
         <v-card-title>
-          <span class="headline">Registrar reservación por rango de fecha</span>
+          <span class="headline">
+            <v-icon color="black" x-large>rate_review</v-icon>
+            Registrar reservación por rango de fecha
+          </span>
         </v-card-title>
 
         <v-card-text>
@@ -32,7 +35,10 @@
           <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
         <v-card-title>
-          <span class="headline">Registrar reservación por hora</span>
+          <span class="headline">
+            <v-icon color="black" x-large>rate_review</v-icon>
+            Registrar reservación por hora
+          </span>
         </v-card-title>
 
         <v-card-text>
@@ -108,13 +114,14 @@
                 <v-row>
                   <v-col cols="12" md="12"></v-col>
                   <v-col cols="12" md="12">
-                    <p class="text-h5 text--black">
+                    <span class="headline">
+                      <v-icon color="white" x-large>rate_review</v-icon>
                       {{
                         `Registrar por ${
                           form.consulta_por_hora ? 'hora' : 'noche'
                         }`
                       }}
-                    </p>
+                    </span>
                   </v-col>
                   <v-col cols="12" md="12">
                     Datos personales del cliente
@@ -141,7 +148,7 @@
                       :errors_form="errors"
                     ></FormError>
                   </v-col>
-                  <v-col cols="12" md="6" v-if="filteredList.length > 0">
+                  <v-col cols="12" md="6" v-show="mostrar_nit === true">
                     <strong>Resultados de la busqueda</strong>
                     <ul
                       v-for="(item, index) in filteredList"
@@ -486,7 +493,11 @@
                                     detalle.h_reservaciones_detalles.precio,
                                   )}`
                                 "
-                                hint="Precio"
+                                :hint="`Precio mínimo ${formato_moneda(
+                                  1,
+                                  detalle.h_reservaciones_detalles.precio,
+                                  0,
+                                )}`"
                                 persistent-hint
                               ></v-text-field>
                               <FormError
@@ -665,6 +676,8 @@ export default {
 
         dialog_pickture: false,
         foto: null,
+
+        mostrar_nit: false,
       },
     }
   },
@@ -672,14 +685,13 @@ export default {
   computed: {
     filteredList() {
       if (this.form.nit) {
-        if (this.form.nit.length > 2) {
-          return this.clientes.filter((element) => {
-            return element.nit
-              .toUpperCase()
-              .includes(this.form.nit.toUpperCase())
-          })
-        }
+        let encontrados = this.clientes.filter((element) => {
+          return element.nit.toUpperCase().includes(this.form.nit.toUpperCase())
+        })
+        this.mostrar_nit = true
+        return encontrados.slice(encontrados.length - 5)
       } else {
+        this.mostrar_nit = false
         return []
       }
     },
@@ -780,7 +792,7 @@ export default {
             return
           }
 
-          this.habitaciones_disponibles = r.data
+          this.habitaciones_disponibles = r.data[0]
           this.dialog = true
           this.bloquear = true
 
@@ -838,6 +850,8 @@ export default {
       this.dialog_pickture = false
       this.foto = null
 
+      this.mostrar_nit = false
+
       this.$validator.reset()
       this.$validator.reset()
     },
@@ -871,6 +885,10 @@ export default {
       object.precio = 0
       this.form.h_reservaciones_detalles.push(object)
       precio.seleccionado = precio.mostrar === 1 ? 0 : 1
+      this.$toastr.info(
+        `Se agrego la habitación #${item.numero} a la reservación, con la descripción ${precio.cantidad} | ${precio.nombre_completo} - Q${precio.precio}`,
+        'Reservado',
+      )
       this.loading = false
     },
 

@@ -2,8 +2,9 @@
 
 namespace App\Models\V1\Hotel;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\V1\Hotel\HHabitacion;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class HReservacionDetalle extends Model
 {
@@ -31,4 +32,14 @@ class HReservacionDetalle extends Model
         'sub_total' => 'float',
         'disponible' => 'boolean'
     ];
+
+    /**
+     * Get the habitacion associated.
+     *
+     * @return object
+     */
+    public function habitacion()
+    {
+        return $this->hasOne(HHabitacion::class, 'id', 'h_habitaciones_id');
+    }
 }

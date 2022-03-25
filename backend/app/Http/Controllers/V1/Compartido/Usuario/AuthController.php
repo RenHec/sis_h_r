@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ApiController;
-use App\Models\V1\Principal\Configuracion;
-use App\Models\V1\Principal\Empresa;
 use App\Models\V1\Seguridad\Rol;
 use App\Models\V1\Seguridad\Usuario;
 use App\Models\V1\Seguridad\UsuarioRol;

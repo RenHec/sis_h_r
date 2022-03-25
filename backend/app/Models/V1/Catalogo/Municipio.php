@@ -24,7 +24,7 @@ class Municipio extends Model
      */
     protected $fillable = [
         'nombre',
-        'departamento_id'
+        'departamento_id', 'codigo_original', 'codigo'
     ];
 
     /**

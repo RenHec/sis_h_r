@@ -117,11 +117,7 @@
                               :errors_form="errors"
                             ></FormError>
                           </v-col>
-                          <v-col
-                            cols="12"
-                            md="6"
-                            v-if="filteredList.length > 0"
-                          >
+                          <v-col cols="12" md="6" v-if="mostrar_nit">
                             <strong>Resultados de la busqueda</strong>
                             <ul
                               v-for="(item, index) in filteredList"
@@ -1023,6 +1019,8 @@ export default {
 
       detalle: null,
       dialog_detalle: false,
+
+      mostrar_nit: false,
     }
   },
   computed: {
@@ -1036,14 +1034,13 @@ export default {
 
     filteredList() {
       if (this.form.nit) {
-        if (this.form.nit.length > 2) {
-          return this.proveedores.filter((element) => {
-            return element.nit
-              .toUpperCase()
-              .includes(this.form.nit.toUpperCase())
-          })
-        }
+        let encontrados = this.proveedores.filter((element) => {
+          return element.nit.toUpperCase().includes(this.form.nit.toUpperCase())
+        })
+        this.mostrar_nit = true
+        return encontrados.slice(encontrados.length - 5)
       } else {
+        this.mostrar_nit = false
         return []
       }
     },
@@ -1089,6 +1086,8 @@ export default {
       this.editedIndex = false
 
       this.dialog_detalle = false
+
+      this.mostrar_nit = false
 
       this.$validator.reset()
       this.$validator.reset()
