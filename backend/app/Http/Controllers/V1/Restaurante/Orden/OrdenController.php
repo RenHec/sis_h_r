@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\V1\Restaurante\Orden;
+use App\Models\V1\Restaurante\Venta;
 use App\Http\Controllers\ApiController;
 use App\Models\V1\Restaurante\EstadoOrden;
 use App\Models\V1\Restaurante\OrdenProducto;
@@ -178,6 +179,7 @@ class OrdenController extends ApiController
                             ->join('r_tipo_orden as to','to.id','o.tipo_orden_id')
                             ->join('r_mesa as m','o.mesa_id','m.id')
                             ->select('o.id','o.monto','o.fecha','o.hora','eo.nombre as estado_orden','to.nombre as tipo_orden','eo.color','eo.icono','eo.finaliza','m.nombre as mesa')
+                            ->where('o.activo',1)
                             ->get();
 
         return response()->json(['data' => $ordenes], 200);
@@ -197,5 +199,35 @@ class OrdenController extends ApiController
         $registro->save();
 
         return $this->showMessage('',204);
+    }
+
+    public function orderPayment(Request $request)
+    {
+        $rules = [
+            'id'            => 'required',
+            'orden_id'      => 'required',
+            'tipo_pago_id'  => 'required',
+            'cliente_id'    => 'required',
+            'monto'         => 'required'
+        ];
+
+        $this->validate($request, $rules);
+
+        return DB::transaction(function() use($request){
+            $registro = new Venta();
+            $registro->id = $request->get('id');
+            $registro->orden_id = $request->get('orden_id');
+            $registro->tipo_pago_id = $request->get('tipo_pago_id');
+            $registro->cliente_id = $request->get('cliente_id');
+            $registro->usuario_id = $request->user()->id;
+            $registro->monto = $request->get('monto');
+            $registro->save();
+
+            $orden = Orden::findOrFail($request->get('orden_id'));
+            $orden->activo = 0;
+            $orden->save();
+
+            return $this->showMessage('',201);
+        });
     }
 }

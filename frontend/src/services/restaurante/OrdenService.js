@@ -19,6 +19,10 @@ class OrdenServices {
     return this.axios.post(`${this.baseUrl}`, data)
   }
 
+  paymentOrders (data) {
+    return this.axios.post(`${this.baseUrl}-payment`, data)
+  }
+
   updateOrders (data) {
     return this.axios.put(`${this.baseUrl}/${data.id}`, data)
   }
