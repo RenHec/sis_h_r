@@ -180,6 +180,7 @@ class SelectController extends ApiController
                         ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
                 })
                 ->where('h_habitaciones.h_estados_id', HEstado::DISPONIBLE)
+                ->orderBy('h_habitaciones.numero')
                 ->get();
 
             if (count($data) == 0) {

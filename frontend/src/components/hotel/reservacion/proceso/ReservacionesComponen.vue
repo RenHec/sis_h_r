@@ -177,15 +177,12 @@
                               controls
                               placeholder="stock"
                               rounded
+                              @change="actualizar_stock"
                             ></vue-number-input>
                             <br />
                             <small>
                               {{
-                                `Stock actual ${
-                                  parseInt(
-                                    productos[index_pro]['stock_actual'],
-                                  ) - parseInt(producto.cantidad)
-                                }`
+                                `Stock actual ${productos[index_pro]['stock_actual']}`
                               }}
                             </small>
                           </v-col>
@@ -230,6 +227,29 @@
                         :errors_form="errors"
                       ></FormError>
                     </v-col>
+                    <v-col cols="12">
+                      <v-textarea
+                        filled-inverted
+                        suffix
+                        dense
+                        dark
+                        prepend-inner-icon="fiber_new"
+                        counter
+                        v-model="form.descripcion"
+                        type="text"
+                        label="descripción"
+                        data-vv-scope="crear"
+                        data-vv-name="descripción"
+                        v-validate="'max:1500'"
+                        hint="Notas"
+                        persistent-hint
+                      ></v-textarea>
+                      <FormError
+                        :attribute_name="'crear.descripción'"
+                        :errors_form="errors"
+                      ></FormError>
+                    </v-col>
+
                     <v-col cols="12">
                       <div
                         class="text-h6 white--text text--lighten-1 font-weight-light text-center"
@@ -356,6 +376,7 @@ export default {
         foto: null,
         codigo: null,
         nombre: null,
+        descripcion: null,
         check_in: [],
       },
 
@@ -395,6 +416,7 @@ export default {
       this.form.foto = null
       this.form.codigo = null
       this.form.nombre = null
+      this.form.descripcion = null
       this.form.check_in = []
       this.editedIndex = false
 
@@ -501,7 +523,7 @@ export default {
           //Agregando la lista a la habitacion correspondiente
           unicos.forEach((element) => {
             let objeto = new Object()
-            objeto.lista = this.productos
+            objeto.lista = []
             objeto.h_reservaciones_id = element.h_reservaciones_id
             objeto.h_reservaciones_detalles_id = element.id
             objeto.h_habitaciones_id = element.habitacion.id
@@ -517,11 +539,58 @@ export default {
         })
     },
 
-    seleecionar_habitacion(index) {
-      this.selected = index
+    actualizar_stock(event) {
+      console.log(event)
     },
 
-    verificador_lista_check() {},
+    seleecionar_habitacion(index) {
+      this.loading = true
+
+      let asignar_productos = function asignar(productos, item) {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            if (item.lista.length === 0) {
+              //Objeto para la lista de productos nueva
+              productos.forEach((producto) => {
+                let nuevo = new Object()
+                nuevo.id = producto.id
+                nuevo.producto = producto.producto
+                nuevo.stock_actual = producto.stock_actual
+                nuevo.cantidad = null
+                nuevo.incluir = false
+                nuevo.consumible = producto.consumible
+
+                item.lista.push(nuevo)
+              })
+
+              if (item.lista.length) resolve('Nueva lista de productos')
+              else
+                reject(
+                  `No fue posible asignar productos a la lista del check in de la ${item.habitacion}`,
+                )
+            } else {
+              resolve('Ya tiene lista de productos asignada')
+            }
+          }, 2000)
+        })
+      }
+
+      asignar_productos(this.productos, this.form.check_in[index])
+        .then((res) => {
+          this.$toastr.success(res, 'Lista de productos')
+          this.selected = index
+          this.loading = false
+        })
+        .catch((error) => {
+          this.loading = false
+          this.$swal({
+            title: 'Lista de productos',
+            text: error,
+            type: 'info',
+            showCancelButton: false,
+          })
+        })
+    },
 
     store(scope) {
       //Validacion de check in seleccionados

@@ -283,139 +283,203 @@
                     <p class="text-h5 text--white">
                       {{ `Reservación del cliente ${form.nombre}` }}
                     </p>
+                    <v-spacer></v-spacer>
+                    <v-autocomplete
+                      filled-inverted
+                      suffix
+                      dense
+                      dark
+                      rounded
+                      prepend-inner-icon="view_carousel"
+                      v-model="search_h"
+                      :items="habitaciones_disponibles"
+                      label="Seleccionar número de la habitación para bsucar"
+                      :clearable="true"
+                      :deletable-chips="true"
+                      item-text="numero"
+                      item-value="id"
+                      return-object
+                      v-validate="'required'"
+                      data-vv-scope="crear"
+                      :data-vv-name="`número de la habitación para bsucar`"
+                      @input="filtrar_habitaciones"
+                      multiple
+                    >
+                      <template v-slot:no-data>
+                        <v-row align="center" justify="space-around">
+                          No hay habitaciones disponibles
+                        </v-row>
+                      </template>
+                    </v-autocomplete>
                   </v-card-title>
                   <v-card-text>
                     <v-container>
-                      <v-row>
-                        <v-col
-                          cols="12"
-                          md="4"
-                          sm="6"
-                          v-for="(item, index) in habitaciones_disponibles"
-                          v-bind:key="`Habitacion#${index}`"
-                        >
-                          <v-card class="mx-auto elevation-22" dark>
-                            <v-img
-                              contain
-                              height="25%"
-                              :src="item.foto"
-                              :alt="`Habitación #${item.numero}`"
-                            ></v-img>
-                            <v-card-title>
-                              {{ `Habitación #${item.numero}` }}
-                            </v-card-title>
-                            <v-card-subtitle>
-                              {{ `Huespedes recomendados ${item.huespedes}` }}
-                            </v-card-subtitle>
-                            <v-card-actions>
-                              <v-tooltip bottom color="light-green darken-2">
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-btn
-                                    class="ma-2"
-                                    text
-                                    icon
-                                    color="light-green darken-2"
-                                    dark
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    small
-                                    @click="ver_fotos(item)"
-                                  >
-                                    <v-icon>perm_media</v-icon>
-                                  </v-btn>
-                                </template>
-                                <span
-                                  v-text="
-                                    `Fotografías de la habitación # ${item.numero}`
-                                  "
-                                ></span>
-                              </v-tooltip>
-                              <v-spacer></v-spacer>
-                              <v-tooltip bottom color="light-blue darken-2">
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-btn
-                                    class="ma-2"
-                                    text
-                                    icon
-                                    color="light-blue darken-2"
-                                    dark
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    small
-                                    @click="item.ver_precio = !item.ver_precio"
-                                  >
-                                    <v-icon>
-                                      {{
-                                        item.ver_precio
-                                          ? 'visibility_off'
-                                          : 'visibility'
-                                      }}
-                                    </v-icon>
-                                  </v-btn>
-                                </template>
-                                <span
-                                  v-text="
-                                    `Ver precios de la habitación # ${item.numero}`
-                                  "
-                                ></span>
-                              </v-tooltip>
-                              <v-spacer></v-spacer>
-                              <v-btn icon @click="item.show = !item.show">
-                                <v-icon>
-                                  {{
-                                    item.show
-                                      ? 'mdi-chevron-up'
-                                      : 'mdi-chevron-down'
-                                  }}
-                                </v-icon>
-                              </v-btn>
-                            </v-card-actions>
-
-                            <v-expand-transition>
-                              <div v-show="item.show">
-                                <v-divider></v-divider>
-                                <v-card-text>
-                                  <small>{{ item.descripcion }}</small>
-                                </v-card-text>
-                              </div>
-                            </v-expand-transition>
-
-                            <v-expand-transition>
-                              <div v-show="item.ver_precio">
-                                <v-divider></v-divider>
-                                <v-card-text>
-                                  <template
-                                    v-for="(precio, p_index) in item.precios"
-                                  >
-                                    <p
-                                      class="text-caption light-green--text"
-                                      v-bind:key="`Precio${item.numero} #${p_index}`"
+                      <v-expansion-panels tile dark flat>
+                        <v-expansion-panel>
+                          <v-expansion-panel-header
+                            disable-icon-rotate
+                            color="primary"
+                          >
+                            Habitaciones
+                            <template v-slot:actions>
+                              <v-icon color="white">
+                                $expand
+                              </v-icon>
+                            </template>
+                          </v-expansion-panel-header>
+                          <v-expansion-panel-content>
+                            <br />
+                            <br />
+                            <v-row>
+                              <v-col
+                                cols="12"
+                                md="4"
+                                sm="6"
+                                v-for="(item, index) in filtro_aplicado"
+                                v-bind:key="`Habitacion#${index}`"
+                              >
+                                <v-card class="mx-auto elevation-22" dark>
+                                  <v-img
+                                    contain
+                                    height="25%"
+                                    :src="item.foto"
+                                    :alt="`Habitación #${item.numero}`"
+                                  ></v-img>
+                                  <v-card-title>
+                                    {{ `Habitación #${item.numero}` }}
+                                  </v-card-title>
+                                  <v-card-subtitle>
+                                    {{
+                                      `Huespedes recomendados ${item.huespedes}`
+                                    }}
+                                  </v-card-subtitle>
+                                  <v-card-actions>
+                                    <v-tooltip
+                                      bottom
+                                      color="light-green darken-2"
                                     >
-                                      <v-btn
-                                        :disabled="
-                                          precio.seleccionado === 0
-                                            ? false
-                                            : true
-                                        "
-                                        color="light-green accent-3"
-                                        icon
-                                        x-small
-                                        @click="agregar_detalle(precio, item)"
-                                        :loading="loading"
+                                      <template
+                                        v-slot:activator="{ on, attrs }"
                                       >
-                                        <v-icon>check</v-icon>
-                                      </v-btn>
-                                      {{
-                                        `${precio.cantidad} | ${precio.nombre_completo} - Q${precio.precio}`
-                                      }}
-                                    </p>
-                                  </template>
-                                </v-card-text>
-                              </div>
-                            </v-expand-transition>
-                          </v-card>
-                        </v-col>
-                      </v-row>
+                                        <v-btn
+                                          class="ma-2"
+                                          text
+                                          icon
+                                          color="light-green darken-2"
+                                          dark
+                                          v-bind="attrs"
+                                          v-on="on"
+                                          small
+                                          @click="ver_fotos(item)"
+                                        >
+                                          <v-icon>perm_media</v-icon>
+                                        </v-btn>
+                                      </template>
+                                      <span
+                                        v-text="
+                                          `Fotografías de la habitación # ${item.numero}`
+                                        "
+                                      ></span>
+                                    </v-tooltip>
+                                    <v-spacer></v-spacer>
+                                    <v-tooltip
+                                      bottom
+                                      color="light-blue darken-2"
+                                    >
+                                      <template
+                                        v-slot:activator="{ on, attrs }"
+                                      >
+                                        <v-btn
+                                          class="ma-2"
+                                          text
+                                          icon
+                                          color="light-blue darken-2"
+                                          dark
+                                          v-bind="attrs"
+                                          v-on="on"
+                                          small
+                                          @click="
+                                            item.ver_precio = !item.ver_precio
+                                          "
+                                        >
+                                          <v-icon>
+                                            {{
+                                              item.ver_precio
+                                                ? 'visibility_off'
+                                                : 'visibility'
+                                            }}
+                                          </v-icon>
+                                        </v-btn>
+                                      </template>
+                                      <span
+                                        v-text="
+                                          `Ver precios de la habitación # ${item.numero}`
+                                        "
+                                      ></span>
+                                    </v-tooltip>
+                                    <v-spacer></v-spacer>
+                                    <v-btn icon @click="item.show = !item.show">
+                                      <v-icon>
+                                        {{
+                                          item.show
+                                            ? 'mdi-chevron-up'
+                                            : 'mdi-chevron-down'
+                                        }}
+                                      </v-icon>
+                                    </v-btn>
+                                  </v-card-actions>
+
+                                  <v-expand-transition>
+                                    <div v-show="item.show">
+                                      <v-divider></v-divider>
+                                      <v-card-text>
+                                        <small>{{ item.descripcion }}</small>
+                                      </v-card-text>
+                                    </div>
+                                  </v-expand-transition>
+
+                                  <v-expand-transition>
+                                    <div v-show="item.ver_precio">
+                                      <v-divider></v-divider>
+                                      <v-card-text>
+                                        <template
+                                          v-for="(precio,
+                                          p_index) in item.precios"
+                                        >
+                                          <p
+                                            class="text-caption light-green--text"
+                                            v-bind:key="`Precio${item.numero} #${p_index}`"
+                                          >
+                                            <v-btn
+                                              :disabled="
+                                                precio.seleccionado === 0
+                                                  ? false
+                                                  : true
+                                              "
+                                              color="light-green accent-3"
+                                              icon
+                                              x-small
+                                              @click="
+                                                agregar_detalle(precio, item)
+                                              "
+                                              :loading="loading"
+                                            >
+                                              <v-icon>check</v-icon>
+                                            </v-btn>
+                                            {{
+                                              `${precio.cantidad} | ${precio.nombre_completo} - Q${precio.precio}`
+                                            }}
+                                          </p>
+                                        </template>
+                                      </v-card-text>
+                                    </div>
+                                  </v-expand-transition>
+                                </v-card>
+                              </v-col>
+                            </v-row>
+                          </v-expansion-panel-content>
+                        </v-expansion-panel>
+                      </v-expansion-panels>
                     </v-container>
                   </v-card-text>
 
@@ -620,6 +684,7 @@ export default {
       clientes: [],
       municipios: [],
       habitaciones_disponibles: [],
+      filtro_aplicado: [],
       form: {
         id: 0,
         nit: null,
@@ -678,6 +743,8 @@ export default {
         foto: null,
 
         mostrar_nit: false,
+
+        search_h: null,
       },
     }
   },
@@ -714,6 +781,18 @@ export default {
   },
 
   methods: {
+    filtrar_habitaciones(item) {
+      if (item.length > 0) {
+        this.filtro_aplicado = this.habitaciones_disponibles.filter(
+          (element) => {
+            return item.includes(element)
+          },
+        )
+      } else {
+        return (this.filtro_aplicado = this.habitaciones_disponibles)
+      }
+    },
+
     //formato de fecha
     formato_fecha(event, inicio, fin) {
       this.fecha_inicio_original = inicio
@@ -793,6 +872,7 @@ export default {
           }
 
           this.habitaciones_disponibles = r.data[0]
+          this.filtro_aplicado = this.habitaciones_disponibles
           this.dialog = true
           this.bloquear = true
 
@@ -851,6 +931,8 @@ export default {
       this.foto = null
 
       this.mostrar_nit = false
+
+      this.search_h = null
 
       this.$validator.reset()
       this.$validator.reset()
@@ -930,10 +1012,18 @@ export default {
           'Es necesario que agregue habitaciones en el detalle de la reservación.',
           'Información incorrecta',
         )
+        return
       }
 
       this.$validator.validateAll(scope).then((result) => {
-        if (result) this.store(this.form)
+        if (result) {
+          this.store(this.form)
+        } else {
+          this.$toastr.warning(
+            'Por favor verifique la información.',
+            'Formulario',
+          )
+        }
       })
     },
 

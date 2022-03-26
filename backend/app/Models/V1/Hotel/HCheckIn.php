@@ -12,7 +12,7 @@ class HCheckIn extends Model
 
     protected $table = 'h_check_in';
 
-    protected $fillable = ['codigo', 'nombre', 'foto', 'lista', 'h_reservaciones_id', 'h_reservaciones_detalles_id', 'usuarios_id'];
+    protected $fillable = ['codigo', 'nombre', 'foto', 'lista', 'descripcion', 'h_reservaciones_id', 'h_reservaciones_detalles_id', 'usuarios_id'];
 
     /**
      * The attributes that should be cast to native types.

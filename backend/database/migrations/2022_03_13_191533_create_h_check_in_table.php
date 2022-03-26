@@ -19,6 +19,7 @@ class CreateHCheckInTable extends Migration
             $table->string('nombre', 100);
             $table->string('foto', 100); //Guardaremos la imagen en el local storage
             $table->longText('lista');
+            $table->longText('descripcion')->nullable();
             $table->foreignId('h_reservaciones_id')->constrained('h_reservaciones');
             $table->foreignId('h_reservaciones_detalles_id')->constrained('h_reservaciones_detalles');
             $table->foreignId('usuarios_id')->constrained('usuarios');
