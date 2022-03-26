@@ -20,6 +20,7 @@ class CreateRestauranteOrdenProducto extends Migration
             $table->uuid('orden_id')->nullable(false);
             $table->decimal('precio',9,2);
             $table->bigInteger('producto_id')->unsigned();
+            $table->smallInteger('activo')->default(1);
             $table->foreign('producto_id')->references('id')->on('r_producto');
             $table->foreign('orden_id')->references('id')->on('r_orden');
             $table->timestamps();

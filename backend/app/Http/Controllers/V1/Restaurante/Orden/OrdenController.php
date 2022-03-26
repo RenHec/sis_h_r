@@ -20,13 +20,18 @@ class OrdenController extends ApiController
      */
     public function index()
     {
+        $finaliza = EstadoOrden::select('id')
+                                ->where('finaliza',1)
+                                ->first();
+
         $registros = DB::table('r_orden as o')
                         ->join('r_tipo_orden as to','o.tipo_orden_id','to.id')
                         ->join('r_estado_orden as eo','o.estado_orden_id','eo.id')
                         ->join('r_mesa as m','o.mesa_id','m.id')
                         ->select('o.id','o.monto','o.fecha','o.hora','to.nombre as tipo_orden','eo.nombre as estado_orden','eo.id as estado_orden_id','eo.icono','m.nombre as mesa','eo.finaliza','eo.color')
-                        //->where('eo.id','<>',$finaliza->id)
+                        ->where('eo.id','<>',$finaliza->id)
                         ->get();
+
         $datos = array();
 
         foreach ($registros as $key => $value) {
@@ -35,6 +40,7 @@ class OrdenController extends ApiController
                         ->join('r_producto as p','op.producto_id','p.id')
                         ->select('op.id','op.cantidad','op.notas','p.nombre as producto','p.img','op.precio')
                         ->where('op.orden_id',$value->id)
+                        ->where('op.activo',1)
                         ->get();
 
             $datos[$key]            = (array)$value;
@@ -80,17 +86,24 @@ class OrdenController extends ApiController
                         ->where('inicia',1)
                         ->first();
 
-            $registro                   = new Orden();
-            $registro->id               = $request->get('id');
-            $registro->monto            = $request->get('monto');
-            $registro->estado_orden_id  = $request->get('orden');
-            $registro->tipo_orden_id    = $request->get('tipo_orden_id');
-            $registro->fecha            = $request->get('fecha');
-            $registro->hora             = $request->get('hora');
-            $registro->mesa_id          = $request->get('mesa_id');
-            $registro->usuario_id       = $request->user()->id;
-            $registro->estado_orden_id  = $estado->id;
-            $registro->save();
+            $registro = $this->ensureExistsOrderActive($request->get('mesa_id'));
+
+            if($registro){
+                $registro->monto            += $request->get('monto');
+                $registro->estado_orden_id  = $estado->id;
+                $registro->save();
+            }else{
+                $registro                   = new Orden();
+                $registro->id               = $request->get('id');
+                $registro->monto            = $request->get('monto');
+                $registro->tipo_orden_id    = $request->get('tipo_orden_id');
+                $registro->fecha            = $request->get('fecha');
+                $registro->hora             = $request->get('hora');
+                $registro->mesa_id          = $request->get('mesa_id');
+                $registro->usuario_id       = $request->user()->id;
+                $registro->estado_orden_id  = $estado->id;
+                $registro->save();
+            }
 
             foreach ($request->get('detalle') as $value) {
                 OrdenProducto::create([
@@ -103,6 +116,20 @@ class OrdenController extends ApiController
 
             return $this->showMessage('',201);
         });
+    }
+
+    public function ensureExistsOrderActive($id)
+    {
+        $orden = Orden::select('id','monto')
+                        ->where('mesa_id',$id)
+                        ->where('activo',1)
+                        ->first();
+
+        if(!$orden){
+            return null;
+        }
+
+        return $orden;
     }
 
     /**
@@ -194,11 +221,35 @@ class OrdenController extends ApiController
 
         $this->validate($request, $rules);
 
+        if($this->verifyIfFinishedStatus($request->get('estado'))){
+            $this->updateProductStatus($request->get('orden'));
+        }
+
         $registro = Orden::findOrFail($request->get('orden'));
         $registro->estado_orden_id = $request->get('estado');
         $registro->save();
 
         return $this->showMessage('',204);
+    }
+
+    public function updateProductStatus($id)
+    {
+        $detalle =  DB::table('r_orden_producto')
+                        ->where('orden_id', $id)
+                        ->update(['activo' => 0]);
+
+        if(!$detalle){
+            throw new \Exception("Error al actualizar estado de los productos");
+        }
+
+        return;
+    }
+
+    public function verifyIfFinishedStatus($id)
+    {
+        $registro = EstadoOrden::findOrFail($id);
+
+        return $registro->finaliza == 1;
     }
 
     public function orderPayment(Request $request)
@@ -212,6 +263,11 @@ class OrdenController extends ApiController
         ];
 
         $this->validate($request, $rules);
+
+        if(!$this->ensureHasNotOrderInKitchen($request->get('orden_id')))
+        {
+            return $this->errorResponse('La orden tiene productos pendientes de despacharse',);
+        }
 
         return DB::transaction(function() use($request){
             $registro = new Venta();
@@ -229,5 +285,16 @@ class OrdenController extends ApiController
 
             return $this->showMessage('',201);
         });
+    }
+
+    public function ensureHasNotOrderInKitchen($ordenId)
+    {
+        $finaliza = EstadoOrden::select('id')
+                                ->where('finaliza',1)
+                                ->first();
+
+        $orden = Orden::findOrFail($ordenId);
+
+        return $orden->estado_orden_id == $finaliza->id;
     }
 }
