@@ -651,14 +651,6 @@ export default {
         }
       })
     },
-
-    formato_moneda(monto) {
-      return monto.toLocaleString('es-GT', {
-        style: 'currency',
-        currency: 'GTQ',
-        minimumFractionDigits: 2,
-      })
-    },
   },
 }
 </script>

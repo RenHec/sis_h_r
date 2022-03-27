@@ -108,7 +108,7 @@ trait ApiResponser
 		return $message;
 	}
 
-	protected function historial_kardex(string $signo, int $stock, int $cantidad, int $id_tabla, HKardex $h_kardex_id, string $producto)
+	protected function historial_kardex(string $signo, int $stock, int $cantidad, int $id_tabla, HKardex $h_kardex_id, string $producto, string $tabla, string $titulo, bool $eliminado = false)
 	{
 		/*
 			$signo, indica el tipo de operación de quede de hacer para registrar el historial
@@ -121,47 +121,53 @@ trait ApiResponser
 		$data['stock_anterior'] = 0;
 		$data['signo'] = $signo;
 		$data['stock_nuevo'] = $stock;
-		$data['h_insumos_detalles_id'] = 0;
-		$data['h_check_in_id'] = 0;
+		$data['tabla'] = $tabla;
+		$data['tabla_id'] = $id_tabla;
 		$data['h_kardex_id'] = $h_kardex_id->id;
 		$data['usuarios_id'] = Auth::user()->id;
+		$data['created_at'] = date("Y-m-d H:i:s");
+		$data['documento'] = $titulo;
+		$data['eliminado'] = $eliminado;
 
 		switch ($signo) {
-			case '=':
-				$data['documento'] = "Kardex - {$id_tabla}";
+			case '=': //Solo en el Kardex aplica
 				$data['descripcion'] = "Se creo el inventario para el producto {$producto}";
 				break;
 
-			case '+':
-				$data['documento'] = "Insumo - {$id_tabla}";
-				$data['descripcion'] = "Al producto {$producto} se le sumaron {$cantidad}";
+			case '+i': //Solo aplica al registrar los insumos
+				$data['descripcion'] = "Al producto {$producto} se le sumaron {$cantidad} por ingreso de insumo.";
 				$data['stock_anterior'] = $stock - $cantidad;
 				$data['stock_nuevo'] = $stock;
-				$data['h_insumos_detalles_id'] = $id_tabla;
 				break;
 
-			case 'i':
-				$data['documento'] = "Reservacion - {$id_tabla}";
-				$data['descripcion'] = "Al producto {$producto} se le restaron {$cantidad}";
+			case 'ai': //Solo aplica en la anulación de un insumo
+				$data['descripcion'] = "Al producto {$producto} se le restaron {$cantidad} por anulación de insumos.";
 				$data['stock_anterior'] = $stock + $cantidad;
 				$data['stock_nuevo'] = $stock;
-				$data['h_check_in_id'] = $id_tabla;
 				break;
 
-			case 'o':
-				$data['documento'] = "Reservacion - {$id_tabla}";
-				$data['descripcion'] = "Al producto {$producto} se le sumaron {$cantidad}";
+			case '-ri': //Solo aplica en el registro de check in de la reservación
+				$data['descripcion'] = "Al producto {$producto} se le restaron {$cantidad} por registro de check in.";
+				$data['stock_anterior'] = $stock + $cantidad;
+				$data['stock_nuevo'] = $stock;
+				break;
+
+			case 'aci': //Solo aplica en la anulación del check in de la reservación
+				$data['descripcion'] = "Al producto {$producto} se le sumaron {$cantidad} por anulación de check in.";
 				$data['stock_anterior'] = $stock - $cantidad;
 				$data['stock_nuevo'] = $stock;
-				$data['h_check_in_id'] = $id_tabla;
 				break;
 
-			case 'a':
-				$data['documento'] = "Insumo - {$id_tabla}";
-				$data['descripcion'] = "Al producto {$producto} se le restaron {$cantidad} por anulación";
+			case '+ro': //Solo aplica en el registro de check out de la reservación
+				$data['descripcion'] = "Al producto {$producto} se le sumaron {$cantidad} por registro de check out.";
+				$data['stock_anterior'] = $stock - $cantidad;
+				$data['stock_nuevo'] = $stock;
+				break;
+
+			case 'aco': //Solo aplica en la anulación del check out de la reservación
+				$data['descripcion'] = "Al producto {$producto} se le restaron {$cantidad} por anulación de check out.";
 				$data['stock_anterior'] = $stock + $cantidad;
 				$data['stock_nuevo'] = $stock;
-				$data['h_insumos_detalles_id'] = $id_tabla;
 				break;
 
 			default:

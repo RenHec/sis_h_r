@@ -26,8 +26,7 @@
               single-line
               hide-details
             ></v-text-field>
-            <v-spacer></v-spacer>
-
+            <v-divider class="mx-4" inset vertical></v-divider>
             <v-dialog
               v-model="dialog"
               color="primary"
@@ -574,6 +573,10 @@
                 </v-row>
               </v-card>
             </v-dialog>
+            <v-divider class="mx-4" inset vertical></v-divider>
+            <v-btn color="white" small @click="initialize">
+              <v-icon :color="colorTolbar">sync</v-icon>
+            </v-btn>
           </v-toolbar>
         </template>
         <template v-slot:item.sub_total="{ item }">
@@ -1238,20 +1241,6 @@ export default {
         } else {
           this.close()
         }
-      })
-    },
-
-    formato_moneda(cantidad, precio, descuento) {
-      let cantidad_no_null = cantidad ? cantidad : 0
-      let precio_no_null = precio ? precio : 0
-      let descuento_no_null = descuento ? descuento : 0
-      let monto =
-        parseInt(cantidad_no_null) * parseFloat(precio_no_null) -
-        parseFloat(descuento_no_null)
-      return monto.toLocaleString('es-GT', {
-        style: 'currency',
-        currency: 'GTQ',
-        minimumFractionDigits: 2,
       })
     },
 

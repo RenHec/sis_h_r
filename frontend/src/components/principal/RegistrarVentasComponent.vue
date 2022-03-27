@@ -1064,14 +1064,6 @@ export default {
       this.documento_imprimir = false
     },
 
-    formato_moneda(monto) {
-      return monto.toLocaleString('es-GT', {
-        style: 'currency',
-        currency: 'GTQ',
-        minimumFractionDigits: 2,
-      })
-    },
-
     stock_disponible(stock_actual, quitar_stock) {
       return parseInt(stock_actual / quitar_stock)
     },

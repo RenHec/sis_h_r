@@ -25,3 +25,4 @@ Route::resource('/kardex', 'Insumo\Kardex')->only('index', 'store', 'show', 'upd
 
 Route::resource('/reservacion', 'Reservacion\Reservacion')->only('index', 'store', 'destroy');
 Route::resource('/check_in', 'Reservacion\CheckIn')->only('show', 'store', 'destroy');
+Route::resource('/check_out', 'Reservacion\CheckOut')->only('show', 'store', 'destroy');

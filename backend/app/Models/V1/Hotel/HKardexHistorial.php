@@ -14,7 +14,7 @@ class HKardexHistorial extends Model
 
     protected $table = 'h_kardex_historial';
 
-    protected $fillable = ['documento', 'stock_anterior', 'signo', 'stock_nuevo', 'descripcion', 'h_insumos_detalles_id', 'h_check_in_id', 'h_kardex_id', 'usuarios_id'];
+    protected $fillable = ['documento', 'stock_anterior', 'signo', 'stock_nuevo', 'descripcion', 'tabla_id', 'h_kardex_id', 'usuarios_id', 'tabla', 'eliminado'];
 
     /**
      * The attributes that should be cast to native types.
@@ -24,28 +24,9 @@ class HKardexHistorial extends Model
     protected $casts = [
         'created_at' => 'datetime:d/m/Y h:i:s a',
         'stock_anterior' => 'integer',
-        'stock_nuevo' => 'integer'
+        'stock_nuevo' => 'integer',
+        'eliminado' => 'boolean'
     ];
-
-    /**
-     * Get the insumo associated.
-     *
-     * @return object
-     */
-    public function insumo()
-    {
-        return $this->hasOne(HInsumoDetalle::class, 'h_insumos_detalles_id', 'id');
-    }
-
-    /**
-     * Get the reservacion associated.
-     *
-     * @return object
-     */
-    public function reservacion()
-    {
-        return $this->hasOne(HCheckIn::class, 'h_check_in_id', 'id');
-    }
 
     /**
      * Get the usuario associated.

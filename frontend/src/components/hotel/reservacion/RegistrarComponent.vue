@@ -14,6 +14,10 @@
             <v-icon color="black" x-large>rate_review</v-icon>
             Registrar reservación por rango de fecha
           </span>
+          <v-spacer></v-spacer>
+          <v-btn color="white" small @click="limpiar">
+            <v-icon color="primary lighten-2">sync</v-icon>
+          </v-btn>
         </v-card-title>
 
         <v-card-text>
@@ -39,6 +43,10 @@
             <v-icon color="black" x-large>rate_review</v-icon>
             Registrar reservación por hora
           </span>
+          <v-spacer></v-spacer>
+          <v-btn color="white" small @click="limpiar">
+            <v-icon color="success lighten-2">sync</v-icon>
+          </v-btn>
         </v-card-title>
 
         <v-card-text>
@@ -299,9 +307,6 @@
                       item-text="numero"
                       item-value="id"
                       return-object
-                      v-validate="'required'"
-                      data-vv-scope="crear"
-                      :data-vv-name="`número de la habitación para bsucar`"
                       @input="filtrar_habitaciones"
                       multiple
                     >
@@ -901,6 +906,7 @@ export default {
     },
 
     limpiar() {
+      this.loading = true
       this.getSelects()
 
       this.dialog = false
@@ -936,6 +942,7 @@ export default {
 
       this.$validator.reset()
       this.$validator.reset()
+      this.loading = false
     },
 
     seleccionar_cliente(item) {
@@ -992,20 +999,6 @@ export default {
       })
     },
 
-    formato_moneda(cantidad, precio, descuento) {
-      let cantidad_no_null = cantidad ? cantidad : 0
-      let precio_no_null = precio ? precio : 0
-      let descuento_no_null = descuento ? descuento : 0
-      let monto =
-        parseInt(cantidad_no_null) * parseFloat(precio_no_null) -
-        parseFloat(descuento_no_null)
-      return monto.toLocaleString('es-GT', {
-        style: 'currency',
-        currency: 'GTQ',
-        minimumFractionDigits: 2,
-      })
-    },
-
     validar_formulario(scope) {
       if (this.form.h_reservaciones_detalles.length === 0) {
         this.$toastr.info(
@@ -1055,6 +1048,7 @@ export default {
               }
 
               this.$toastr.success(r.data, 'Mensaje')
+              this.notificador_audible(this.$store.state.audio.agregar)
               this.limpiar()
             })
             .catch((r) => {

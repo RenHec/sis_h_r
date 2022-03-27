@@ -25,8 +25,7 @@
               single-line
               hide-details
             ></v-text-field>
-            <v-spacer></v-spacer>
-
+            <v-divider class="mx-4" inset vertical></v-divider>
             <v-dialog v-model="dialog" color="primary" width="50%" persistent>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -178,13 +177,17 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
+            <v-divider class="mx-4" inset vertical></v-divider>
+            <v-btn color="white" small @click="initialize">
+              <v-icon :color="colorTolbar">sync</v-icon>
+            </v-btn>
           </v-toolbar>
         </template>
         <template v-slot:item.fotografia="{ item }">
           <br />
           <v-card
             class="mx-auto"
-            max-width="300"
+            max-width="400"
             :color="colorCardH(item.h_estados_id)"
           >
             <v-img
@@ -292,7 +295,7 @@
                   <v-avatar
                     color="grey"
                     class="ma-3"
-                    @click="key == 0 ? null : quitar_foto(imagen)"
+                    @click="opciones_imagen(imagen, key)"
                     size="81"
                     tile
                   >
@@ -771,7 +774,7 @@ export default {
             }
             return
           }
-          console.log(r.data)
+
           this.desserts = r.data
           this.close()
         })
@@ -918,14 +921,6 @@ export default {
       })
     },
 
-    formato_moneda(monto) {
-      return monto.toLocaleString('es-GT', {
-        style: 'currency',
-        currency: 'GTQ',
-        minimumFractionDigits: 2,
-      })
-    },
-
     //PRECIOS
     modal_precio(item) {
       this.loading = true
@@ -1067,6 +1062,66 @@ export default {
                 })
             }
           })
+        }
+      })
+    },
+
+    opciones_imagen(imagen, index) {
+      this.$swal({
+        title: 'Opciones',
+        text: '¿Está seguro de realizar esta acción?',
+        type: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Seleccionar como principal',
+        cancelButtonText: index === 0 ? 'Cancelar' : 'Eliminar',
+      })
+        .then((result) => {
+          if (result.value) {
+            this.imagen_principal(imagen)
+          } else if (result.dismiss === this.$swal.DismissReason.cancel) {
+            index === 0 ? null : this.quitar_foto(imagen)
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
+
+    imagen_principal(data) {
+      this.$swal({
+        title: 'Imagen Principal',
+        text: '¿Está seguro de realizar esta acción?',
+        type: 'warning',
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.value) {
+          this.loading = true
+          this.$store.state.services.HabitacionFotoService.get(data.id)
+            .then((r) => {
+              this.loading = false
+              if (r.response) {
+                if (r.response.data.code === 404) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else if (r.response.data.code === 423) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else {
+                  for (let value of Object.values(r.response.data)) {
+                    this.$toastr.error(value, 'Mensaje')
+                  }
+                }
+                return
+              }
+
+              this.$toastr.success(r.data, 'Mensaje')
+              this.initialize()
+            })
+            .catch((r) => {
+              this.loading = false
+            })
         }
       })
     },

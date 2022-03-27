@@ -61,7 +61,7 @@ class HReservacion extends Model
             ->where('check_in', false)
             ->where('check_out', false)
             ->where('anulado', false)
-            ->orderByDesc('id');
+            ->orderBy('id');
     }
 
     /**
@@ -72,12 +72,12 @@ class HReservacion extends Model
      */
     public function scopeIn($query) //Lista para pasar a CheckOut
     {
-        return $query->with('check_in.detalle.habitacion')
+        return $query->with('check_in_list')
             ->where('reservacion', true)
             ->where('check_in', true)
             ->where('check_out', false)
             ->where('anulado', false)
-            ->orderByDesc('id');
+            ->orderBy('created_at', 'DESC');
     }
 
     /**
@@ -88,12 +88,13 @@ class HReservacion extends Model
      */
     public function scopeOut($query) //Lista para pasar a Pago
     {
-        return $query->where('reservacion', true)
+        return $query->with('check_in_list', 'check_out_list')
+            ->where('reservacion', true)
             ->where('check_in', true)
             ->where('check_out', true)
             ->where('pagado', false)
             ->where('anulado', false)
-            ->orderByDesc('id');
+            ->orderBy('id');
     }
 
     /**
@@ -159,7 +160,7 @@ class HReservacion extends Model
      *
      * @return array
      */
-    public function check_in()
+    public function check_in_list()
     {
         return $this->hasMany(HCheckIn::class, 'h_reservaciones_id', 'id');
     }
@@ -169,7 +170,7 @@ class HReservacion extends Model
      *
      * @return array
      */
-    public function check_out()
+    public function check_out_list()
     {
         return $this->hasMany(HCheckOut::class, 'h_reservaciones_id', 'id');
     }

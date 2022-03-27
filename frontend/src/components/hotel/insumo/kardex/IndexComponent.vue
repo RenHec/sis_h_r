@@ -14,6 +14,7 @@
               :page.sync="page"
               :search="search"
               hide-default-footer
+              :custom-filter="filteredItems"
             >
               <template v-slot:header>
                 <v-toolbar dark :color="colorTolbar" class="mb-1">
@@ -28,6 +29,10 @@
                     prepend-inner-icon="mdi-magnify"
                     label="Busqueda"
                   ></v-text-field>
+                  <v-divider class="mx-4" inset vertical></v-divider>
+                  <v-btn color="white" small @click="initialize">
+                    <v-icon :color="colorTolbar">sync</v-icon>
+                  </v-btn>
                 </v-toolbar>
               </template>
 
@@ -541,73 +546,39 @@
                 </v-col>
                 <v-col cols="12" md="12">
                   <v-simple-table dark dense>
-                    <template v-slot:default>
-                      <tbody>
-                        <tr
-                          v-for="inventario in historial.historial"
-                          :key="`I${inventario.id}`"
-                        >
-                          <td>
-                            <br />
-                            <v-text-field
-                              v-model="inventario.documento"
-                              label="Movimiento"
-                              filled
-                              shaped
-                              dense
-                              disabled
-                            ></v-text-field>
-                          </td>
-                          <td>
-                            <br />
-                            <v-textarea
-                              v-model="inventario.descripcion"
-                              label="Descripción"
-                              rows="2"
-                              filled
-                              shaped
-                              dense
-                              disabled
-                            ></v-textarea>
-                          </td>
-                          <td>
-                            <br />
-                            <v-text-field
-                              v-model="inventario.stock_anterior"
-                              label="Stock anterior"
-                              prefix="C"
-                              filled
-                              shaped
-                              dense
-                              disabled
-                            ></v-text-field>
-                          </td>
-                          <td>
-                            <br />
-                            <v-text-field
-                              v-model="inventario.stock_nuevo"
-                              label="Stock nuevo"
-                              prefix="C"
-                              filled
-                              shaped
-                              dense
-                              disabled
-                            ></v-text-field>
-                          </td>
-                          <td>
-                            <br />
-                            <v-text-field
-                              v-model="inventario.created_at"
-                              label="Fecha"
-                              filled
-                              shaped
-                              dense
-                              disabled
-                            ></v-text-field>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </template>
+                    <thead>
+                      <tr>
+                        <td>Movimiento</td>
+                        <td>Descripción</td>
+                        <td>Stock Anterior</td>
+                        <td>Stock Nuevo</td>
+                        <td>Fecha</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="inventario in historial.historial"
+                        :key="`I${inventario.id}`"
+                      >
+                        <td>
+                          {{ inventario.documento }}
+                        </td>
+                        <td>
+                          {{ inventario.descripcion }}
+                        </td>
+                        <td>
+                          {{ inventario.stock_anterior }}
+                        </td>
+                        <td>
+                          {{
+                            `${inventario.stock_nuevo} (${inventario.signo})`
+                          }}
+                        </td>
+                        <td>
+                          {{ inventario.created_at }}
+                        </td>
+                      </tr>
+                    </tbody>
                   </v-simple-table>
                 </v-col>
               </v-row>
@@ -627,10 +598,10 @@ export default {
       loading: false,
       dialog: false,
 
-      itemsPerPageArray: [4, 8, 12],
+      itemsPerPageArray: [4, 8, 12, 16, 20],
       search: '',
       page: 1,
-      itemsPerPage: 4,
+      itemsPerPage: 12,
       items: [],
 
       editedIndex: false,
@@ -717,7 +688,7 @@ export default {
             }
             return
           }
-          console.log(r.data)
+
           this.desserts = r.data
           this.items = r.data
           this.close()
@@ -831,6 +802,18 @@ export default {
     ver_historial(item) {
       this.historial = item
       this.dialog_historial = true
+    },
+
+    filteredItems() {
+      if (this.search) {
+        return this.items.filter((element) => {
+          return element.producto.nombre
+            .toUpperCase()
+            .includes(this.search.toUpperCase())
+        })
+      } else {
+        return this.items
+      }
     },
   },
 }

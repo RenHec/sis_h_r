@@ -102,7 +102,7 @@ class Insumo extends ApiController
                 $kardex->updated_at = date('Y-m-d H:i:s');
                 $kardex->save();
 
-                $this->historial_kardex("+", $kardex->stock_actual, $cantidad, $detalle->id, $kardex, $detalle->producto);
+                $this->historial_kardex("+i", $kardex->stock_actual, $cantidad, $detalle->id, $kardex, $detalle->producto, $insumo->getTable(), "Insumo - {$insumo->documento}");
 
                 $insumo->sub_total += ($cantidad * $precio);
                 $insumo->descuento += $detalle->descuento;
@@ -137,7 +137,7 @@ class Insumo extends ApiController
             $detalle = HInsumoDetalle::where('h_insumos_id', $insumo->id)->get();
 
             $cantidad_anulados = 0;
-            foreach ($detalle as $key => $value) {
+            foreach ($detalle as $value) {
                 $kardex = HKardex::where('h_productos_id', $value->h_productos_id)->firts();
 
                 if (($kardex->stock_actual - $value->cantidad) < 0) {
@@ -148,7 +148,7 @@ class Insumo extends ApiController
                 $kardex->activo = $kardex->stock_actual > 0 ? true : false;
                 $kardex->save();
 
-                $this->historial_kardex("a", $kardex->stock_actual, $value->cantidad, $detalle->id, $kardex, $kardex->producto->nombre);
+                $this->historial_kardex("ai", $kardex->stock_actual, $value->cantidad, $detalle->id, $kardex, $kardex->producto->nombre, $insumo->getTable(), "Insumo - {$insumo->documento}", true);
 
                 $cantidad_anulados += 1;
             }

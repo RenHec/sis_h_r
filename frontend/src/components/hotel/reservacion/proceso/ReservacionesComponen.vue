@@ -26,7 +26,33 @@
               single-line
               hide-details
             ></v-text-field>
+            <v-divider class="mx-4" inset vertical></v-divider>
+            <v-btn color="white" small @click="initialize">
+              <v-icon :color="colorTolbar">sync</v-icon>
+            </v-btn>
           </v-toolbar>
+        </template>
+        <template v-slot:item.cancelar="{ item }">
+          <v-tooltip bottom color="red lighten-2">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                class="ma-2"
+                text
+                icon
+                color="red lighten-2"
+                dark
+                v-bind="attrs"
+                v-on="on"
+                @click="destroy(item)"
+                small
+              >
+                <v-icon>report_problem</v-icon>
+              </v-btn>
+            </template>
+            <span
+              v-text="`Cancelar reservación con código ${item.codigo}`"
+            ></span>
+          </v-tooltip>
         </template>
         <template v-slot:item.total="{ item }">
           <br />
@@ -61,6 +87,7 @@
         </template>
       </v-data-table>
     </v-col>
+
     <v-col cols="12">
       <v-dialog
         v-model="dialog"
@@ -122,74 +149,104 @@
                   class="d-flex text-center"
                   v-if="selected > -1"
                 >
-                  <v-scroll-y-transition mode="out-in">
-                    <div
-                      v-if="selected < 0"
-                      class="text-h6 white--text text--lighten-1 font-weight-light"
-                      style="align-self: center;"
-                    >
-                      Seleccionar una habitación por favor...
-                    </div>
-                    <v-card
-                      v-else
-                      class="pt-6 mx-auto animate__fadeIn"
-                      flat
-                      max-width="80%"
-                      v-bind:key="selected"
-                    >
-                      <v-card-text>
-                        <h3 class="text-h4 mb-2">
-                          {{ form.check_in[selected]['habitacion'] }}
-                        </h3>
-                        <div class="blue--text mb-2">
-                          Check In
-                        </div>
-                      </v-card-text>
-                      <v-divider></v-divider>
-                      <v-card-text>
-                        <v-row
-                          align="center"
-                          v-for="(producto, index_pro) in form.check_in[
-                            selected
-                          ]['lista']"
-                          v-bind:key="`${selected}-${index_pro}`"
-                        >
-                          <v-col cols="12" md="2">
-                            <v-checkbox
-                              v-model="producto.incluir"
-                              hide-details
-                              class="shrink mr-2 mt-0"
-                            ></v-checkbox>
-                          </v-col>
-                          <v-col cols="12" md="7">
-                            <v-chip class="ma-2" color="primary" label small>
-                              {{ producto.producto }}
-                            </v-chip>
-                          </v-col>
-                          <v-col cols="12" md="3">
-                            <vue-number-input
-                              v-model="producto.cantidad"
-                              size="small"
-                              :min="0"
-                              :max="productos[index_pro]['stock_actual']"
-                              inline
-                              center
-                              controls
-                              placeholder="stock"
-                              rounded
-                              @change="actualizar_stock"
-                            ></vue-number-input>
-                            <br />
-                            <small>
-                              {{
-                                `Stock actual ${productos[index_pro]['stock_actual']}`
-                              }}
-                            </small>
-                          </v-col>
-                        </v-row>
-                      </v-card-text>
-                    </v-card>
-                  </v-scroll-y-transition>
+                  <v-expansion-panels tile dark flat>
+                    <v-expansion-panel>
+                      <v-expansion-panel-header
+                        disable-icon-rotate
+                        color="primary"
+                      >
+                        Productos
+                        <template v-slot:actions>
+                          <v-icon color="white">
+                            $expand
+                          </v-icon>
+                        </template>
+                      </v-expansion-panel-header>
+                      <v-expansion-panel-content>
+                        <v-scroll-y-transition mode="out-in">
+                          <div
+                            v-if="selected < 0"
+                            class="text-h6 white--text text--lighten-1 font-weight-light"
+                            style="align-self: center;"
+                          >
+                            Seleccionar una habitación por favor...
+                          </div>
+                          <v-card
+                            v-else
+                            class="pt-6 mx-auto animate__fadeIn"
+                            flat
+                            max-width="80%"
+                            v-bind:key="selected"
+                          >
+                            <v-card-text>
+                              <h3 class="text-h4 mb-2">
+                                {{ form.check_in[selected]['habitacion'] }}
+                              </h3>
+                              <div class="blue--text mb-2">
+                                Check In
+                              </div>
+                            </v-card-text>
+                            <v-divider></v-divider>
+                            <v-card-text>
+                              <v-row
+                                align="center"
+                                v-for="(producto, index_pro) in form.check_in[
+                                  selected
+                                ]['lista']"
+                                v-bind:key="`${selected}-${index_pro}`"
+                              >
+                                <v-col cols="12" md="2">
+                                  <v-checkbox
+                                    v-model="producto.incluir"
+                                    hide-details
+                                    class="shrink mr-2 mt-0"
+                                  ></v-checkbox>
+                                </v-col>
+                                <v-col cols="12" :md="'7'">
+                                  <v-chip
+                                    class="ma-2"
+                                    color="primary"
+                                    :disabled="!producto.incluir"
+                                    label
+                                    small
+                                  >
+                                    {{ producto.producto }}
+                                  </v-chip>
+                                </v-col>
+                                <v-col cols="12" md="3">
+                                  <vue-number-input
+                                    v-model="producto.cantidad"
+                                    size="small"
+                                    :min="0"
+                                    :max="producto.disponible"
+                                    inline
+                                    center
+                                    controls
+                                    placeholder="stock"
+                                    rounded
+                                    @change="
+                                      stock_producto(
+                                        $event,
+                                        index_pro,
+                                        selected,
+                                      )
+                                    "
+                                    :disabled="!producto.incluir"
+                                  ></vue-number-input>
+                                  <br />
+                                  <small>
+                                    {{
+                                      `Disponible ${productos[index_pro]['stock_actual']}`
+                                    }}
+                                  </small>
+                                </v-col>
+                              </v-row>
+                            </v-card-text>
+                          </v-card>
+                        </v-scroll-y-transition>
+                      </v-expansion-panel-content>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
                 </v-col>
                 <v-divider vertical></v-divider>
                 <v-col cols="12" md="4" sm="4">
@@ -258,6 +315,11 @@
                         Firma del encargado
                       </div>
                     </v-col>
+                    <v-col class="text-center" cols="12">
+                      <v-btn small color="red" text @click="limpiar_firma">
+                        Volver a firmar
+                      </v-btn>
+                    </v-col>
                     <v-col cols="12" class="text-center">
                       <canvas
                         id="draw-canvas"
@@ -273,9 +335,17 @@
                         No tienes un buen navegador.
                       </canvas>
                     </v-col>
-                    <v-col class="text-center" cols="12">
-                      <v-btn small color="red" text @click="limpiar_firma">
-                        Volver a firmar
+
+                    <v-col cols="12">
+                      <v-btn
+                        color="success"
+                        x-large
+                        :loading="loading"
+                        :disabled="loading"
+                        block
+                        @click="store('crear')"
+                      >
+                        REGISTRAR
                       </v-btn>
                     </v-col>
                   </v-row>
@@ -328,6 +398,11 @@ export default {
       dialog: true,
       search: '',
       headers: [
+        {
+          text: '',
+          align: 'center',
+          value: 'cancelar',
+        },
         {
           text: 'Reservación',
           align: 'center',
@@ -468,20 +543,6 @@ export default {
         })
     },
 
-    formato_moneda(cantidad, precio, descuento) {
-      let cantidad_no_null = cantidad ? cantidad : 0
-      let precio_no_null = precio ? precio : 0
-      let descuento_no_null = descuento ? descuento : 0
-      let monto =
-        parseInt(cantidad_no_null) * parseFloat(precio_no_null) -
-        parseFloat(descuento_no_null)
-      return monto.toLocaleString('es-GT', {
-        style: 'currency',
-        currency: 'GTQ',
-        minimumFractionDigits: 2,
-      })
-    },
-
     /*:::::::::::::::::::::: PROCESO CHECK IN ::::::::::::::::::::::::::*/
     proceso_check_in(item) {
       this.loading = true
@@ -539,8 +600,45 @@ export default {
         })
     },
 
-    actualizar_stock(event) {
-      console.log(event)
+    stock_producto(event, index, selected) {
+      this.loading = true
+
+      let inventario = function actual(productos, check_in, lista, numero) {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            let suma =
+              lista.anterior > 0
+                ? productos.stock_actual + lista.anterior
+                : productos.stock_actual
+
+            productos.stock_actual = suma - numero
+            lista.anterior = numero
+
+            lista.disponible = numero + productos.stock_actual
+
+            resolve('Inventario nuevo')
+          }, 2000)
+        })
+      }
+
+      inventario(
+        this.productos[index],
+        this.form.check_in[selected],
+        this.form.check_in[selected].lista[index],
+        event,
+      )
+        .then((res) => {
+          this.loading = false
+        })
+        .catch((error) => {
+          this.loading = false
+          this.$swal({
+            title: 'Producto',
+            text: error,
+            type: 'info',
+            showCancelButton: false,
+          })
+        })
     },
 
     seleecionar_habitacion(index) {
@@ -555,10 +653,13 @@ export default {
                 let nuevo = new Object()
                 nuevo.id = producto.id
                 nuevo.producto = producto.producto
-                nuevo.stock_actual = producto.stock_actual
-                nuevo.cantidad = null
+                nuevo.disponible = producto.stock_actual
+                nuevo.cantidad = 1
                 nuevo.incluir = false
+                nuevo.todos = false
                 nuevo.consumible = producto.consumible
+                nuevo.anterior = 1
+                nuevo.checkout = false
 
                 item.lista.push(nuevo)
               })
@@ -680,6 +781,7 @@ export default {
                       }
 
                       this.$toastr.success(r.data.mensaje, 'Mensaje')
+                      this.notificador_audible(this.$store.state.audio.agregar)
                       this.initialize()
                     })
                     .catch((r) => {
@@ -699,6 +801,44 @@ export default {
             showCancelButton: false,
           })
         })
+    },
+
+    destroy(data) {
+      this.$swal({
+        title: 'Cancelar',
+        text: '¿Está seguro de realizar esta acción?',
+        type: 'error',
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.value) {
+          this.loading = true
+          this.$store.state.services.ReservacionService.delete(data)
+            .then((r) => {
+              this.loading = false
+              if (r.response) {
+                if (r.response.data.code === 404) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else if (r.response.data.code === 423) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else {
+                  for (let value of Object.values(r.response.data)) {
+                    this.$toastr.error(value, 'Mensaje')
+                  }
+                }
+                return
+              }
+
+              this.$toastr.success(r.data, 'Mensaje')
+              this.notificador_audible(this.$store.state.audio.anular)
+              this.initialize()
+            })
+            .catch((r) => {
+              this.loading = false
+            })
+        }
+      })
     },
 
     //Funciones para la firma

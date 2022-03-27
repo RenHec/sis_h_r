@@ -346,7 +346,9 @@ export default {
     },
 
     redirect(item) {
-      this.$router.push({ path: item })
+      if (item !== '#') {
+        this.$router.push({ path: item })
+      }
     },
 
     mostar() {

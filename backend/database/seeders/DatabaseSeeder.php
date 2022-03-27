@@ -17,6 +17,8 @@ use App\Models\V1\Seguridad\UsuarioRol;
 use Database\Seeders\RestauranteSeeder;
 use Illuminate\Support\Facades\Artisan;
 use App\Models\V1\Catalogo\Presentacion;
+use App\Models\V1\Principal\Cliente;
+use App\Models\V1\Principal\Proveedor;
 
 class DatabaseSeeder extends Seeder
 {
@@ -159,6 +161,9 @@ class DatabaseSeeder extends Seeder
             'meses_id' => date('n'),
             'usuarios_id' => 1
         ]);
+
+        Proveedor::factory(100)->create();
+        Cliente::factory(100)->create();
 
         $this->call([RestauranteSeeder::class]);
         $this->call([HotelSeeder::class]);

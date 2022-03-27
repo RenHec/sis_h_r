@@ -147,3 +147,7 @@ exportingInit(Highcharts)
 
 //Animate
 import 'animate.css';
+
+//Notificacion Audible
+import NotificadorAudio from '../static/funcionesGlobales.js';
+Vue.use(NotificadorAudio);

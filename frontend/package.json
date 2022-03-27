@@ -1,8 +1,8 @@
 {
-  "name": "spa_inventario",
+  "name": "spa_hotel_restaurante",
   "version": "1.0.0",
-  "description": "Sistema para el control de inventario nivel 3, bienes e inmuebles",
-  "author": "MDH",
+  "description": "Sistema el control de restaurante y hotel",
+  "author": "SHR",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",

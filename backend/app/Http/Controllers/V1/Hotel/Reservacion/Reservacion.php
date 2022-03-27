@@ -186,7 +186,7 @@ class Reservacion extends ApiController
             $reservacion->save();
 
             DB::commit();
-            return $this->successResponse("La reservación con código {$reservacion->codigo} fue dado de anulada.");
+            return $this->successResponse("La reservación con código {$reservacion->codigo} fue anulada.");
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->errorResponse('Error en el controlador');

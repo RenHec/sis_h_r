@@ -33,6 +33,6 @@ class HotelSeeder extends Seeder
 
         HHabitacion::factory(20)->create();
         HHabitacionPrecio::factory(150)->create();
-        HKardexHistorial::factory(1000)->create();
+        HKardexHistorial::factory(250)->create();
     }
 }

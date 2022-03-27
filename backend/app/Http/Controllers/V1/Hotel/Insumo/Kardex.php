@@ -55,7 +55,7 @@ class Kardex extends ApiController
             );
 
             if ($kardex->stock_actual > 0) {
-                $this->historial_kardex("=", $kardex->stock_actual, $kardex->stock_actual, 0, $kardex, $producto->nombre);
+                $this->historial_kardex("=", $kardex->stock_actual, $kardex->stock_actual, $producto->id, $kardex, $producto->nombre, $producto->getTable(), "Producto - {$producto->id}");
             }
 
             DB::commit();
@@ -108,7 +108,7 @@ class Kardex extends ApiController
                 $kardex->stock_inicial = $request->stock_inicial;
                 $kardex->activo = $request->stock_inicial > 0 ? true : false;
 
-                $this->historial_kardex("=", $kardex->stock_inicial, $kardex->stock_inicial, 0, $kardex, $producto->nombre);
+                $this->historial_kardex("=", $kardex->stock_inicial, $kardex->stock_inicial, 0, $kardex, $producto->nombre, $producto->getTable(), "Producto - {$producto->id}");
             }
             $kardex->save();
 

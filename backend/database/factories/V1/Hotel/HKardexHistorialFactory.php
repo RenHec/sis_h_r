@@ -46,15 +46,15 @@ class HKardexHistorialFactory extends Factory
         );
 
         return [
-            'documento' => "Kardex - {$kardex->id}",
+            'documento' => "Producto - {$kardex->id}",
             'stock_anterior' => 0,
             'signo' => "=",
             'stock_nuevo' => $stock,
             'descripcion' => "Se creo el inventario para el producto {$producto->nombre}",
-            'h_insumos_detalles_id' => 0,
-            'h_check_in_id' => 0,
+            'tabla_id' => $producto->id,
             'h_kardex_id' => $kardex->id,
-            'usuarios_id' => $producto->usuarios_id
+            'usuarios_id' => $producto->usuarios_id,
+            'tabla' => $producto->getTable()
         ];
     }
 }

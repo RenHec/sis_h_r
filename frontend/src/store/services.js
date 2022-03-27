@@ -62,13 +62,14 @@ import HabitacionPrecioService from '../services/hotel/HabitacionPrecioService'
 import InsumoService from '../services/hotel/InsumoService'
 import KardexService from '../services/hotel/KardexService'
 import ReservacionService from '../services/hotel/ReservacionService'
-//import CheckInService from '../services/hotel/CheckInService'
+import CheckInService from '../services/hotel/CheckInService'
+import CheckOutService from '../services/hotel/CheckOutService'
 /* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
-let baseUrl = 'http://localhost:8001/hotel_restuarante/backend/public/'
-//let baseUrl = 'http://64.225.43.65/multi_api/'
+
+let baseUrl = process.env.BASE_URL
 let token_data = $cookies.get('token_data')
-let restaurantUrl = 'api/v1/restaurante/'
-let hotelUrl = 'servicio/hotel/version_uno/'
+let restaurantUrl = process.env.PREFIX_RESTAURANT
+let hotelUrl = process.env.PREFIX_HOTEL
 
 // Axios Configuration
 Axios.defaults.headers.common.Accept = 'application/json'
@@ -175,5 +176,6 @@ export default {
   InsumoService: new InsumoService(Axios, baseUrl, hotelUrl),
   KardexService: new KardexService(Axios, baseUrl, hotelUrl),
   ReservacionService: new ReservacionService(Axios, baseUrl, hotelUrl),
-  //CheckInService: new CheckInService(Axios, baseUrl, hotelUrl),
+  CheckInService: new CheckInService(Axios, baseUrl, hotelUrl),
+  CheckOutService: new CheckOutService(Axios, baseUrl, hotelUrl),
 }

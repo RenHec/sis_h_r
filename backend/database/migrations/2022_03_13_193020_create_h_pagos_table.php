@@ -18,7 +18,11 @@ class CreateHPagosTable extends Migration
             $table->string('nit', 15)->default('CF');
             $table->string('nombre', 200);
             $table->string('ubicacion', 350)->nullable();
+            $table->string('vaucher_pago', 20)->nullable();
 
+            $table->longText('detalle');
+            $table->boolean('factura')->default(false);
+            $table->decimal('descuento', 11, 2)->default(0);
             $table->decimal('total', 11, 2);
 
             $table->foreignId('h_reservaciones_id')->constrained('h_reservaciones');
