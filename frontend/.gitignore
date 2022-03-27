@@ -1,5 +1,6 @@
 # Logs
 logs
+
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -56,8 +57,7 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+config/
 
 # next.js build output
 .next
-
