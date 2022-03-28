@@ -22,6 +22,7 @@ class CreateHPagosTable extends Migration
 
             $table->longText('detalle');
             $table->boolean('factura')->default(false);
+            $table->decimal('sub_total', 11, 2)->default(0);
             $table->decimal('descuento', 11, 2)->default(0);
             $table->decimal('total', 11, 2);
 

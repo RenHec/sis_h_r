@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\V1\Hotel\HReservacion;
 use Intervention\Image\Facades\Image;
 use App\Http\Controllers\ApiController;
+use App\Models\V1\Hotel\HReservacionDetalle;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Exception\ImageException;
@@ -87,6 +88,7 @@ class CheckOut extends ApiController
             }
 
             HReservacion::where('id', $distribucion_check->h_reservaciones_id)->update(['check_out' => true]);
+            HReservacionDetalle::where('h_reservaciones_id', $distribucion_check->h_reservaciones_id)->update(['disponible' => true]);
 
             DB::commit();
 
@@ -96,7 +98,7 @@ class CheckOut extends ApiController
             if ($e instanceof ImageException) {
                 return $this->errorResponse('Ocurrio un problema al grabar la firma del check out');
             } else if ($e instanceof QueryException) {
-                return $this->errorResponse($e->getMessage());
+                return $this->errorResponse('Ocurrio un problema al grabar la información del check out');
             }
             return $e->getCode() === 1 ? $this->errorResponse($e->getMessage()) : $this->errorResponse('Error en el controlador');
         }
@@ -120,10 +122,10 @@ class CheckOut extends ApiController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\V1\Hotel\HCheckOut  $check_out
+     * @param  \App\Models\V1\Hotel\HReservacion  $check_out
      * @return \Illuminate\Http\Response
      */
-    public function destroy(HCheckOut $check_out)
+    public function destroy(HReservacion $check_out)
     {
         try {
             DB::beginTransaction();
@@ -158,6 +160,8 @@ class CheckOut extends ApiController
 
             $check_out->check_out = false;
             $check_out->save();
+
+            HReservacionDetalle::where('h_reservaciones_id', $check_out->id)->update(['disponible' => false]);
 
             Storage::disk('firma')->exists($foto) ? Storage::disk('firma')->delete($foto) : null;
 

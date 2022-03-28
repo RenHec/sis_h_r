@@ -32,9 +32,6 @@ class Reservacion extends ApiController
                 case 'o': //devuelve todas las reservaciones que se encuentran en check out
                     $data = HReservacion::out()->get();
                     break;
-                case 'p': //devuelve todas las reservaciones que fueron pagadas
-                    $data = HReservacion::pagado()->get();
-                    break;
                 case 'a': //devuelve todas las reservaciones que se encuentran anuladas
                     $data = HReservacion::anulado()->get();
                     break;

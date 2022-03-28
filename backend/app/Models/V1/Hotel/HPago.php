@@ -14,7 +14,7 @@ class HPago extends Model
 
     protected $table = 'h_pagos';
 
-    protected $fillable = ['nit', 'nombre', 'ubicacion', 'vaucher_pago', 'detalle', 'factura', 'descuento', 'total', 'h_reservaciones_id', 'tipos_pagos_id', 'usuarios_id'];
+    protected $fillable = ['nit', 'nombre', 'ubicacion', 'vaucher_pago', 'detalle', 'factura', 'sub_total', 'descuento', 'total', 'h_reservaciones_id', 'tipos_pagos_id', 'usuarios_id'];
 
     /**
      * The attributes that should be cast to native types.
@@ -24,6 +24,7 @@ class HPago extends Model
     protected $casts = [
         'created_at' => 'datetime:d/m/Y h:i:s a',
         'factura' => 'boolean',
+        'sub_total' => 'float',
         'descuento' => 'float',
         'total' => 'float',
         'detalle' => 'array'

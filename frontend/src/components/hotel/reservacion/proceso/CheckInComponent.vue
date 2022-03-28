@@ -461,9 +461,6 @@ export default {
       this.form.check_out = []
       this.editedIndex = false
 
-      this.selected = -1
-      this.stock_general = []
-
       this.lastPos = this.mousePos
       this.dialog = false
 
