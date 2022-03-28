@@ -305,7 +305,7 @@ export default {
 
   created() {
     this.initialize()
-    //this.getSelects()
+    this.getSelects()
   },
 
   methods: {
@@ -350,7 +350,7 @@ export default {
 
     getSelects() {
       this.$store.state.services.selectController
-        .vendedores()
+        .empleado()
         .then((r) => {
           this.vendedores = r.data.data
         })

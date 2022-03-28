@@ -20,6 +20,7 @@ use App\Models\V1\Catalogo\Departamento;
 use App\Models\V1\Catalogo\Presentacion;
 use App\Models\V1\Hotel\HHabitacionFoto;
 use App\Models\V1\Catalogo\SAT as V1CatalogoSAT;
+use App\Models\V1\Principal\Empleado;
 
 class SelectController extends ApiController
 {
@@ -332,5 +333,10 @@ class SelectController extends ApiController
         } catch (Exception $e) {
             return $this->errorResponse($e->getMessage());
         }
+    }
+
+    public function empleado()
+    {
+        return $this->showAll(Empleado::orderBy('primer_nombre')->get());
     }
 }

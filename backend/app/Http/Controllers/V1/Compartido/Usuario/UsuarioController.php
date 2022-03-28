@@ -8,7 +8,7 @@ use App\Models\V1\Seguridad\Usuario;
 use App\Models\V1\Catalogo\Municipio;
 use Intervention\Image\Facades\Image;
 use App\Http\Controllers\ApiController;
-use App\Models\V1\Seguridad\UsuarioEmpresa;
+use App\Models\V1\Principal\Empleado;
 use App\Models\V1\Seguridad\UsuarioRol;
 use Illuminate\Support\Facades\Storage;
 
@@ -120,7 +120,13 @@ class UsuarioController extends ApiController
                 $data['foto'] = $path;
             }
 
+            $persona = Empleado::create($data);
+
+            $this->bitacora_general("empleados", $this->acciones(0), $persona, "{$this->controlador_principal}@store");
+
+            $data['empleado_id'] = $persona->id;
             $user = Usuario::create($data);
+
             $this->bitacora_general($this->tabla_principal, $this->acciones(0), $user, "{$this->controlador_principal}@store");
 
             foreach ($request->roles as $value) {
@@ -256,18 +262,19 @@ class UsuarioController extends ApiController
 
         try {
             DB::beginTransaction();
+            $persona = Empleado::find($user->empleado_id);
+            $persona->cui = $request->cui;
+            $persona->primer_nombre = $request->primer_nombre;
+            $persona->segundo_nombre = $request->segundo_nombre;
+            $persona->primer_apellido = $request->primer_apellido;
+            $persona->segundo_apellido = $request->segundo_apellido;
+            $persona->email = $request->email;
+            $persona->ubicacion = $request->ubicacion;
+            $persona->telefono = $request->telefono;
+            $persona->departamento_id = Municipio::find($request->municipio_id['id'])->departamento_id;
+            $persona->municipio_id = $request->municipio_id['id'];
+
             $user->cui = $request->cui;
-            $user->primer_nombre = $request->primer_nombre;
-            $user->segundo_nombre = $request->segundo_nombre;
-            $user->primer_apellido = $request->primer_apellido;
-            $user->segundo_apellido = $request->segundo_apellido;
-            $user->apellido_casada = $request->apellido_casada;
-            $user->email = $request->email;
-            $user->observacion = $request->observacion;
-            $user->ubicacion = $request->ubicacion;
-            $user->telefono = $request->telefono;
-            $user->departamento_id = Municipio::find($request->municipio_id['id'])->departamento_id;
-            $user->municipio_id = $request->municipio_id['id'];
 
             if (!is_null($request->foto)) {
                 Storage::disk('user')->exists($user->foto) ? Storage::disk('user')->delete($user->foto) : null;
@@ -280,26 +287,17 @@ class UsuarioController extends ApiController
                 $image->encode('jpg', 70);
                 $path = "{$request->cui}.jpg";
                 Storage::disk('user')->put($path, $image);
-                $user->foto = $path;
+                $persona->foto = $path;
             }
 
-            if (!$user->isDirty())
+            if (!$user->isDirty() && !$persona->isDirty())
                 $this->errorResponse('No hay datos para actualizar', 423);
 
+            $persona->save();
+            $this->bitacora_general("empleados", $this->acciones(1), $persona, "{$this->controlador_principal}@update");
             $user->save();
             $this->bitacora_general($this->tabla_principal, $this->acciones(1), $user, "{$this->controlador_principal}@update");
 
-            if ($this->traInformacion($request->empresas_id)) {
-                UsuarioEmpresa::where('usuarios_id', $user->id)->delete();
-                $empresa = UsuarioEmpresa::create(
-                    [
-                        'empresas_id' => $request->empresas_id['id'],
-                        'usuarios_id' => $user->id
-                    ]
-                );
-
-                $this->bitacora_general('usuarios_empresas', $this->acciones(1), $empresa, "{$this->controlador_principal}@update");
-            }
             DB::commit();
             return $this->successResponse('Registro actualizado.');
         } catch (\Exception $e) {
@@ -365,10 +363,10 @@ class UsuarioController extends ApiController
                 $user->restore();
                 $message = 'activado';
             }
+            $this->bitacora_general($this->tabla_principal, $this->acciones(3), $user, "{$this->controlador_principal}@destroy");
 
-            return $this->successResponse("Registro {$message}");
-            $this->bitacora_general($this->tabla_principal, $this->acciones(3), $user, "{$this->controlador_principal}@update");
             DB::commit();
+            return $this->successResponse("Registro {$message}");
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->errorResponse('Error en el controlador');
@@ -379,13 +377,13 @@ class UsuarioController extends ApiController
     public function rules($id = null)
     {
         $validar = [
-            'cui' => is_null($id) ? 'required|numeric|digits_between:13,15|unique:usuarios,cui' : "required|numeric|digits_between:13,15|unique:usuarios,cui,{$id}",
+            'cui' => is_null($id) ? 'required|numeric|digits_between:13,15|unique:empleados,cui' : "required|numeric|digits_between:13,15|unique:empleados,cui,{$id}",
             'primer_nombre' => 'required|max:50',
             'segundo_nombre' => 'nullable|max:50',
             'primer_apellido' => 'required|max:50',
             'segundo_apellido' => 'nullable|max:50',
             'apellido_casada' => 'nullable|max:50',
-            'email' => is_null($id) ? 'required|email|max:75|unique:usuarios,email' : "required|email|max:75|unique:usuarios,email,{$id}",
+            'email' => 'email|max:75',
             'password' => is_null($id) ? 'required|min:6' : '',
             'observacion' => 'nullable|max:500',
             'ubicacion' => 'nullable|max:100',

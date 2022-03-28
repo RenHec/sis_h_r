@@ -52,6 +52,6 @@ class Rol extends Model
      */
     public function roles_menus()
     {
-        return $this->hasMany(RolMenu::class, 'rol_id', 'id');
+        return $this->hasMany(RolMenu::class, 'rol_id', 'id')->orderBy('menu_id');
     }
 }

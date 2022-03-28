@@ -46,18 +46,13 @@ class RolController extends ApiController
             $rol = Rol::create($request->all());
 
             foreach ($request->menus as $value) {
-                $menu_principal = Menu::find($value['id']);
-                $padre = RolMenu::where('rol_id', $rol->id)->where('menu_id', $menu_principal->padre)->frist();
-                if (is_null($padre)) {
-                    $insert = RolMenu::creat('rol_id', $rol->id)->where('menu_id', $menu_principal->padre);
-                    $this->bitacora_general($this->tabla_principal, $this->acciones(0), $insert, "{$this->controlador_principal}@store");
+                if ($value['principal'] > 0) {
+                    RolMenu::firstOrCreate(['rol_id' => $rol->id, 'menu_id' => $value['principal']]);
                 }
-
-                $rol_menu = RolMenu::where('rol_id', $rol->id)->where('menu_id', $value['id'])->frist();
-                if (is_null($rol_menu)) {
-                    $insert = RolMenu::creat('rol_id', $rol->id)->where('menu_id', $value['id']);
-                    $this->bitacora_general($this->tabla_principal, $this->acciones(0), $insert, "{$this->controlador_principal}@store");
+                if ($value['padre'] > 0) {
+                    RolMenu::firstOrCreate(['rol_id' => $rol->id, 'menu_id' => $value['padre']]);
                 }
+                RolMenu::firstOrCreate(['rol_id' => $rol->id, 'menu_id' => $value['id']]);
             }
 
             DB::commit();
@@ -65,7 +60,7 @@ class RolController extends ApiController
             return $this->successResponse('Registro agregado.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->errorResponse('Error en el controlador');
+            return $this->errorResponse($e->getMessage());
         }
     }
 

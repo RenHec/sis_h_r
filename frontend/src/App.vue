@@ -89,7 +89,6 @@
         ></v-img>
       </template>
       <v-app-bar-nav-icon @click="mostar"></v-app-bar-nav-icon>
-      <v-app-bar-title>{{ empresa }}</v-app-bar-title>
       <v-spacer></v-spacer>
 
       <v-menu bottom width="30%" rounded offset-y v-if="notIsVendedor">
@@ -247,9 +246,7 @@
                   </v-btn>
                 </v-list-item-title>
                 <v-list-item-subtitle
-                  v-html="
-                    `Hola ${userName}, actualmente estas operando con la empresa: <b>${empresa}</b>`
-                  "
+                  v-html="`Hola ${userName}</b>`"
                 ></v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -358,6 +355,7 @@ export default {
     },
 
     cambiar_password() {
+      console.log(this.$store.state.usuario)
       this.loading = true
       this.form.id = this.$store.state.usuario.id
       this.dialog_password = true
@@ -422,15 +420,8 @@ export default {
       let self = this
       return self.$store.state.menu
     },
-
-    empresa() {
-      return this.$store.state.empresa ? this.$store.state.empresa.nombre : null
-    },
-
     logo() {
-      return this.$store.state.empresa
-        ? this.$store.state.empresa.logo_path
-        : `${this.$store.state.base_url}img/logo.png`
+      return `${this.$store.state.base_url}img/logo.png`
     },
 
     fondo() {

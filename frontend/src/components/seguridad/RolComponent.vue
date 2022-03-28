@@ -326,7 +326,21 @@ export default {
           this.loading = false
         })
         .catch((r) => {
-          this.loading = false
+          if (r.response) {
+            this.loading = false
+            if (r.response.data.code === 404) {
+              this.$toastr.warning(r.response.data.error, 'Advertencia')
+              return
+            } else if (r.response.data.code === 423) {
+              this.$toastr.warning(r.response.data.error, 'Advertencia')
+              return
+            } else {
+              for (let value of Object.values(r.response.data)) {
+                this.$toastr.error(value, 'Mensaje')
+              }
+            }
+            return
+          }
         })
     },
 
@@ -391,7 +405,21 @@ export default {
               this.initialize()
             })
             .catch((r) => {
-              this.loading = false
+              if (r.response) {
+                this.loading = false
+                if (r.response.data.code === 404) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else if (r.response.data.code === 423) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else {
+                  for (let value of Object.values(r.response.data)) {
+                    this.$toastr.error(value, 'Mensaje')
+                  }
+                }
+                return
+              }
             })
         } else {
           this.close()
@@ -437,7 +465,21 @@ export default {
               this.initialize()
             })
             .catch((r) => {
-              this.loading = false
+              if (r.response) {
+                this.loading = false
+                if (r.response.data.code === 404) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else if (r.response.data.code === 423) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else {
+                  for (let value of Object.values(r.response.data)) {
+                    this.$toastr.error(value, 'Mensaje')
+                  }
+                }
+                return
+              }
             })
         } else {
           this.close()
@@ -478,7 +520,21 @@ export default {
               this.initialize()
             })
             .catch((r) => {
-              this.loading = false
+              if (r.response) {
+                this.loading = false
+                if (r.response.data.code === 404) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else if (r.response.data.code === 423) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else {
+                  for (let value of Object.values(r.response.data)) {
+                    this.$toastr.error(value, 'Mensaje')
+                  }
+                }
+                return
+              }
             })
         } else {
           this.close()
@@ -519,7 +575,21 @@ export default {
               this.initialize()
             })
             .catch((r) => {
-              this.loading = false
+              if (r.response) {
+                this.loading = false
+                if (r.response.data.code === 404) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else if (r.response.data.code === 423) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else {
+                  for (let value of Object.values(r.response.data)) {
+                    this.$toastr.error(value, 'Mensaje')
+                  }
+                }
+                return
+              }
             })
         } else {
           this.close()
@@ -550,7 +620,21 @@ export default {
           this.loading = false
         })
         .catch((r) => {
-          this.loading = false
+          if (r.response) {
+            this.loading = false
+            if (r.response.data.code === 404) {
+              this.$toastr.warning(r.response.data.error, 'Advertencia')
+              return
+            } else if (r.response.data.code === 423) {
+              this.$toastr.warning(r.response.data.error, 'Advertencia')
+              return
+            } else {
+              for (let value of Object.values(r.response.data)) {
+                this.$toastr.error(value, 'Mensaje')
+              }
+            }
+            return
+          }
         })
     },
 
@@ -597,28 +681,6 @@ export default {
             }
           })
           temporal.push(primer_nivel)
-        }
-      })
-
-      items.forEach(function (item) {
-        if (item.menu.padre == 0 && item.menu.mostrar) {
-          var object = new Object()
-          object.id = item.id
-          object.name = item.menu.nombre
-          object.icon = item.menu.icono
-          object.children = []
-          items.forEach(function (child, i) {
-            if (item.menu.id == child.menu.padre && child.menu.mostrar) {
-              var object2 = new Object()
-              object2.id = child.id
-              object2.name = child.menu.nombre
-              object2.icon = child.menu.icono
-
-              object.children.push(object2)
-            }
-          })
-
-          temporal.push(object)
         }
       })
 

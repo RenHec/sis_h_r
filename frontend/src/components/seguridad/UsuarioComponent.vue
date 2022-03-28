@@ -80,29 +80,6 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" md="4">
-                        <v-autocomplete
-                          v-model="form.empresas_id"
-                          :items="empresas"
-                          chips
-                          label="Seleccionar empresa"
-                          outlined
-                          :clearable="true"
-                          :deletable-chips="true"
-                          item-text="nombre"
-                          item-value="id"
-                          return-object
-                          v-validate="'required'"
-                          data-vv-scope="crear_usuario"
-                          data-vv-name="empresa"
-                        ></v-autocomplete>
-                        <FormError
-                          :attribute_name="'crear_usuario.empresa'"
-                          :errors_form="errors"
-                        ></FormError>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col cols="12" md="4">
                         <v-text-field
                           counter
                           outlined
@@ -150,7 +127,7 @@
                           :errors_form="errors"
                         ></FormError>
                       </v-col>
-                      <v-col cols="12" md="4">
+                      <v-col cols="12" md="6">
                         <v-text-field
                           counter
                           outlined
@@ -166,7 +143,7 @@
                           :errors_form="errors"
                         ></FormError>
                       </v-col>
-                      <v-col cols="12" md="4">
+                      <v-col cols="12" md="6">
                         <v-text-field
                           counter
                           outlined
@@ -179,22 +156,6 @@
                         ></v-text-field>
                         <FormError
                           :attribute_name="'crear_usuario.segundo apellido'"
-                          :errors_form="errors"
-                        ></FormError>
-                      </v-col>
-                      <v-col cols="12" md="4">
-                        <v-text-field
-                          counter
-                          outlined
-                          v-model="form.apellido_casada"
-                          type="text"
-                          label="apellido de casad@"
-                          data-vv-scope="crear_usuario"
-                          data-vv-name="apellido de casad@"
-                          v-validate="'max:50'"
-                        ></v-text-field>
-                        <FormError
-                          :attribute_name="'crear_usuario.apellido de casad@'"
                           :errors_form="errors"
                         ></FormError>
                       </v-col>
@@ -240,7 +201,7 @@
                           v-model="number"
                           default-country-code="GT"
                           size="lg"
-                          :dark="true"
+                          :dark="false"
                           :translations="translations"
                           show-code-on-list
                           @update="validar_numero($event)"
@@ -311,25 +272,6 @@
                         ></FormError>
                       </v-col>
                       <v-col cols="12" md="12">
-                        <v-textarea
-                          counter
-                          outlined
-                          auto-grow
-                          rows="3"
-                          row-height="15"
-                          v-model="form.observation"
-                          type="text"
-                          label="Observaciones"
-                          data-vv-name="observaciones"
-                          v-validate="'max:250'"
-                          @input="form.observation = $event.toUpperCase()"
-                        ></v-textarea>
-                        <FormError
-                          :attribute_name="'observaciones'"
-                          :errors_form="errors"
-                        ></FormError>
-                      </v-col>
-                      <v-col cols="12" md="12">
                         <v-file-input
                           outlined
                           v-model="temp"
@@ -379,12 +321,15 @@
           <br />
           <div class="text-center">
             <v-avatar size="75">
-              <img :src="item.picture" :alt="item.full_name" />
+              <img
+                :src="item.empleado.picture"
+                :alt="item.empleado.full_name"
+              />
             </v-avatar>
             <br />
-            {{ item.cui }}
+            {{ item.empleado.cui }}
             <br />
-            {{ item.full_name }}
+            {{ item.empleado.full_name }}
           </div>
           <br />
         </template>
@@ -445,7 +390,7 @@
       </v-data-table>
 
       <v-dialog v-model="dialog_rol" color="primary">
-        <v-card height="400px">
+        <v-card>
           <v-overlay :value="loading">
             <v-progress-circular indeterminate size="64"></v-progress-circular>
           </v-overlay>
@@ -586,28 +531,23 @@ export default {
       temp: null,
       headers: [
         {
-          text: 'Empresa',
-          align: 'start',
-          value: 'empresas.empresa.nombre',
-        },
-        {
           text: 'Nombre',
-          align: 'start',
+          align: 'center',
           value: 'name',
         },
         {
           text: 'E-mail',
-          align: 'start',
-          value: 'email',
+          align: 'center',
+          value: 'empleado.email',
         },
         {
           text: 'Teléfono',
-          align: 'start',
-          value: 'telefono',
+          align: 'center',
+          value: 'empleado.telefono',
         },
         {
           text: 'Rol',
-          align: 'start',
+          align: 'center',
           value: 'users_rols',
         },
         { text: 'Opciones', value: 'actions', sortable: false },
@@ -622,7 +562,6 @@ export default {
       desserts: [],
       municipios: [],
       roles: [],
-      empresas: [],
       form: {
         id: 0,
         cui: null,
@@ -639,7 +578,6 @@ export default {
         municipio_id: null,
         roles: [],
         password: null,
-        empresas_id: null,
       },
       form_rol: {
         id: null,
@@ -670,7 +608,6 @@ export default {
     this.initialize()
     this.getRoles()
     this.getMunicipios()
-    this.getEmpresa()
   },
 
   methods: {
@@ -701,7 +638,6 @@ export default {
       this.form.municipio_id = null
       this.form.roles = []
       this.form.password = null
-      this.form.empresas_id = null
 
       this.$validator.reset()
       this.$validator.reset()
@@ -736,21 +672,18 @@ export default {
 
     mapear(item) {
       this.form.id = item.id
-      this.form.cui = item.cui
-      this.form.primer_nombre = item.primer_nombre
-      this.form.segundo_nombre = item.segundo_nombre
-      this.form.primer_apellido = item.primer_apellido
-      this.form.segundo_apellido = item.segundo_apellido
-      this.form.apellido_casada = item.apellido_casada
-      this.form.email = item.email
-      this.form.observation = item.observation
-      this.form.ubicacion = item.ubicacion
-      this.form.telefono = item.telefono
-      this.form.municipio_id = item.municipio
-      this.imagen_upload = item.picture
-      this.form.empresas_id = item.empresas.empresa
+      this.form.cui = item.empleado.cui
+      this.form.primer_nombre = item.empleado.primer_nombre
+      this.form.segundo_nombre = item.empleado.segundo_nombre
+      this.form.primer_apellido = item.empleado.primer_apellido
+      this.form.segundo_apellido = item.empleado.segundo_apellido
+      this.form.email = item.empleado.email
+      this.form.ubicacion = item.empleado.ubicacion
+      this.form.telefono = item.empleado.telefono
+      this.form.municipio_id = item.empleado.municipio
+      this.imagen_upload = item.empleado.picture
 
-      this.number = item.telefono
+      this.number = item.empleado.telefono
 
       this.editedIndex = true
       this.dialog = true
@@ -800,7 +733,21 @@ export default {
                   this.dialog_password = false
                 })
                 .catch((r) => {
-                  this.loading = false
+                  if (r.response) {
+                    this.loading = false
+                    if (r.response.data.code === 404) {
+                      this.$toastr.warning(r.response.data.error, 'Advertencia')
+                      return
+                    } else if (r.response.data.code === 423) {
+                      this.$toastr.warning(r.response.data.error, 'Advertencia')
+                      return
+                    } else {
+                      for (let value of Object.values(r.response.data)) {
+                        this.$toastr.error(value, 'Mensaje')
+                      }
+                    }
+                    return
+                  }
                 })
             } else {
               this.close()
@@ -858,7 +805,21 @@ export default {
               this.initialize()
             })
             .catch((r) => {
-              this.loading = false
+              if (r.response) {
+                this.loading = false
+                if (r.response.data.code === 404) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else if (r.response.data.code === 423) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else {
+                  for (let value of Object.values(r.response.data)) {
+                    this.$toastr.error(value, 'Mensaje')
+                  }
+                }
+                return
+              }
             })
         } else {
           this.close()
@@ -900,7 +861,21 @@ export default {
               this.initialize()
             })
             .catch((r) => {
-              this.loading = false
+              if (r.response) {
+                this.loading = false
+                if (r.response.data.code === 404) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else if (r.response.data.code === 423) {
+                  this.$toastr.warning(r.response.data.error, 'Advertencia')
+                  return
+                } else {
+                  for (let value of Object.values(r.response.data)) {
+                    this.$toastr.error(value, 'Mensaje')
+                  }
+                }
+                return
+              }
             })
         } else {
           this.close()
@@ -922,7 +897,12 @@ export default {
             .then((r) => {
               this.loading = false
 
+              this.$toastr.success(r.data, 'Mensaje')
+              this.initialize()
+            })
+            .catch((r) => {
               if (r.response) {
+                this.loading = false
                 if (r.response.data.code === 404) {
                   this.$toastr.warning(r.response.data.error, 'Advertencia')
                   return
@@ -936,12 +916,6 @@ export default {
                 }
                 return
               }
-
-              this.$toastr.success(r.data, 'Mensaje')
-              this.initialize()
-            })
-            .catch((r) => {
-              this.loading = false
             })
         } else {
           this.close()
@@ -1046,7 +1020,21 @@ export default {
                   this.initialize()
                 })
                 .catch((r) => {
-                  this.loading = false
+                  if (r.response) {
+                    this.loading = false
+                    if (r.response.data.code === 404) {
+                      this.$toastr.warning(r.response.data.error, 'Advertencia')
+                      return
+                    } else if (r.response.data.code === 423) {
+                      this.$toastr.warning(r.response.data.error, 'Advertencia')
+                      return
+                    } else {
+                      for (let value of Object.values(r.response.data)) {
+                        this.$toastr.error(value, 'Mensaje')
+                      }
+                    }
+                    return
+                  }
                 })
             } else {
               this.close()

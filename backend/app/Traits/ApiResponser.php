@@ -456,7 +456,7 @@ trait ApiResponser
 
 		// FOOTER
 		$this->fpdf->SetY(-25);
-		is_null($qr) ? null : $this->fpdf->Image($qr, 27, 100, 25, 0, 'PNG');
+		//is_null($qr) ? null : $this->fpdf->Image($qr, 27, 100, 25, 0, 'PNG');
 		$this->fpdf->SetFont(
 			'Helvetica',
 			'',

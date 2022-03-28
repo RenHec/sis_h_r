@@ -35,10 +35,8 @@ const state = {
 
 const mutations = {
   setUser(state, data) {
-    state.usuario = data.user.empleado
-    state.empresa = null
+    state.usuario = data.user
     state.roles = data.roles
-    //state.configuracion = data.configuracion
   },
 
   setMenu(state, menu) {

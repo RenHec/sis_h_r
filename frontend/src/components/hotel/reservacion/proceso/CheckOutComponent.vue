@@ -323,6 +323,47 @@
         </v-col>
       </v-row>
     </v-col>
+    <v-col cols="12">
+      <v-dialog v-model="dialog_print" max-width="65%" persistent>
+        <v-card color="success">
+          <v-overlay :value="loading">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+          </v-overlay>
+          <v-card-title>
+            <span class="headline">
+              Imprimir documento
+            </span>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1" @click="dialog_print = false">
+              Cerrar
+            </v-btn>
+          </v-card-title>
+
+          <v-card-text v-if="documento_imprimir">
+            <v-container>
+              <v-row>
+                <v-col cols="12" md="12">
+                  <embed
+                    :src="documento_imprimir"
+                    type="application/pdf"
+                    width="100%"
+                    height="930"
+                    style="
+                      overflow: hidden;
+                      overflow-x: hidden;
+                      overflow-y: hidden;
+                      border: 1px solid #666ccc;
+                    "
+                    title="Comprobante"
+                    frameborder="1"
+                  />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+    </v-col>
   </v-row>
 </template>
 
@@ -341,6 +382,9 @@ export default {
       desserts: [],
 
       tipos_pago: [],
+
+      documento_imprimir: null,
+      dialog_print: false,
     }
   },
 
@@ -449,31 +493,43 @@ export default {
           }).then((result) => {
             if (result.value) {
               this.loading = true
-              this.$store.state.services.PagoService.store(item)
-                .then((r) => {
-                  this.loading = false
-                  if (r.response) {
-                    if (r.response.data.code === 404) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else if (r.response.data.code === 423) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else {
-                      for (let value of Object.values(r.response.data)) {
-                        this.$toastr.error(value, 'Mensaje')
-                      }
-                    }
+              this.$store.state.services.PagoService.store(item).then((r) => {
+                this.loading = false
+                if (r.response) {
+                  if (r.response.data.code === 404) {
+                    this.$toastr.warning(r.response.data.error, 'Advertencia')
                     return
+                  } else if (r.response.data.code === 423) {
+                    this.$toastr.warning(r.response.data.error, 'Advertencia')
+                    return
+                  } else {
+                    for (let value of Object.values(r.response.data)) {
+                      this.$toastr.error(value, 'Mensaje')
+                    }
                   }
+                  return
+                }
 
-                  this.$toastr.success(r.data.mensaje, 'Mensaje')
-                  this.notificador_audible(this.$store.state.audio.agregar)
-                  this.initialize()
+                this.documento_imprimir = null
+                this.dialog_print = false
+
+                this.$toastr.success(r.data.mensaje, 'Mensaje')
+                this.notificador_audible(this.$store.state.audio.agregar)
+                this.$swal({
+                  title: 'Imprimir',
+                  text: '¿Está seguro de realizar esta acción?',
+                  type: 'info',
+                  showCancelButton: true,
+                }).then((result) => {
+                  if (result.value) {
+                    this.documento_imprimir = r.data.pago
+                    this.dialog_print = true
+                    this.initialize()
+                  } else {
+                    this.initialize()
+                  }
                 })
-                .catch((r) => {
-                  this.loading = false
-                })
+              })
             }
           })
         }

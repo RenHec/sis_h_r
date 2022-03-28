@@ -46,4 +46,22 @@ class Menu extends Model
      * @var array
      */
     protected $dates = ['created_at', 'updated_at'];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['principal'];
+
+    /**
+     * Get the user's full name.
+     *
+     * @return string
+     */
+    public function getPrincipalAttribute()
+    {
+        $menu = Menu::find($this->padre);
+        return !is_null($menu) ? $menu->id : 0;
+    }
 }

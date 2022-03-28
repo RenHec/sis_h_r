@@ -26,8 +26,12 @@ class RolMenuController extends ApiController
         $this->validate($request, $this->rules(), $this->messages());
 
         foreach ($request->menus_id as $value) {
-            $menu_principal = Menu::find($value['id']);
-            RolMenu::firstOrCreate(['rol_id' => $request->id, 'menu_id' => $menu_principal->padre]);
+            if ($value['principal'] > 0) {
+                RolMenu::firstOrCreate(['rol_id' => $request->id, 'menu_id' => $value['principal']]);
+            }
+            if ($value['padre'] > 0) {
+                RolMenu::firstOrCreate(['rol_id' => $request->id, 'menu_id' => $value['padre']]);
+            }
             RolMenu::firstOrCreate(['rol_id' => $request->id, 'menu_id' => $value['id']]);
         }
 
