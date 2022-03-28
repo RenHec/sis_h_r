@@ -2,17 +2,18 @@
 
 namespace App\Traits;
 
-use App\Models\V1\Catalogo\Municipio;
 use Illuminate\Http\Request;
+use Warrior\Ticketer\Ticketer;
 use App\Models\V1\Hotel\HKardex;
 use Illuminate\Support\Collection;
+use App\Models\V1\Principal\Cliente;
 use Illuminate\Support\Facades\Auth;
+use App\Models\V1\Catalogo\Municipio;
 use App\Models\V1\Principal\CajaPago;
 use App\Models\V1\Seguridad\Bitacora;
+use App\Models\V1\Principal\Proveedor;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\V1\Hotel\HKardexHistorial;
-use App\Models\V1\Principal\Cliente;
-use App\Models\V1\Principal\Proveedor;
 
 trait ApiResponser
 {
@@ -231,61 +232,6 @@ trait ApiResponser
 		return $persona;
 	}
 
-	/*protected function crear_cliente_proveedor($persona, $controlador, $request_normal)
-	{
-		if ($request_normal) {
-			$nombre = $persona->representacion == Persona::INDIVIDUAL ? "{$persona->nombres} {$persona->apellidos}" : $persona->completo;
-			$persona_existe = Persona::where('completo', $nombre)->first();
-			if (is_null($persona_existe)) {
-				$persona = Persona::create([
-					'representacion' => $persona->representacion,
-					'nit' => $persona->nit,
-					'nombres' => $persona->nombres,
-					'apellidos' => $persona->apellidos,
-					'completo' => $nombre,
-					'telefono' => $this->traInformacion($persona->telefono) ? $persona->telefono : null,
-					'celular' => $this->traInformacion($persona->celular) ? $persona->celular : null,
-					'direccion' => $persona->direccion,
-					'email' => $this->traInformacion($persona->email) ? $persona->email : null,
-					'limite_credito_cliente' => 0,
-					'limite_credito_proveedor' => 0,
-					'es_proveedor' => $persona->es_proveedor,
-					'municipios_id' => $persona->municipios_id['id'],
-					'departamentos_id' => $persona->municipios_id['departamento_id'],
-					'usuarios_id' => Auth::user()->id
-				]);
-
-				$this->bitacora_general('personas', $this->acciones(0), $persona, $controlador);
-			} else {
-				$persona = $persona_existe;
-			}
-		} else {
-			$nombre = $persona['representacion'] == Persona::INDIVIDUAL ? "{$persona['nombres']} {$persona['apellidos']}" : $persona['completo'];
-			$persona_existe = Persona::where('completo', $nombre)->first();
-			if (is_null($persona_existe)) {
-				$persona = Persona::create([
-					'representacion' => $persona['representacion'],
-					'nit' => $this->traInformacion($persona['nit']) ? $persona['nit'] : 'CF',
-					'nombres' => $persona['nombres'],
-					'apellidos' => $persona['apellidos'],
-					'completo' => $nombre,
-					'limite_credito_cliente' => 0,
-					'limite_credito_proveedor' => 0,
-					'es_proveedor' => $persona['es_proveedor'],
-					'municipios_id' => $persona['municipios_id']['id'],
-					'departamentos_id' => $persona['municipios_id']['departamento_id'],
-					'usuarios_id' => Auth::user()->id
-				]);
-
-				$this->bitacora_general('personas', $this->acciones(0), $persona, $controlador);
-			} else {
-				$persona = $persona_existe;
-			}
-		}
-
-		return $persona;
-	}*/
-
 	protected function bitacora_general($tabla, $accion, $instance, $controlador, $user = null)
 	{
 		if (is_null($user)) {
@@ -316,6 +262,38 @@ trait ApiResponser
 		$caja->save();
 
 		$this->bitacora_general('cajas_pagos', $this->acciones(0), $pago, $controlador);
+	}
+
+	protected function generarTicket($hotel, $restaurante)
+	{
+		//https://github.com/AlexanderBV/ticketer
+
+		$serie = is_null($restaurante) ? date("Y") : "deivis lo tuyo";
+		$numero_comprobante = is_null($restaurante) ? $hotel->correlativo : "deivis lo tuyo";
+		$cliente = is_null($restaurante) ? $hotel->nombre : "deivis lo tuyo";
+		$nit = is_null($restaurante) ? $hotel->nit : "deivis lo tuyo";
+		$direccion = is_null($restaurante) ? $hotel->ubicacion : "deivis lo tuyo";
+		$tipo_detalle = is_null($restaurante) ? 'DETALLADO' : 'CONSUMO';
+
+		$ticketer = new Ticketer();
+		$ticketer->init('dummy');
+		$ticketer->setFechaEmision(date("d/m/Y H:i:s"));
+		$ticketer->setComprobante('COMPROBANTE');
+		$ticketer->setSerieComprobante($serie);
+		$ticketer->setNumeroComprobante($numero_comprobante);
+		$ticketer->setCliente($cliente);
+		$ticketer->setTipoDocumento(1);
+		$ticketer->setNumeroDocumento($nit);
+		$ticketer->setDireccion($direccion);
+		$ticketer->setTipoDetalle($tipo_detalle);
+
+		foreach ($hotel->detalle as $agregado) {
+			// $nombre, $cantidad, $precio, $icbper, $gratuita
+			$ticketer->addItem($agregado['descripcion'], 1, $agregado['sub_total'], false, false);
+		}
+
+		$ticketer->setDescuento($hotel->descuento);
+		return $ticketer->printComprobante(true);
 	}
 
 	protected function traInformacion($data)

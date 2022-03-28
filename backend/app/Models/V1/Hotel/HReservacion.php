@@ -88,29 +88,13 @@ class HReservacion extends Model
      */
     public function scopeOut($query) //Lista para pasar a Pago
     {
-        return $query->with('check_in_list', 'check_out_list')
+        return $query->with('check_in_list', 'check_out_list', 'detalle', 'cliente.municipio')
             ->where('reservacion', true)
             ->where('check_in', true)
             ->where('check_out', true)
             ->where('pagado', false)
             ->where('anulado', false)
             ->orderBy('id');
-    }
-
-    /**
-     * Scope a query to only include pagado
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopePagado($query) //Todas las que fueron pagadas
-    {
-        return $query->where('reservacion', false)
-            ->where('check_in', true)
-            ->where('check_out', true)
-            ->where('pagado', true)
-            ->where('anulado', false)
-            ->orderByDesc('id');
     }
 
     /**
@@ -173,15 +157,5 @@ class HReservacion extends Model
     public function check_out_list()
     {
         return $this->hasMany(HCheckOut::class, 'h_reservaciones_id', 'id');
-    }
-
-    /**
-     * Get the pago associated.
-     *
-     * @return array
-     */
-    public function pago()
-    {
-        return $this->hasOne(HCheckOut::class, 'h_reservaciones_id', 'id');
     }
 }

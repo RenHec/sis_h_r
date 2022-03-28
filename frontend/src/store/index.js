@@ -26,6 +26,7 @@ const state = {
     agregar: `${process.env.BASE_URL}audio/agregar.mp3`,
     anular: `${process.env.BASE_URL}audio/anular.mp3`,
   },
+  logo_ticket: `${process.env.BASE_URL}img/logo_ticket.png`,
 
   base_url: process.env.BASE_URL,
   client_id: process.env.CLIENT_API,

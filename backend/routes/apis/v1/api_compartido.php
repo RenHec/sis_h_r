@@ -42,7 +42,7 @@ Route::name('select.presentacion')->get('select/presentacion', 'Catalogo\SelectC
 Route::name('select.cliente')->get('select/cliente', 'Catalogo\SelectController@cliente');
 Route::name('select.proveedor')->get('select/proveedor', 'Catalogo\SelectController@proveedor');
 Route::name('select.mes')->get('select/mes', 'Catalogo\SelectController@mes');
-Route::name('select.tipo_pago')->get('select/tipo_pago/{movimiento}', 'Catalogo\SelectController@tipo_pago');
+Route::name('select.tipo_pago')->get('select/tipo_pago', 'Catalogo\SelectController@tipo_pago');
 Route::name('select.tipo_cama')->get('select/tipo_cama', 'Catalogo\SelectController@tipo_cama');
 Route::name('select.estado_habitacion')->get('select/estado_habitacion', 'Catalogo\SelectController@estado_habitacion');
 Route::name('select.producto_insumo')->get('select/producto_insumo', 'Catalogo\SelectController@producto_insumo');

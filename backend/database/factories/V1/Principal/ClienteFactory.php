@@ -23,12 +23,13 @@ class ClienteFactory extends Factory
     public function definition()
     {
         $municipio = Municipio::all()->random();
+        $direccion = $this->faker->randomElement([$this->faker->address, null]);
         return [
             'nit' => $this->faker->unique()->numerify('########'),
             'nombre' => $this->faker->randomElement([$this->faker->firstNameMale, $this->faker->firstNameFemale]),
             'telefonos' => $this->faker->randomElement([$this->faker->unique()->numerify('########'), null]),
             'emails' => $this->faker->randomElement([$this->faker->unique()->freeEmail, null]),
-            'direcciones' => $this->faker->randomElement([$this->faker->address, null]),
+            'direcciones' => $direccion,
             'departamentos_id' => $municipio->departamento_id,
             'municipios_id' => $municipio->id,
             'usuarios_id' => 1

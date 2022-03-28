@@ -33,6 +33,7 @@ class HKardexHistorialFactory extends Factory
             ]
         );
         $stock = $this->faker->numberBetween(0, 5000);
+        $check_in = HKardex::where('check_in', true)->count();
         $kardex = HKardex::create(
             [
                 'stock_actual' => $stock,
@@ -41,7 +42,7 @@ class HKardexHistorialFactory extends Factory
                 'h_productos_id' => $producto->id,
                 'usuarios_id'  => $producto->usuarios_id,
                 'activo' => $stock > 0 ? true : false,
-                'check_in' => $this->faker->randomElement([true, false])
+                'check_in' => $check_in < 26 ? $this->faker->randomElement([true, false]) : false
             ]
         );
 
