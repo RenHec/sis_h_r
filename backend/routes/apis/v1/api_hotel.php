@@ -26,3 +26,5 @@ Route::resource('/kardex', 'Insumo\KardexController')->only('index', 'store', 's
 Route::resource('/reservacion', 'Reservacion\ReservacionController')->only('index', 'store', 'destroy');
 Route::resource('/check_in', 'Reservacion\CheckInController')->only('show', 'store', 'destroy');
 Route::resource('/check_out', 'Reservacion\CheckOutController')->only('show', 'store', 'destroy');
+
+Route::resource('/pago', 'Pago\PagoController')->only('index', 'show', 'store', 'destroy');

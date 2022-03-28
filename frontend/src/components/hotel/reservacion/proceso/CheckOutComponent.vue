@@ -20,16 +20,16 @@
           <v-icon :color="colorTolbar">sync</v-icon>
         </v-btn>
       </v-toolbar>
-      <v-card tile :loading="loading">
-        <v-card-text>
-          <v-container fluid>
-            <v-row>
-              <v-col
-                cols="12"
-                md="6"
-                v-for="(reservacion, index) in filteredItems"
-                v-bind:key="index"
-              >
+      <v-row>
+        <v-col
+          cols="12"
+          md="6"
+          v-for="(reservacion, index) in filteredItems"
+          v-bind:key="index"
+        >
+          <v-card tile :loading="loading">
+            <v-card-text>
+              <v-container fluid>
                 <div class="invoice-box">
                   <table cellpadding="0" cellspacing="0">
                     <tr class="top">
@@ -44,7 +44,7 @@
                             </td>
 
                             <td>
-                              {{ `Comprobante #${reservacion.id}` }}
+                              {{ `Reservación ${reservacion.codigo}` }}
                               <br />
                               NIT
                               <br />
@@ -248,11 +248,80 @@
                     </tr>
                   </table>
                 </div>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-      </v-card>
+              </v-container>
+            </v-card-text>
+            <v-card-actions>
+              <v-row justify="center" align="center">
+                <v-btn-toggle dark rounded>
+                  <v-tooltip bottom color="blue lighten-2">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        text
+                        icon
+                        color="blue lighten-2"
+                        @click="store(reservacion.codigo, reservacion)"
+                        dark
+                        v-bind="attrs"
+                        v-on="on"
+                        :loading="loading"
+                        :disabled="loading"
+                      >
+                        <v-icon>local_atm</v-icon>
+                      </v-btn>
+                    </template>
+                    <span
+                      v-text="`Pagar la reservación ${reservacion.codigo}`"
+                    ></span>
+                  </v-tooltip>
+                  <v-tooltip bottom color="orange lighten-2">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        text
+                        icon
+                        color="orange lighten-2"
+                        dark
+                        v-bind="attrs"
+                        v-on="on"
+                        :loading="loading"
+                        :disabled="loading"
+                      >
+                        <v-icon>info</v-icon>
+                      </v-btn>
+                    </template>
+                    <span
+                      v-text="
+                        `Ver el información de la reservación ${reservacion.codigo}`
+                      "
+                    ></span>
+                  </v-tooltip>
+                  <v-tooltip bottom color="red lighten-2">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        text
+                        icon
+                        color="red lighten-2"
+                        @click="destroy(reservacion)"
+                        dark
+                        v-bind="attrs"
+                        v-on="on"
+                        :loading="loading"
+                        :disabled="loading"
+                      >
+                        <v-icon>report_problem</v-icon>
+                      </v-btn>
+                    </template>
+                    <span
+                      v-text="
+                        `Eliminar check out para la reservación ${reservacion.codigo}`
+                      "
+                    ></span>
+                  </v-tooltip>
+                </v-btn-toggle>
+              </v-row>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-col>
   </v-row>
 </template>
@@ -367,6 +436,48 @@ export default {
           this.tipos_pago = r.data.data
         })
         .catch((r) => {})
+    },
+
+    store(scope, item) {
+      this.$validator.validateAll(scope).then((result) => {
+        if (result) {
+          this.$swal({
+            title: 'Pago',
+            text: '¿Está seguro de realizar esta acción?',
+            type: 'success',
+            showCancelButton: true,
+          }).then((result) => {
+            if (result.value) {
+              this.loading = true
+              this.$store.state.services.PagoService.store(item)
+                .then((r) => {
+                  this.loading = false
+                  if (r.response) {
+                    if (r.response.data.code === 404) {
+                      this.$toastr.warning(r.response.data.error, 'Advertencia')
+                      return
+                    } else if (r.response.data.code === 423) {
+                      this.$toastr.warning(r.response.data.error, 'Advertencia')
+                      return
+                    } else {
+                      for (let value of Object.values(r.response.data)) {
+                        this.$toastr.error(value, 'Mensaje')
+                      }
+                    }
+                    return
+                  }
+
+                  this.$toastr.success(r.data.mensaje, 'Mensaje')
+                  this.notificador_audible(this.$store.state.audio.agregar)
+                  this.initialize()
+                })
+                .catch((r) => {
+                  this.loading = false
+                })
+            }
+          })
+        }
+      })
     },
 
     destroy(data) {

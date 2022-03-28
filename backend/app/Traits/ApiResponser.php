@@ -2,8 +2,8 @@
 
 namespace App\Traits;
 
+use Codedge\Fpdf\Fpdf\Fpdf;
 use Illuminate\Http\Request;
-use Warrior\Ticketer\Ticketer;
 use App\Models\V1\Hotel\HKardex;
 use Illuminate\Support\Collection;
 use App\Models\V1\Principal\Cliente;
@@ -13,10 +13,14 @@ use App\Models\V1\Principal\CajaPago;
 use App\Models\V1\Seguridad\Bitacora;
 use App\Models\V1\Principal\Proveedor;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use App\Models\V1\Hotel\HKardexHistorial;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 trait ApiResponser
 {
+	private $fpdf;
+
 	protected function successResponse($data, $code = 200)
 	{
 		return response()->json($data, $code);
@@ -181,6 +185,7 @@ trait ApiResponser
 
 	protected function generadorCodigo(string $palabra, int $correlativo)
 	{
+		$correlativo = $correlativo === 0 ? 1 : $correlativo + 1;
 		$codigo = str_pad(strval($correlativo), 5, "0", STR_PAD_LEFT);
 		$anio = date('Y');
 		return "{$palabra}{$codigo}{$anio}";
@@ -267,17 +272,11 @@ trait ApiResponser
 	protected function generarTicket($hotel, $restaurante)
 	{
 		//https://github.com/AlexanderBV/ticketer
-
-		$serie = is_null($restaurante) ? date("Y") : "deivis lo tuyo";
-		$numero_comprobante = is_null($restaurante) ? $hotel->correlativo : "deivis lo tuyo";
-		$cliente = is_null($restaurante) ? $hotel->nombre : "deivis lo tuyo";
-		$nit = is_null($restaurante) ? $hotel->nit : "deivis lo tuyo";
-		$direccion = is_null($restaurante) ? $hotel->ubicacion : "deivis lo tuyo";
-		$tipo_detalle = is_null($restaurante) ? 'DETALLADO' : 'CONSUMO';
+		/*$now = Carbon::now();
 
 		$ticketer = new Ticketer();
 		$ticketer->init('dummy');
-		$ticketer->setFechaEmision(date("d/m/Y H:i:s"));
+		$ticketer->setFechaEmision($now);
 		$ticketer->setComprobante('COMPROBANTE');
 		$ticketer->setSerieComprobante($serie);
 		$ticketer->setNumeroComprobante($numero_comprobante);
@@ -291,9 +290,193 @@ trait ApiResponser
 			// $nombre, $cantidad, $precio, $icbper, $gratuita
 			$ticketer->addItem($agregado['descripcion'], 1, $agregado['sub_total'], false, false);
 		}
+		$ticketer->addItem("prueba", 1, 2200, false, false);
 
 		$ticketer->setDescuento($hotel->descuento);
-		return $ticketer->printComprobante(true);
+		return $ticketer->printComprobante(true, true);*/
+
+		$serie = is_null($restaurante) ? date("Y") : "deivis lo tuyo";
+		$numero_comprobante = is_null($restaurante) ? $hotel->correlativo : "deivis lo tuyo";
+		$nit = is_null($restaurante) ? $hotel->nit : "deivis lo tuyo";
+		$cliente = is_null($restaurante) ? $hotel->nombre : "deivis lo tuyo";
+		$direccion = is_null($restaurante) ? $hotel->ubicacion : "deivis lo tuyo";
+		$tipo_detalle = is_null($restaurante) ? 'DETALLADO' : 'CONSUMO';
+		$total = is_null($restaurante) ? $hotel->total : 'deivis lo tuyo';
+		$sub_total = is_null($restaurante) ? $hotel->sub_total : 'deivis lo tuyo';
+		$descuento = is_null($restaurante) ? $hotel->descuento : 'deivis lo tuyo';
+
+		$empresa_nombre = "Hotel y Resutante El Mirador";
+		$empresa_direccion = "Chiquimulilla, Santa Rosa";
+
+		$qr = Storage::disk('logo')->exists("qr.png");
+		if ($qr) {
+			$qr = Storage::disk('logo')->path("qr.png");
+		} else {
+			$qr = QrCode::format('png')->size(100)->generate("Esperamos que vuelva pronto");
+			Storage::disk('logo')->put("qr.png", $qr);
+			$qr = Storage::disk('logo')->path("qr.png");
+		}
+
+		$this->fpdf = new FPDF('P', 'mm', array(80, 180));
+		$this->fpdf->AddPage();
+
+		// AUTOR
+		$this->fpdf->SetTitle(utf8_decode("Comprobante No.: {$numero_comprobante}"), true);
+		$this->fpdf->SetAuthor(utf8_decode($empresa_nombre), true);
+
+		// CABECERA
+		$this->fpdf->SetFont(
+			'Helvetica',
+			'',
+			8
+		);
+
+
+		$logo = Storage::disk('logo')->path("logo_ticket.png");
+
+
+		$this->fpdf->Image($logo, 27, 4, 25, 0, 'PNG');
+		$this->fpdf->Ln(7);
+		$this->fpdf->Cell(60, 4, utf8_decode($empresa_nombre), 0, 1, 'C');
+		$this->fpdf->SetFont('Helvetica', '', 7);
+		$this->fpdf->Cell(
+			60,
+			4,
+			utf8_decode($empresa_direccion),
+			0,
+			1,
+			'C'
+		);
+		$fecha = date('d/m/Y');
+		$this->fpdf->SetFont('Helvetica', '', 6);
+		$this->fpdf->Cell(60, 4, utf8_decode("Comprobante No: {$numero_comprobante}"), 0, 1, 'C');
+		$this->fpdf->Cell(60, 4, "Fecha: {$fecha}", 0, 1, 'C');
+
+		//FACTURA CLIENTE
+		$this->fpdf->Ln(2);
+		$this->fpdf->SetFont('Helvetica', '', 5);
+		$this->fpdf->Cell(60, 4, "NIT: {$nit}", 0, 1, 'L');
+		$this->fpdf->MultiCell(60, 4, utf8_decode("Cliente: {$cliente}"), 0, 'J');
+		$this->fpdf->MultiCell(60, 4, utf8_decode("Dirección: {$direccion}"), 0, 'J');
+
+		// COLUMNAS
+		$this->fpdf->Ln(3);
+		$this->fpdf->SetFont(
+			'Helvetica',
+			'B',
+			5
+		);
+		$this->fpdf->Cell(60, 0, '', 'T', 1);
+		$this->fpdf->Cell(30, 4, utf8_decode('Descripción'), 0);
+		$this->fpdf->Cell(5, 4, 'Ud', 0, 0, 'R');
+		$this->fpdf->Cell(10, 4, 'Precio', 0, 0, 'R');
+		$this->fpdf->Cell(15, 4, 'Total', 0, 0, 'R');
+		$this->fpdf->Ln(4);
+		$this->fpdf->Cell(60, 0, '', 'T');
+		$this->fpdf->Ln(0);
+
+		if (!is_null($hotel)) {
+			foreach ($hotel->detalle as $value) {
+				$this->fpdf->SetFont('Helvetica', '', 5);
+				$this->fpdf->MultiCell(30, 4, utf8_decode($value['descripcion']), 0, 'L');
+				$this->fpdf->Cell(
+					35,
+					-5,
+					'',
+					0,
+					0,
+					'R'
+				);
+				$this->fpdf->Cell(
+					10,
+					-5,
+					$value['sub_total'],
+					0,
+					0,
+					'R'
+				);
+				$this->fpdf->Cell(15, -5, number_format(
+					$value['sub_total'],
+					2,
+					'.',
+					','
+				), 0, 0, 'R');
+				$this->fpdf->Ln(3);
+			}
+		}
+
+		if (!is_null($restaurante)) {
+			//deivis aca va lo tuyo
+			foreach ($hotel->detalle as $value) {
+				$this->fpdf->SetFont('Helvetica', '', 5);
+				$this->fpdf->MultiCell(30, 4, utf8_decode($value['descripcion']), 0, 'L');
+				$this->fpdf->Cell(
+					35,
+					-5,
+					'',
+					0,
+					0,
+					'R'
+				);
+				$this->fpdf->Cell(
+					10,
+					-5,
+					$value['sub_total'],
+					0,
+					0,
+					'R'
+				);
+				$this->fpdf->Cell(15, -5, number_format(
+					$value['sub_total'],
+					2,
+					'.',
+					','
+				), 0, 0, 'R');
+				$this->fpdf->Ln(3);
+			}
+		}
+
+		$this->fpdf->Cell(60, 0, '', 'T');
+
+		// SUMATORIO DE LOS PRODUCTOS 
+		$this->fpdf->SetFont('Helvetica', '', 6);
+		$this->fpdf->Ln(1);
+		$this->fpdf->Cell(50, 10, 'SUB TOTAL Q', 0, 0, 'R');
+		$this->fpdf->Cell(10, 10, number_format($sub_total, 2), 0, 0, 'R');
+		$this->fpdf->Ln(1);
+		$this->fpdf->Ln(1);
+		$this->fpdf->Ln(1);
+		$this->fpdf->Cell(50, 10, 'DESCUENTO Q', 0, 0, 'R');
+		$this->fpdf->Cell(10, 10, number_format($descuento, 2), 0, 0, 'R');
+		$this->fpdf->Ln(1);
+		$this->fpdf->Ln(1);
+		$this->fpdf->Ln(1);
+		$this->fpdf->Cell(50, 10, 'TOTAL Q', 0, 0, 'R');
+		$this->fpdf->Cell(10, 10, number_format($total, 2), 0, 0, 'R');
+
+		// FOOTER
+		$this->fpdf->SetY(-25);
+		is_null($qr) ? null : $this->fpdf->Image($qr, 27, 100, 25, 0, 'PNG');
+		$this->fpdf->SetFont(
+			'Helvetica',
+			'',
+			3
+		);
+		$this->fpdf->Cell(60, 0, utf8_decode('EL PERIODO DE ANULACIÓN'), 0, 1, 'C');
+		$this->fpdf->Ln(2);
+		$this->fpdf->Cell(60, 0, utf8_decode("SOLO PUEDE SER APLICADO EL {$fecha}"), 0, 1, 'C');
+		$this->fpdf->Ln(2);
+		$this->fpdf->SetFont('Arial', 'I', 4);
+		$this->fpdf->Cell(
+			60,
+			0,
+			utf8_decode("Página {$this->fpdf->PageNo()}"),
+			0,
+			1,
+			'C'
+		);
+
+		return $this->fpdf->Output("S", "PRUEBA.PDF", true);
 	}
 
 	protected function traInformacion($data)

@@ -65,15 +65,15 @@ return [
 
         'logo' => [
             'driver' => 'local',
-            'root' => storage_path('app/public/pictures_logos'),
-            'url' => env('APP_URL') . '/storage/pictures_logos',
+            'root' => public_path('img'),
+            'url' => env('APP_URL') . '/img',
             'visibility' => 'public',
         ],
 
         'ticket' => [
             'driver' => 'local',
-            'root' => public_path('tickets'),
-            'url' => env('APP_URL') . '/tickets',
+            'root' => storage_path('app/public/tickets'),
+            'url' => env('APP_URL') . '/storage/tickets',
             'visibility' => 'public',
         ],
 

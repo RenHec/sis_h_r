@@ -64,6 +64,7 @@ import KardexService from '../services/hotel/KardexService'
 import ReservacionService from '../services/hotel/ReservacionService'
 import CheckInService from '../services/hotel/CheckInService'
 import CheckOutService from '../services/hotel/CheckOutService'
+import PagoService from '../services/hotel/PagoService'
 /* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
 
 let baseUrl = process.env.BASE_URL
@@ -178,4 +179,5 @@ export default {
   ReservacionService: new ReservacionService(Axios, baseUrl, hotelUrl),
   CheckInService: new CheckInService(Axios, baseUrl, hotelUrl),
   CheckOutService: new CheckOutService(Axios, baseUrl, hotelUrl),
+  PagoService: new PagoService(Axios, baseUrl, hotelUrl),
 }
