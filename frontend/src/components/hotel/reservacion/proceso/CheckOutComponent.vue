@@ -38,7 +38,7 @@
                           <tr>
                             <td class="title">
                               <img
-                                src="https://www.sparksuite.com/images/logo.png"
+                                :src="logotipo"
                                 style="width: 100%; max-width: 300px;"
                               />
                             </td>
@@ -280,6 +280,10 @@ export default {
       return 'success'
     },
 
+    logotipo() {
+      return this.$store.state.logo_ticket
+    },
+
     filteredItems() {
       if (this.search) {
         return this.desserts.filter((element) => {
@@ -328,6 +332,7 @@ export default {
             objeto.direccion = `${ele.cliente.municipio.full_name}, ${ele.cliente.direcciones}`.toLowerCase()
             objeto.tipos_pagos_id = null
             objeto.vaucher_pago = null
+            objeto.factura = false
             objeto.detalle = []
 
             ele.detalle.forEach((det) => {

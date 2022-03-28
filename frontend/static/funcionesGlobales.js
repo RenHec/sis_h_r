@@ -7,7 +7,7 @@ exports.install = function (Vue, options) {
                 let sound = new Audio(audio)
                 sound.volume = 100 / 100
                 sound.onended = () => {
-                    resolve()
+                    resolve("audio")
                 }
                 sound.play()
             } catch (error) {

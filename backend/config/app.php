@@ -168,7 +168,7 @@ return [
         L5Swagger\L5SwaggerServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
-        //Codedge\Fpdf\Fpdf\Fpdf::class,
+        Warrior\Ticketer\TicketerServiceProvider::class,
         /*
          * Application Service Providers...
          */

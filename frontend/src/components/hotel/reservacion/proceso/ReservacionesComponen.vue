@@ -142,13 +142,7 @@
                   </v-list>
                 </v-col>
                 <v-divider vertical></v-divider>
-                <v-col
-                  cols="12"
-                  md="6"
-                  sm="6"
-                  class="d-flex text-center"
-                  v-if="selected > -1"
-                >
+                <v-col cols="12" md="6" sm="6" class="d-flex text-center">
                   <v-expansion-panels tile dark flat>
                     <v-expansion-panel>
                       <v-expansion-panel-header
@@ -162,7 +156,7 @@
                           </v-icon>
                         </template>
                       </v-expansion-panel-header>
-                      <v-expansion-panel-content>
+                      <v-expansion-panel-content v-if="selected > -1">
                         <v-scroll-y-transition mode="out-in">
                           <div
                             v-if="selected < 0"
@@ -643,6 +637,7 @@ export default {
 
     seleecionar_habitacion(index) {
       this.loading = true
+      this.selected = -1
 
       let asignar_productos = function asignar(productos, item) {
         return new Promise((resolve, reject) => {

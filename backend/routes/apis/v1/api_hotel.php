@@ -15,14 +15,14 @@ use Illuminate\Support\Facades\Route;
 
 /* Prefix route: servicio/hotel/version_uno */
 
-Route::resource('/tipo_cama', 'Habitacion\TipoCama')->only('index', 'store', 'show', 'destroy');
-Route::resource('/habitacion', 'Habitacion\Habitacion')->only('index', 'store', 'update', 'destroy');
-Route::resource('/habitacion_foto', 'Habitacion\HabitacionFoto')->only('show', 'update', 'destroy');
-Route::resource('/habitacion_precio', 'Habitacion\HabitacionPrecio')->only('update', 'destroy');
+Route::resource('/tipo_cama', 'Habitacion\TipoCamaController')->only('index', 'store', 'show', 'destroy');
+Route::resource('/habitacion', 'Habitacion\HabitacionController')->only('index', 'store', 'update', 'destroy');
+Route::resource('/habitacion_foto', 'Habitacion\HabitacionFotoController')->only('show', 'update', 'destroy');
+Route::resource('/habitacion_precio', 'Habitacion\HabitacionPrecioController')->only('update', 'destroy');
 
-Route::resource('/insumo', 'Insumo\Insumo')->only('index', 'store', 'destroy');
-Route::resource('/kardex', 'Insumo\Kardex')->only('index', 'store', 'show', 'update', 'destroy');
+Route::resource('/insumo', 'Insumo\InsumoController')->only('index', 'store', 'destroy');
+Route::resource('/kardex', 'Insumo\KardexController')->only('index', 'store', 'show', 'update', 'destroy');
 
-Route::resource('/reservacion', 'Reservacion\Reservacion')->only('index', 'store', 'destroy');
-Route::resource('/check_in', 'Reservacion\CheckIn')->only('show', 'store', 'destroy');
-Route::resource('/check_out', 'Reservacion\CheckOut')->only('show', 'store', 'destroy');
+Route::resource('/reservacion', 'Reservacion\ReservacionController')->only('index', 'store', 'destroy');
+Route::resource('/check_in', 'Reservacion\CheckInController')->only('show', 'store', 'destroy');
+Route::resource('/check_out', 'Reservacion\CheckOutController')->only('show', 'store', 'destroy');
