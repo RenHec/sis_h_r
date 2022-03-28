@@ -205,7 +205,7 @@ class OrdenController extends ApiController
                             ->join('r_estado_orden as eo','eo.id','o.estado_orden_id')
                             ->join('r_tipo_orden as to','to.id','o.tipo_orden_id')
                             ->join('r_mesa as m','o.mesa_id','m.id')
-                            ->select('o.id','o.monto','o.fecha','o.hora','eo.nombre as estado_orden','to.nombre as tipo_orden','eo.color','eo.icono','eo.finaliza','m.nombre as mesa')
+                            ->select('o.id','o.monto','o.fecha','o.hora','eo.nombre as estado_orden','to.nombre as tipo_orden','eo.color','eo.icono','eo.finaliza','eo.inicia','m.nombre as mesa')
                             ->where('o.activo',1)
                             ->get();
 
@@ -237,11 +237,6 @@ class OrdenController extends ApiController
         $detalle =  DB::table('r_orden_producto')
                         ->where('orden_id', $id)
                         ->update(['activo' => 0]);
-
-        if(!$detalle){
-            throw new \Exception("Error al actualizar estado de los productos");
-        }
-
         return;
     }
 

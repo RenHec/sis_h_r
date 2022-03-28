@@ -3,7 +3,7 @@
       <v-overlay :value="loading">
         <v-progress-circular indeterminate size="64"></v-progress-circular>
       </v-overlay>
-      <v-col md='12' sm='12' v-if="!paymentScreen">
+      <v-col md='12' sm='12' v-if="!paymentScreen  && !showUpdateOrderScreen">
         <v-card>
           <v-toolbar>
             <v-toolbar-title>Listado de órdenes</v-toolbar-title>
@@ -15,14 +15,29 @@
           <div style="background-color:#e3f2fd; height:85vh; overflow-y:scroll">
               <v-row>
                 <template v-for="item in recordList">
-                    <v-col v-bind:key="item.id" md="4" lg="3" sm='6'>
-                      <v-card class="mt-3 mx-2" @click="checkTable(item)" :color="item.color" dark>
-                        <v-card-title class="justify-center text-h4" bold>{{ item.mesa }}</v-card-title>
+                    <v-col v-bind:key="item.id" md="4" lg="3" sm='6' xs='12'>
+                      <v-card class="mt-3 mx-2" :color="item.color" dark>
+                        <div class="justify-center" v-if="checkStatusOrder(item)">
+                          <v-btn
+                            class="ma-1 float-right"
+                            fab
+                            dark
+                            color="white"
+                            @click="deleteOrder(item)"
+                          >
+                            <v-icon dark color="red">
+                              delete
+                            </v-icon>
+                          </v-btn>
+                        </div>
+                        <div @click="checkTable(item)">
+                          <v-card-title class="justify-center text-h4" bold>{{ item.mesa }}</v-card-title>
                         <div>
                           <p class="text-center" dark><v-icon>{{ item.icono }}</v-icon>&nbsp;{{ item.estado_orden }}</p>
                           <p class="text-center" dark>{{ setFormatDate(item.fecha) }} {{ item.hora }}</p>
                         </div>
                         <v-card-title class="justify-center text-h4" >{{ getAmountTitle(item.monto) }}</v-card-title>
+                        </div>
                       </v-card>
                     </v-col>
                 </template>
@@ -31,16 +46,19 @@
         </v-card>
       </v-col>
       <PaymentComponent v-if="showPaymentScreen" :item="orderId"></PaymentComponent>
+      <UpdateOrderComponent v-if="showUpdateOrderScreen" :tableName="tableName" :orderId="orderId"></UpdateOrderComponent>
     </v-row>
 </template>
 
 <script>
 import moment from 'moment'
 import PaymentComponent from './PaymentComponent.vue'
+import UpdateOrderComponent from './UpdateOrderComponent.vue'
 
 export default{
   components:{
-    PaymentComponent
+    PaymentComponent,
+    UpdateOrderComponent
   },
   data(){
     return{
@@ -54,7 +72,9 @@ export default{
       formUpdateRecord:false,
 
       paymentScreen:false,
-      orderId:0
+      updateOrderScreen:false,
+      orderId:0,
+      tableName:'',
     }
   },
   mounted(){
@@ -62,9 +82,11 @@ export default{
   },
   created(){
     events.$on('close_payment_form',this.eventClosePaymentForm)
+    events.$on('close_update_order',this.eventCloseUpdateOrder)
   },
   beforeDestroy(){
     events.$off('close_payment_form')
+    events.$off('close_update_order')
   },
   methods:{
     eventClosePaymentForm(){
@@ -72,7 +94,53 @@ export default{
       this.paymentScreen = false
       this.getAllFoodCategory()
     },
+    eventCloseUpdateOrder(){
+      this.orderId = 0
+      this.updateOrderScreen = false
+      this.tableName = ''
+      this.getAllFoodCategory()
+    },
+    deleteOrder(item){
+      this.loading = true
+
+      let data = {
+        'orden':item.id
+      }
+      this.$swal({
+        title: 'Eliminar',
+        text: '¿Está seguro de eliminar la orden?',
+        type: 'question',
+        showCancelButton: true,
+      }).then((r) => {
+        if(!r.value){
+          this.loading = false
+          this.close
+          return
+        }
+        this.$store.state.services.orderDetailService
+        .deleteAllOrderDetail(data)
+        .then((r) =>{
+          this.getAllFoodCategory()
+        })
+        .catch((e) =>{
+          this.$toastr.error(e,'Error')
+        })
+        .finally(()=>{
+          this.loading = false
+        })
+      })
+
+    },
+    checkStatusOrder(item){
+      return item.inicia === 1
+    },
     checkTable(item){
+      if(item.inicia === 1 ){
+        this.updateOrderScreen = true
+        this.orderId = item.id
+        this.tableName = item.mesa
+      }
+
       if(item.finaliza === 1){
         this.paymentScreen = true
         this.orderId = item.id
@@ -122,6 +190,9 @@ export default{
   computed:{
     showPaymentScreen(){
       return this.paymentScreen
+    },
+    showUpdateOrderScreen(){
+      return this.updateOrderScreen
     }
   }
 }

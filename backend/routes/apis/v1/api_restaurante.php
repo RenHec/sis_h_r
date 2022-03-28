@@ -41,3 +41,9 @@ Route::resource('/ordenes','Orden\OrdenController',['except' => ['create','edit'
 Route::get('/ordenes-list','Orden\OrdenController@orderList');
 Route::post('/ordenes-payment','Orden\OrdenController@orderPayment');
 Route::post('/ordenes-status','Orden\OrdenController@updateOrderStatus');
+
+Route::get('/ordenes-edit-list/{orderId}','Orden\OrdenDetailController@getDetailOrder');
+Route::post('/ordenes-minus','Orden\OrdenDetailController@setMinusQuantity');
+Route::post('/ordenes-plus','Orden\OrdenDetailController@setPlusQuantity');
+Route::post('/ordenes-delete-one','Orden\OrdenDetailController@deleteOneDetailOrder');
+Route::post('/ordenes-delete-all','Orden\OrdenDetailController@deleteAllOrderDetail');
