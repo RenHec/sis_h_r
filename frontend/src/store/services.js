@@ -46,13 +46,14 @@ import CategoriaComidaService from '../services/restaurante/CategoriaComidaServi
 import ProductoService from '../services/restaurante/ProductoService'
 import MeseroService from '../services/restaurante/MeseroService'
 import OrdenService from '../services/restaurante/OrdenService'
+import OrdenDetailService from '../services/restaurante/OrdenDetailService'
 import MesaService from '../services/restaurante/MesaService'
 import DepartamentoService from '../services/restaurante/DepartamentoService'
 import MunicipioService from '../services/restaurante/MunicipioService'
 
 /*
 |--------------------------------------------------------------------------
-| Restaurant Services
+| Hotel Services
 |--------------------------------------------------------------------------
 */
 import TipoCamaService from '../services/hotel/TipoCamaService'
@@ -95,7 +96,7 @@ Axios.interceptors.response.use(response => {
     })
   }
 
-  return error
+  throw error
 });
 
 function refreshToken() {
@@ -118,7 +119,7 @@ instance.interceptors.response.use(response => {
     auth.noAcceso()
   }
 
-  return error
+  throw error
 });
 
 export default {
@@ -162,6 +163,7 @@ export default {
   productService: new ProductoService(Axios, baseUrl, restaurantUrl),
   waiterService: new MeseroService(Axios, baseUrl, restaurantUrl),
   orderService: new OrdenService(Axios, baseUrl, restaurantUrl),
+  orderDetailService: new OrdenDetailService(Axios, baseUrl, restaurantUrl),
   tableService: new MesaService(Axios, baseUrl, restaurantUrl),
 
   /*
