@@ -317,7 +317,11 @@ trait ApiResponser
 			$qr = Storage::disk('logo')->path("qr.png");
 		}
 
-		$this->fpdf = new FPDF('P', 'mm', array(80, 180));
+		$largo = 55;
+		$agregar_largo = is_null($restaurante) ? count($hotel->detalle) * 40 : 0;
+		$largo += $agregar_largo;
+
+		$this->fpdf = new FPDF('P', 'mm', array(80, $largo));
 		$this->fpdf->AddPage();
 
 		// AUTOR
@@ -331,9 +335,7 @@ trait ApiResponser
 			8
 		);
 
-
 		$logo = Storage::disk('logo')->path("logo_ticket.png");
-
 
 		$this->fpdf->Image($logo, 27, 4, 25, 0, 'PNG');
 		$this->fpdf->Ln(7);
@@ -455,7 +457,7 @@ trait ApiResponser
 		$this->fpdf->Cell(10, 10, number_format($total, 2), 0, 0, 'R');
 
 		// FOOTER
-		$this->fpdf->SetY(-25);
+		$this->fpdf->SetY(-28);
 		//is_null($qr) ? null : $this->fpdf->Image($qr, 27, 100, 25, 0, 'PNG');
 		$this->fpdf->SetFont(
 			'Helvetica',
