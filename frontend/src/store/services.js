@@ -108,7 +108,7 @@ function refreshToken() {
       .then(r => {
         resolve(r)
       }).catch(e => {
-        reject(r)
+        reject(e)
       })
   })
 }

@@ -95,11 +95,14 @@
                           :key="item.id"
                           :label="item.nombre"
                           :value="item.id"
+                          @click="verifyNeedVoucher(item.ticket)"
                         >
                         </v-radio>
                       </v-radio-group>
                       <form-error :attribute_name="'metodo-pago'" :errors_form="errors"> </form-error>
                     </div>
+                    <v-text-field outlined dense name="Número de voucher" v-model="voucher" label="Número de voucher" v-show="showInputVoucher"></v-text-field>
+                    <form-error :attribute_name="'voucher'" :errors_form="errors"> </form-error>
                     <v-card-title class="text-h4 justify-center">Q. {{ recordDetail.monto }}</v-card-title>
                     <br/>
                     <v-btn rounded block color="primary" x-large class="float: bottom" @click="validateForm()">
@@ -134,6 +137,7 @@ export default{
       loading:false,
       dialog:false,
       search:'',
+      no_voucher: false,
 
       cliente:'',
       items:[],
@@ -142,6 +146,7 @@ export default{
       paymentMethodToPay:'',
       paymentMethodList:[],
       paymentId:'',
+      voucher:'',
 
       recordDetail:{}
     }
@@ -172,7 +177,15 @@ export default{
           })
     }
   },
+  computed:{
+    showInputVoucher(){
+      return this.no_voucher
+    }
+  },
   methods:{
+    verifyNeedVoucher(item){
+      this.no_voucher = item === 1 ? true : false
+    },
     validateForm()
     {
       this.$validator.validateAll().then((result) => {
@@ -188,7 +201,8 @@ export default{
         'orden_id':this.item,
         'tipo_pago_id':this.paymentMethodToPay,
         'cliente_id':this.cliente.id,
-        'monto':this.recordDetail.monto
+        'monto':this.recordDetail.monto,
+        'voucher':this.voucher
       }
 
       this.loading = true

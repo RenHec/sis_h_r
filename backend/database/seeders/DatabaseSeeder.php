@@ -146,7 +146,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         TipoPago::create([
-            'nombre' => 'TARJETA'
+            'nombre' => 'TARJETA',
+            'ticket' => 1
         ]);
 
         Caja::create([

@@ -28,7 +28,8 @@ class TipoPago extends Model
      */
     protected $fillable = [
         'nombre',
-        'movimientos_id'
+        'movimientos_id',
+        'ticket'
     ];
 
     /**

@@ -16,7 +16,7 @@ class CreateTiposPagosTable extends Migration
         Schema::create('tipos_pagos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 20);
-
+            $table->smallInteger('ticket')->default(0);
             $table->timestamps();
         });
     }

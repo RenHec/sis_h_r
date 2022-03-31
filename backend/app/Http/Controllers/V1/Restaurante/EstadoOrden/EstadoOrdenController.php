@@ -70,7 +70,16 @@ class EstadoOrdenController extends ApiController
             'color' => 'required|string'
         ];
 
+
         $this->validate($request, $rules);
+
+        if($request->get('inicia') == 1){
+            $this->ensureNotExistsRecordWithStart();
+        }
+
+        if($request->get('finaliza') == 1){
+            $this->ensureNotExistsRecordWithEnd();
+        }
 
         $registro           = new EstadoOrden();
         $registro->nombre   = $request->get('nombre');
@@ -125,6 +134,14 @@ class EstadoOrdenController extends ApiController
 
         $this->validate($request, $rules);
 
+        if($request->get('inicia') == 1){
+            $this->ensureNotExistsRecordWithStart();
+        }
+
+        if($request->get('finaliza') == 1){
+            $this->ensureNotExistsRecordWithEnd();
+        }
+
         $registro           = EstadoOrden::findOrFail($id);
         $registro->nombre   = $request->get('nombre');
         $registro->icono    = $request->get('icono');
@@ -158,5 +175,22 @@ class EstadoOrdenController extends ApiController
                     ->get();
 
         return $this->showAll($registro);
+    }
+
+    public function ensureNotExistsRecordWithStart()
+    {
+        $record =  DB::table('r_estado_orden')
+            ->where('inicia', 1)
+            ->update(['inicia' => 0]);
+
+        return;
+    }
+    public function ensureNotExistsRecordWithEnd()
+    {
+        $record =  DB::table('r_estado_orden')
+            ->where('finaliza', 1)
+            ->update(['finaliza' => 0]);
+
+        return;
     }
 }

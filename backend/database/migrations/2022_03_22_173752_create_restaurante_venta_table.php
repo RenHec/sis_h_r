@@ -17,6 +17,7 @@ class CreateRestauranteVentaTable extends Migration
             $table->uuid('id')->primary();
             $table->uuid('orden_id')->nullable(false);
             $table->bigInteger('tipo_pago_id')->unsigned();
+            $table->string('voucher')->nullable();
             $table->bigInteger('cliente_id')->unsigned();
             $table->bigInteger('usuario_id')->unsigned();
             $table->decimal('monto',9,2);

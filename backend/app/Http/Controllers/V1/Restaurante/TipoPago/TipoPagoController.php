@@ -16,7 +16,7 @@ class TipoPagoController extends ApiController
      */
     public function index()
     {
-        $registros = TipoPago::select('id','nombre')->get();
+        $registros = TipoPago::select('id','nombre','ticket')->get();
 
         return $this->showAll($registros);
     }
