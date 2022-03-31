@@ -50,6 +50,7 @@ import CategoriaComida from '@/components/restaurante/categoria-comida/IndexComp
 import ProductoRestaurante from '@/components/restaurante/producto/IndexComponent'
 import Ordenes from '@/components/restaurante/ordenes/IndexComponent'
 import Mesa from '@/components/restaurante/mesa/IndexComponent'
+import ReporteCaja from '@/components/restaurante/reportes/ReporteCajaComponent'
 /*
 |--------------------------------------------------------------------------
 | Hotel Components
@@ -353,6 +354,12 @@ const routes = [
     path: '/mesas',
     name: 'Mesa',
     component: Mesa,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/caja',
+    name: 'Caja',
+    component: ReporteCaja,
     beforeEnter: multiguard([isLoggedIn])
   },
   /*
