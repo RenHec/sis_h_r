@@ -11,5 +11,5 @@ class Mesa extends Model
 
     protected $table = 'r_mesa';
 
-    protected $fillable = ['id','nombre','icono'];
+    protected $fillable = ['id','nombre','icono','orden'];
 }

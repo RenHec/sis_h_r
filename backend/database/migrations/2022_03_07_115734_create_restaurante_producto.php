@@ -17,6 +17,7 @@ class CreateRestauranteProducto extends Migration
             $table->bigIncrements('id');
             $table->string('nombre');
             $table->decimal('precio',9,2);
+            $table->decimal('costo',9,2);
             $table->string('img');
             $table->smallInteger('activo')->default(1);
             $table->timestamps();

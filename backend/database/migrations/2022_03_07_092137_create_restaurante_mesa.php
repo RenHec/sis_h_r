@@ -17,6 +17,7 @@ class CreateRestauranteMesa extends Migration
             $table->bigIncrements('id');
             $table->string('nombre');
             $table->string('icono');
+            $table->smallInteger('orden')->default(0);
             $table->timestamps();
         });
     }

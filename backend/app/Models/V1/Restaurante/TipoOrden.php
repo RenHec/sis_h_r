@@ -11,5 +11,5 @@ class TipoOrden extends Model
 
     protected $table = 'r_tipo_orden';
 
-    protected $fillable = ['id','nombre'];
+    protected $fillable = ['id','nombre','reservacion'];
 }

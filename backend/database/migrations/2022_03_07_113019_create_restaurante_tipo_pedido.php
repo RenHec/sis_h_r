@@ -16,6 +16,7 @@ class CreateRestauranteTipoPedido extends Migration
         Schema::create('r_tipo_orden', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nombre');
+            $table->smallInteger('reservacion')->default(0);
             $table->smallInteger('orden')->default(0);
             $table->timestamps();
         });

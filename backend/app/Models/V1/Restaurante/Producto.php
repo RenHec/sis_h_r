@@ -11,7 +11,7 @@ class Producto extends Model
 
     protected $table = 'r_producto';
 
-    protected $fillable = ['id','nombre','precio','img','activo','tipo_producto_id'];
+    protected $fillable = ['id','nombre','precio','img','activo','tipo_producto_id','costo'];
 
     public function producto_categoria_comida()
     {
