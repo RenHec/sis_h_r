@@ -226,7 +226,7 @@
                 <v-list-item three-line>
                   <v-list-item-content>
                     <v-list-item-title
-                      v-text="formato_moneda(habitacion_precio.precio)"
+                      v-text="formato_moneda(1, habitacion_precio.precio, 0)"
                     ></v-list-item-title>
                     <v-list-item-subtitle
                       v-text="

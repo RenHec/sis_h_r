@@ -79,7 +79,6 @@ class SelectController extends ApiController
                 'h_kardex.stock_actual AS stock_actual'
             )
             ->where('h_productos.activo', true)
-            ->where('h_kardex.activo', true)
             ->orderBy('h_productos.nombre')
             ->get();
 

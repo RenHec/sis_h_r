@@ -28,21 +28,21 @@ class ProductoController extends ApiController
         $pagina     = $request['page'];
 
         $productos  = DB::table('r_producto')
-                    ->select('id','nombre','precio','img')
-                    ->where($columna, 'LIKE', '%' . $criterio . '%')
-                    ->orderBy($columna, $orden)
-                    ->skip($pagina)
-                    ->take($filas)
-                    ->get();
+            ->select('id', 'nombre', 'precio', 'img')
+            ->where($columna, 'LIKE', '%' . $criterio . '%')
+            ->orderBy($columna, $orden)
+            ->skip($pagina)
+            ->take($filas)
+            ->get();
 
         $count      = DB::table('r_producto')
-                    ->where($columna, 'LIKE', '%' . $criterio . '%')
-                    ->count();
+            ->where($columna, 'LIKE', '%' . $criterio . '%')
+            ->count();
 
         $data       = array(
-                        'total' => $count,
-                        'data' => $productos,
-                    );
+            'total' => $count,
+            'data' => $productos,
+        );
 
         return response()->json($data, 200);
     }
@@ -65,9 +65,15 @@ class ProductoController extends ApiController
      */
     public function store(Request $request)
     {
-        if($request->get('id')){
+        if ($request->get('id')) {
             return $this->update($request, $request->get('id'));
         }
+
+        $message = [
+            'precio.required' => 'El precio es obligatorio.',
+            'precio.numeric'  => 'El precio debe de ser un número.',
+            'precio.min'  => 'El precio debe ser mayor a :min .'
+        ];
 
         $rules = [
             'nombre' => 'required|string',
@@ -76,29 +82,28 @@ class ProductoController extends ApiController
             'categorias' => 'nullable|array'
         ];
 
-        $this->validate($request, $rules);
+        $this->validate($request, $rules, $message);
 
         $file    = $request->file('imagen');
         $name   = $file->hashName();
 
-        $file->move(getcwd().$this->pathImage,$name);
+        $file->move(getcwd() . $this->pathImage, $name);
 
-        return DB::transaction(function() use($request, $name){
+        return DB::transaction(function () use ($request, $name) {
             $registro           = new Producto();
             $registro->nombre   = $request->get('nombre');
             $registro->precio   = $request->get('precio');
-            $registro->img      = $this->pathImage.$name;
+            $registro->img      = $this->pathImage . $name;
             $registro->save();
 
-            foreach($request->get('categorias') as $key => $value)
-            {
+            foreach ($request->get('categorias') as $key => $value) {
                 ProductoCategoriaComida::create([
                     'producto_id'           => $registro->id,
                     'categoria_comida_id'   => $value
                 ]);
             }
 
-            return $this->showMessage('',201);
+            return $this->showMessage('', 201);
         });
     }
 
@@ -111,8 +116,8 @@ class ProductoController extends ApiController
     public function show($id)
     {
         $registro = Producto::with('producto_categoria_comida')
-                        ->where('r_producto.id',$id)
-                        ->first();
+            ->where('r_producto.id', $id)
+            ->first();
 
         return $this->showOne($registro);
     }
@@ -125,7 +130,6 @@ class ProductoController extends ApiController
      */
     public function edit($id)
     {
-
     }
 
     /**
@@ -148,12 +152,11 @@ class ProductoController extends ApiController
 
         $registro  = Producto::findOrFail($id);
 
-        return DB::transaction(function() use($request, $registro){
+        return DB::transaction(function () use ($request, $registro) {
 
             $registro->producto_categoria_comida()->delete();
 
-            foreach($request->get('categorias') as $key => $value)
-            {
+            foreach ($request->get('categorias') as $key => $value) {
                 ProductoCategoriaComida::create([
                     'producto_id'           => $registro->id,
                     'categoria_comida_id'   => $value
@@ -163,24 +166,24 @@ class ProductoController extends ApiController
             $registro->nombre   = $request->get('nombre');
             $registro->precio   = $request->get('precio');
 
-            if($request->hasFile('imagen')){
+            if ($request->hasFile('imagen')) {
                 $file    = $request->file('imagen');
                 $name    = $file->hashName();
 
-                $file->move(getcwd().$this->pathImage,$name);
+                $file->move(getcwd() . $this->pathImage, $name);
 
-                $currentImage = getcwd().$registro->img;
+                $currentImage = getcwd() . $registro->img;
 
-                if(file_exists($currentImage)){
+                if (file_exists($currentImage)) {
                     unlink(realpath($currentImage));
                 }
 
-                $registro->img = $this->pathImage.$name;
+                $registro->img = $this->pathImage . $name;
             }
 
             $registro->save();
 
-            return $this->showMessage('',202);
+            return $this->showMessage('', 202);
         });
     }
 
@@ -194,10 +197,10 @@ class ProductoController extends ApiController
     {
         $registro = Producto::findOrFail($id);
 
-        return DB::transaction(function() use($registro){
-            $currentImage = getcwd().$registro->img;
+        return DB::transaction(function () use ($registro) {
+            $currentImage = getcwd() . $registro->img;
 
-            if(file_exists($currentImage)){
+            if (file_exists($currentImage)) {
                 unlink(realpath($currentImage));
             }
 
@@ -205,16 +208,16 @@ class ProductoController extends ApiController
 
             $registro->delete();
 
-            return $this->showMessage('',210);
+            return $this->showMessage('', 210);
         });
     }
 
     public function productsList()
     {
-        $registros =  Producto::select('id','nombre','precio','img')
-                        ->with('producto_categoria_comida')
-                        ->where('r_producto.activo',1)
-                        ->get();
+        $registros =  Producto::select('id', 'nombre', 'precio', 'img')
+            ->with('producto_categoria_comida')
+            ->where('r_producto.activo', 1)
+            ->get();
 
         return response()->json(['data' => $registros]);
     }
