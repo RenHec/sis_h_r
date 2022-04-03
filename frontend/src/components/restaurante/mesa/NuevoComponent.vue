@@ -20,6 +20,9 @@
 
               <v-text-field outlined dense name="icono" v-model="icono" v-validate="'required'" label="Icono"></v-text-field>
               <form-error :attribute_name="'icono'" :errors_form="errors"> </form-error>
+
+              <v-text-field outlined dense name="orden" v-model="orden" v-validate="'required'" label="Orden de despliegue"></v-text-field>
+              <form-error :attribute_name="'orden'" :errors_form="errors"> </form-error>
           </v-form>
           </v-card-text>
           <v-card-actions>
@@ -45,6 +48,7 @@ export default{
     return{
       nombre:'',
       icono:'',
+      orden:'',
 
       loading:false,
     }
@@ -69,6 +73,7 @@ export default{
     intializeFields(){
       this.nombre = '',
       this.icono = '',
+      this.orden = '',
       this.$validator.reset()
     },
 
@@ -77,7 +82,8 @@ export default{
 
       let data = {
           'nombre':this.nombre,
-          'icono':this.icono
+          'icono':this.icono,
+          'orden':this.orden
       }
 
       this.$parent.$store.state.services.tableService

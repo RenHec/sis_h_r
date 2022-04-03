@@ -138,7 +138,7 @@ class TipoOrdenController extends ApiController
 
     public function listOrderType()
     {
-        $orderTypes = TipoOrden::select('id','nombre')
+        $orderTypes = TipoOrden::select('id','nombre','reservacion')
                         ->orderBy('orden','asc')
                         ->get();
 

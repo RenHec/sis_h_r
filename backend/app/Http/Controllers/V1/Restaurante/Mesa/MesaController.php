@@ -24,7 +24,7 @@ class MesaController extends ApiController
         $pagina     = $request['page'];
 
         $categoriasComida = DB::table('r_mesa')
-                            ->select('id','nombre','icono')
+                            ->select('id','nombre','icono','orden')
                             ->where($columna, 'LIKE', '%' . $criterio . '%')
                             ->orderBy($columna, $orden)
                             ->skip($pagina)
@@ -64,7 +64,8 @@ class MesaController extends ApiController
         $rules = [
 
             'nombre'    => 'required|string',
-            'icono'     => 'required|string'
+            'icono'     => 'required|string',
+            'orden'     => 'nullable|numeric|min:1'
         ];
 
         $this->validate($request, $rules);
@@ -72,6 +73,7 @@ class MesaController extends ApiController
         $registro           = new Mesa();
         $registro->nombre   = $request->get('nombre');
         $registro->icono    = $request->get('icono');
+        $registro->orden    = $request->get('orden');
         $registro->save();
 
         return $this->showMessage('',201);
@@ -109,8 +111,9 @@ class MesaController extends ApiController
     public function update(Request $request, $id)
     {
         $rules = [
-            'nombre' => 'required|string',
-            'icono' => 'required|string'
+            'nombre'    => 'required|string',
+            'icono'     => 'required|string',
+            'orden'     => 'nullable|numeric|min:1'
         ];
 
         $this->validate($request, $rules);
@@ -118,6 +121,7 @@ class MesaController extends ApiController
         $registro           = Mesa::findOrFail($id);
         $registro->nombre   = $request->get('nombre');
         $registro->icono    = $request->get('icono');
+        $registro->orden    = $request->get('orden');
         $registro->save();
 
         return $this->showMessage('',202);
@@ -140,6 +144,7 @@ class MesaController extends ApiController
     public function listTables()
     {
         $tables = Mesa::select('id','nombre','icono')
+                        ->orderBy('orden','asc')
                         ->get();
 
         return response()->json(['data' => $tables],200);

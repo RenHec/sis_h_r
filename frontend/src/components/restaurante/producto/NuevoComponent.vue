@@ -35,10 +35,23 @@
                 name="precio"
                 v-model="precio"
                 v-validate="'required|decimal'"
-                label="Precio"
+                label="Precio venta"
               ></v-text-field>
               <form-error
                 :attribute_name="'precio'"
+                :errors_form="errors"
+              ></form-error>
+
+              <v-text-field
+                outlined
+                dense
+                name="costo"
+                v-model="costo"
+                v-validate="'required|decimal'"
+                label="Precio costo"
+              ></v-text-field>
+              <form-error
+                :attribute_name="'costo'"
                 :errors_form="errors"
               ></form-error>
 
@@ -101,6 +114,7 @@ export default {
       nombre: '',
       precio: '',
       imagen: null,
+      costo: '',
       opc: [],
 
       loading: false,
@@ -139,11 +153,12 @@ export default {
       })
     },
     intializeFields() {
-      ;(this.nombre = ''),
-        (this.precio = ''),
-        (this.imagen = null),
-        (this.opc = []),
-        this.$validator.reset()
+      this.nombre = '',
+      this.precio = '',
+      this.imagen = null,
+      this.costo = '',
+      this.opc = [],
+      this.$validator.reset()
     },
 
     saveRecord() {
@@ -152,6 +167,7 @@ export default {
       let data = new FormData()
       data.append('nombre', this.nombre)
       data.append('precio', this.precio)
+      data.append('costo', this.costo)
       data.append('imagen', this.imagen, this.imagen.name)
       this.opc.forEach((item) => {
         data.append('categorias[]', item)

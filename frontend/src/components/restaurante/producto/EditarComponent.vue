@@ -18,8 +18,21 @@
               <v-text-field outlined dense autofocus name="nombre" v-model="nombre" v-validate="'required'" label="Nombre"></v-text-field>
               <form-error :attribute_name="'nombre'" :errors_form="errors"> </form-error>
 
-              <v-text-field outlined dense name="precio" v-model="precio" v-validate="'required|decimal'" label="Precio"></v-text-field>
+              <v-text-field outlined dense name="precio" v-model="precio" v-validate="'required|decimal'" label="Precio venta"></v-text-field>
               <form-error :attribute_name="'precio'" :errors_form="errors"> </form-error>
+
+              <v-text-field
+                outlined
+                dense
+                name="costo"
+                v-model="costo"
+                v-validate="'required|decimal'"
+                label="Precio costo"
+              ></v-text-field>
+              <form-error
+                :attribute_name="'costo'"
+                :errors_form="errors"
+              ></form-error>
 
               <v-file-input @change="loadImage" accept="image/*" type="file" outlined dense name="imagen" v-model="imagen" label="Imagen"></v-file-input>
               <form-error :attribute_name="'imagen'" :errors_form="errors"> </form-error>
@@ -61,6 +74,7 @@ export default{
     return{
       nombre:'',
       precio:'',
+      costo:'',
       imagen:null,
       categories:[],
       opc:[],
@@ -137,6 +151,7 @@ export default{
       this.id = item.id
       this.nombre = item.nombre
       this.precio = item.precio
+      this.costo = item.costo
       this.categories = item.producto_categoria_comida
     },
     closeForm(){
@@ -158,6 +173,7 @@ export default{
       data.append('id',this.id)
       data.append('nombre',this.nombre)
       data.append('precio',this.precio)
+      data.append('costo',this.costo)
       this.imagen ? data.append('imagen',this.imagen,this.imagen.name) : ''
       this.opc.forEach((item)=>{
         data.append('categorias[]',item)

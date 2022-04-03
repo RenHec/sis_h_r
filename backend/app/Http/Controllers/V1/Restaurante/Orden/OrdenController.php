@@ -30,6 +30,7 @@ class OrdenController extends ApiController
                         ->join('r_mesa as m','o.mesa_id','m.id')
                         ->select('o.id','o.monto','o.fecha','o.hora','to.nombre as tipo_orden','eo.nombre as estado_orden','eo.id as estado_orden_id','eo.icono','m.nombre as mesa','eo.finaliza','eo.color')
                         ->where('eo.id','<>',$finaliza->id)
+                        ->orderBy('m.orden','asc')
                         ->get();
 
         $datos = array();
@@ -147,6 +148,7 @@ class OrdenController extends ApiController
                         ->select('o.id','o.monto','o.fecha','o.hora','to.nombre as tipo_orden','eo.nombre as estado_orden','eo.id as estado_orden_id','eo.icono','m.nombre as mesa','eo.finaliza','eo.color')
                         ->where('o.id',$id)
                         ->where('o.activo',1)
+                        ->orderBy('m.orden','asc')
                         ->get();
         $datos = array();
 
@@ -207,6 +209,7 @@ class OrdenController extends ApiController
                             ->join('r_mesa as m','o.mesa_id','m.id')
                             ->select('o.id','o.monto','o.fecha','o.hora','eo.nombre as estado_orden','to.nombre as tipo_orden','eo.color','eo.icono','eo.finaliza','eo.inicia','m.nombre as mesa')
                             ->where('o.activo',1)
+                            ->orderBy('m.orden','asc')
                             ->get();
 
         return response()->json(['data' => $ordenes], 200);

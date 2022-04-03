@@ -26,7 +26,8 @@ class RestauranteSeeder extends Seeder
 
         TipoOrden::insert([
             ['nombre'=>'Consumo local','orden' => 1],
-            ['nombre'=>'Para llevar','orden' => 2]
+            ['nombre'=>'Para llevar','orden' => 2],
+            ['nombre'=>'Reservación','orden' => 3, 'reservacion' => 1]
         ]);
 
         CategoriaComida::insert([
@@ -38,12 +39,12 @@ class RestauranteSeeder extends Seeder
         ]);
 
         Mesa::insert([
-            ['nombre'=>'Mesa 1','icono'=>'restaurant'],
-            ['nombre'=>'Mesa 2','icono'=>'restaurant'],
-            ['nombre'=>'Mesa 3','icono'=>'restaurant'],
-            ['nombre'=>'Mesa 4','icono'=>'restaurant'],
-            ['nombre'=>'Mesa 5','icono'=>'restaurant'],
-            ['nombre'=>'Mesa 6','icono'=>'restaurant'],
+            ['nombre'=>'Mesa 1','icono'=>'restaurant','orden'=>1],
+            ['nombre'=>'Mesa 2','icono'=>'restaurant','orden'=>2],
+            ['nombre'=>'Mesa 3','icono'=>'restaurant','orden'=>3],
+            ['nombre'=>'Mesa 4','icono'=>'restaurant','orden'=>4],
+            ['nombre'=>'Mesa 5','icono'=>'restaurant','orden'=>5],
+            ['nombre'=>'Mesa 6','icono'=>'restaurant','orden'=>6],
         ]);
     }
 }

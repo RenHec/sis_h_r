@@ -79,7 +79,8 @@ class ProductoController extends ApiController
             'nombre' => 'required|string',
             'precio' => 'required|numeric|min:1',
             'imagen' => 'required|image',
-            'categorias' => 'nullable|array'
+            'categorias' => 'nullable|array',
+            'costo' => 'required|numeric',
         ];
 
         $this->validate($request, $rules, $message);
@@ -94,6 +95,7 @@ class ProductoController extends ApiController
             $registro->nombre   = $request->get('nombre');
             $registro->precio   = $request->get('precio');
             $registro->img      = $this->pathImage . $name;
+            $registro->costo    = $request->get('costo');
             $registro->save();
 
             foreach ($request->get('categorias') as $key => $value) {
@@ -145,7 +147,8 @@ class ProductoController extends ApiController
             'nombre' => 'required|string',
             'precio' => 'required|numeric|min:1',
             'imagen' => 'nullable|image',
-            'categorias' => 'nullable|array'
+            'categorias' => 'nullable|array',
+            'costo'     => 'required|numeric'
         ];
 
         $this->validate($request, $rules);
@@ -165,6 +168,7 @@ class ProductoController extends ApiController
 
             $registro->nombre   = $request->get('nombre');
             $registro->precio   = $request->get('precio');
+            $registro->costo    = $request->get('costo');
 
             if ($request->hasFile('imagen')) {
                 $file    = $request->file('imagen');

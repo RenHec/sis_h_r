@@ -20,6 +20,9 @@
 
               <v-text-field outlined dense name="icono" v-model="icono" v-validate="'required'" label="Icono"></v-text-field>
               <form-error :attribute_name="'icono'" :errors_form="errors"> </form-error>
+
+              <v-text-field outlined dense name="orden" v-model="orden" v-validate="'required'" label="Orden de despliegue"></v-text-field>
+              <form-error :attribute_name="'orden'" :errors_form="errors"> </form-error>
           </v-form>
           </v-card-text>
           <v-card-actions>
@@ -46,12 +49,13 @@ export default{
       id:'',
       nombre:'',
       icono:'',
+      orden:'',
 
       loading:false,
     }
   },
   mounted(){
-    this.initializeModel()
+    this.initializeModel(this.item)
   },
   created(){
 
@@ -63,10 +67,11 @@ export default{
     item:{}
   },
   methods:{
-    initializeModel(){
-      this.id = this.item.id
-      this.nombre = this.item.nombre
-      this.icono = this.item.icono
+    initializeModel(mesa){
+      this.id = mesa.id
+      this.nombre = mesa.nombre
+      this.icono = mesa.icono
+      this.orden = mesa.orden
     },
     closeForm(){
       events.$emit("close_form_update_table",true)
@@ -87,6 +92,7 @@ export default{
           'id':this.id,
           'nombre':this.nombre,
           'icono':this.icono,
+          'orden':this.orden
       }
 
       this.$parent.$store.state.services.tableService

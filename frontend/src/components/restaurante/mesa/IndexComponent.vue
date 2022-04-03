@@ -123,7 +123,8 @@ export default{
 
       headers:[
         { text: 'Nombre', value: 'nombre' },
-        { text: 'Icono', value: 'icono', sortable:false }
+        { text: 'Icono', value: 'icono', sortable:false },
+        { text: 'Orden de despliegue', value: 'orden', sortable:false }
       ],
       singleSelect: true,
       selected:[],
