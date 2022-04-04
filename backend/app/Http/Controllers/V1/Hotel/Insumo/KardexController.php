@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 
 class KardexController extends ApiController
 {
+    private $controlador_principal = 'KardexController';
+
     /**
      * Display a listing of the resource.
      *
@@ -22,6 +24,7 @@ class KardexController extends ApiController
         try {
             return $this->successResponse(HKardex::with('historial', 'producto', 'usuario')->get());
         } catch (\Exception $e) {
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@index");
             return $this->errorResponse('Error en el controlador');
         }
     }
@@ -58,10 +61,14 @@ class KardexController extends ApiController
                 $this->historial_kardex("=", $kardex->stock_actual, $kardex->stock_actual, $producto->id, $kardex, $producto->nombre, $producto->getTable(), "Producto - {$producto->id}");
             }
 
+            $this->bitacora_general($producto->getTable(), $this->acciones(0), $producto, "{$this->controlador_principal}@store");
+            $this->bitacora_general($kardex->getTable(), $this->acciones(0), $kardex, "{$this->controlador_principal}@store");
+
             DB::commit();
             return $this->successResponse("Producto: {$producto->nombre} fue registrado y con un stock inicial de {$kardex->stock_actual}.");
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             if ($e instanceof QueryException) {
                 return $this->errorResponse('Ocurrio un problema al grabar la información del kardex');
             }
@@ -80,6 +87,7 @@ class KardexController extends ApiController
         try {
             return $this->successResponse(["producto" => $kardex, "usuario" => $kardex->usuario, "kardex" => $kardex->kardex]);
         } catch (\Exception $e) {
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@show");
             return $this->errorResponse('Error en el controlador');
         }
     }
@@ -112,10 +120,14 @@ class KardexController extends ApiController
             }
             $kardex->save();
 
+            $this->bitacora_general($producto->getTable(), $this->acciones(1), $producto, "{$this->controlador_principal}@update");
+            $this->bitacora_general($kardex->getTable(), $this->acciones(1), $kardex, "{$this->controlador_principal}@update");
+
             DB::commit();
             return $this->successResponse("Producto: {$producto->nombre} fue registrado y con un stock inicial de {$kardex->stock_actual}.");
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@update");
             if ($e instanceof QueryException) {
                 return $this->errorResponse('Ocurrio un problema al grabar la información de la habitación');
             }
@@ -132,11 +144,17 @@ class KardexController extends ApiController
     public function destroy(HProducto $kardex)
     {
         try {
+            DB::beginTransaction();
             $kardex->activo = $kardex->activo ? false : true;
             $kardex->save();
             $mensaje = $kardex->activo ? 'ALTA' : 'BAJA';
+
+            $this->bitacora_general($kardex->getTable(), $this->acciones(3), $kardex, "{$this->controlador_principal}@destroy");
+            DB::commit();
             return $this->successResponse("El producto {$kardex->nombre} fue dado de {$mensaje}.");
         } catch (\Exception $e) {
+            DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@destroy");
             return $this->errorResponse('Error en el controlador');
         }
     }

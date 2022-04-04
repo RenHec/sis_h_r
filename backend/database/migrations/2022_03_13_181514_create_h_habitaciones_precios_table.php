@@ -15,7 +15,11 @@ class CreateHHabitacionesPreciosTable extends Migration
     {
         Schema::create('h_habitaciones_precios', function (Blueprint $table) {
             $table->id();
+            $table->string('nombre', 75);
+            $table->decimal('precio_desayuno', 11, 2)->default(0);
+            $table->decimal('precio_habitacion', 11, 2);
             $table->decimal('precio', 11, 2);
+            $table->boolean('incluye_desayuno')->default(false);
             $table->boolean('activo')->default(true);
             $table->foreignId('h_tipos_camas_id')->constrained('h_tipos_camas');
             $table->foreignId('h_habitaciones_id')->constrained('h_habitaciones');

@@ -2,10 +2,13 @@
 
 namespace App\Models\V1\Hotel;
 
+use App\Models\V1\Hotel\HPago;
 use App\Models\V1\Hotel\HCheckIn;
+use App\Models\V1\Hotel\HCheckOut;
 use App\Models\V1\Principal\Cliente;
 use App\Models\V1\Seguridad\Usuario;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use App\Models\V1\Hotel\HReservacionDetalle;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -15,7 +18,10 @@ class HReservacion extends Model
 
     protected $table = 'h_reservaciones';
 
-    protected $fillable = ['codigo', 'nombre', 'sub_total', 'extra', 'total', 'reservacion', 'check_in', 'check_out', 'pagado', 'anulado', 'clientes_id', 'usuarios_id'];
+    protected $fillable = [
+        'codigo', 'nombre', 'sub_total', 'extra', 'total', 'reservacion',
+        'check_in', 'check_out', 'pagado', 'anulado', 'clientes_id', 'usuarios_id', 'comprobante'
+    ];
 
     /**
      * The attributes that should be cast to native types.
@@ -36,6 +42,23 @@ class HReservacion extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['ticket'];
+
+    /**
+     * Get the user's link base64 foto.
+     *
+     * @return string
+     */
+    public function getTicketAttribute()
+    {
+        return Storage::disk('ticket')->exists($this->comprobante) ? Storage::disk('ticket')->url($this->comprobante) : null;
+    }
+
+    /**
      * Scope a query to only include resarvacion
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -43,7 +66,7 @@ class HReservacion extends Model
      */
     public function scopeTodas($query) //Todas
     {
-        return $query->with('cliente', 'usuario', 'detalle', 'check_in', 'check_out', 'pago')
+        return $query->with('cliente', 'usuario', 'detalle', 'check_in_list', 'check_out_list', 'pago')
             ->where('anulado', false)
             ->orderByDesc('id');
     }
@@ -157,5 +180,15 @@ class HReservacion extends Model
     public function check_out_list()
     {
         return $this->hasMany(HCheckOut::class, 'h_reservaciones_id', 'id');
+    }
+
+    /**
+     * Get the pago associated.
+     *
+     * @return object
+     */
+    public function pago()
+    {
+        return $this->hasOne(HPago::class, 'h_reservaciones_id', 'id')->where('anulado', false);
     }
 }

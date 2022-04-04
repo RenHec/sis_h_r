@@ -18,6 +18,8 @@ use Intervention\Image\Exception\ImageException;
 
 class CheckInController extends ApiController
 {
+    private $controlador_principal = 'CheckInController';
+
     /**
      * Store the specified resource in storage.
      *
@@ -82,6 +84,8 @@ class CheckInController extends ApiController
                     $kardex->updated_at = date('Y-m-d H:i:s');
                     $kardex->save();
 
+                    $this->bitacora_general($kardex->getTable(), $this->acciones(1), $kardex, "{$this->controlador_principal}@store");
+
                     $this->historial_kardex("-ri", $kardex->stock_actual, $cantidad, $check->id, $kardex, $agregado['producto'], $check->getTable(), "Reservación {$check->codigo} - {$check->habitacion} (CheckIn)");
 
                     /*REGISTRAR EL PRODUCTO QUE TIENE QUE ENTREGAR AL HUSPED*/
@@ -112,16 +116,20 @@ class CheckInController extends ApiController
                 $h_reservaciones_id = $check->h_reservaciones_id;
             }
 
-            HReservacion::where('id', $h_reservaciones_id)->update(['check_in' => true]);
+            $reservacion = HReservacion::where('id', $h_reservaciones_id)->update(['check_in' => true]);
 
             $distribucion_check->distribucion = $producto_entregar;
             $distribucion_check->save();
+
+            $this->bitacora_general($distribucion_check->getTable(), $this->acciones(0), $distribucion_check, "{$this->controlador_principal}@store");
+            $this->bitacora_general($reservacion->getTable(), $this->acciones(1), $reservacion, "{$this->controlador_principal}@store");
 
             DB::commit();
 
             return $this->successResponse(['mensaje' => "Check In: se realizó el check in para la reservación con código {$request->codigo}."]);
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             if ($e instanceof ImageException) {
                 return $this->errorResponse('Ocurrio un problema al grabar la firma del check in');
             } else if ($e instanceof QueryException) {
@@ -142,6 +150,7 @@ class CheckInController extends ApiController
         try {
             return $this->successResponse($check_in->detalle);
         } catch (\Exception $e) {
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             return $this->errorResponse('Error en el controlador');
         }
     }
@@ -175,16 +184,19 @@ class CheckInController extends ApiController
                     $kardex->stock_consumido -= $cantidad;
                     $kardex->updated_at = date('Y-m-d H:i:s');
                     $kardex->save();
+                    $this->bitacora_general($kardex->getTable(), $this->acciones(1), $kardex, "{$this->controlador_principal}@destroy");
 
                     $this->historial_kardex("aci", $kardex->stock_actual, $cantidad, $item->h_reservaciones_id, $kardex, $agregado['producto'], $item->getTable(), "Reservación {$item->codigo} - {$item->habitacion} (CheckIn)", true);
                 }
 
                 $item->delete();
                 $foto = $item->foto;
+                $this->bitacora_general($item->getTable(), $this->acciones(2), $item, "{$this->controlador_principal}@destroy");
             }
 
             $check_in->check_in = false;
             $check_in->save();
+            $this->bitacora_general($check_in->getTable(), $this->acciones(3), $check_in, "{$this->controlador_principal}@destroy");
 
             Storage::disk('firma')->exists($foto) ? Storage::disk('firma')->delete($foto) : null;
 
@@ -193,6 +205,7 @@ class CheckInController extends ApiController
             return $this->successResponse("Check In: se realizó la anulación del check in para la reservación con código {$check_in->codigo}.");
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             if ($e instanceof ImageException) {
                 return $this->errorResponse('Ocurrio un problema al anular la firma del check in');
             } else if ($e instanceof QueryException) {

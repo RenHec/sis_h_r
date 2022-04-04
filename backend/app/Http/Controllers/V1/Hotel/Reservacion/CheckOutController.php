@@ -18,6 +18,8 @@ use Intervention\Image\Exception\ImageException;
 
 class CheckOutController extends ApiController
 {
+    private $controlador_principal = 'CheckOutController';
+
     /**
      * Store a newly created resource in storage.
      *
@@ -59,6 +61,8 @@ class CheckOutController extends ApiController
                     ]
                 );
 
+                $this->bitacora_general($check->getTable(), $this->acciones(0), $check, "{$this->controlador_principal}@store");
+
                 if ($key == 0) {
                     $distribucion_check = $check;
                 }
@@ -78,20 +82,27 @@ class CheckOutController extends ApiController
                         $kardex->stock_consumido -= $cantidad;
                         $kardex->updated_at = date('Y-m-d H:i:s');
                         $kardex->save();
+
+                        $this->bitacora_general($kardex->getTable(), $this->acciones(1), $kardex, "{$this->controlador_principal}@store");
                     }
 
                     $this->historial_kardex("+ro", $kardex->stock_actual, $cantidad, $check->id, $kardex, $agregado['producto'], $check->getTable(), "Reservación {$check->codigo} - {$check->habitacion} (CheckOut)");
                 }
             }
 
-            HReservacion::where('id', $distribucion_check->h_reservaciones_id)->update(['check_out' => true]);
-            HReservacionDetalle::where('h_reservaciones_id', $distribucion_check->h_reservaciones_id)->update(['disponible' => true]);
+
+            $reservacion = HReservacion::where('id', $distribucion_check->h_reservaciones_id)->update(['pagado' => true]);
+            $this->bitacora_general($reservacion->getTable(), $this->acciones(3), $reservacion, "{$this->controlador_principal}@store");
+
+            $detalle = HReservacionDetalle::where('h_reservaciones_id', $distribucion_check->h_reservaciones_id)->update(['disponible' => true]);
+            $this->bitacora_general($detalle->getTable(), $this->acciones(3), $detalle, "{$this->controlador_principal}@store");
 
             DB::commit();
 
             return $this->successResponse(['mensaje' => "Check Out: se realizó el check out para la reservación con código {$request->codigo}."]);
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             if ($e instanceof ImageException) {
                 return $this->errorResponse('Ocurrio un problema al grabar la firma del check out');
             } else if ($e instanceof QueryException) {
@@ -112,6 +123,7 @@ class CheckOutController extends ApiController
         try {
             return $this->successResponse($check_out->detalle);
         } catch (\Exception $e) {
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@show");
             return $this->errorResponse('Error en el controlador');
         }
     }
@@ -147,18 +159,23 @@ class CheckOutController extends ApiController
                         $kardex->updated_at = date('Y-m-d H:i:s');
                         $kardex->save();
 
+                        $this->bitacora_general($kardex->getTable(), $this->acciones(1), $kardex, "{$this->controlador_principal}@destroy");
+
                         $this->historial_kardex("aco", $kardex->stock_actual, $cantidad, $item->h_reservaciones_id, $kardex, $agregado['producto'], $item->getTable(), "Reservación {$item->codigo} - {$item->habitacion} (CheckOut)", true);
                     }
                 }
 
                 $item->delete();
                 $foto = $item->foto;
+                $this->bitacora_general($item->getTable(), $this->acciones(2), $item, "{$this->controlador_principal}@destroy");
             }
 
             $check_out->check_out = false;
             $check_out->save();
+            $this->bitacora_general($check_out->getTable(), $this->acciones(3), $check_out, "{$this->controlador_principal}@destroy");
 
-            HReservacionDetalle::where('h_reservaciones_id', $check_out->id)->update(['disponible' => false]);
+            $detalle = HReservacionDetalle::where('h_reservaciones_id', $check_out->id)->update(['disponible' => false]);
+            $this->bitacora_general($detalle->getTable(), $this->acciones(3), $detalle, "{$this->controlador_principal}@store");
 
             Storage::disk('firma')->exists($foto) ? Storage::disk('firma')->delete($foto) : null;
 
@@ -167,6 +184,7 @@ class CheckOutController extends ApiController
             return $this->successResponse("Check out: se realizó la anulación del check out para la reservación con código {$check_out->codigo}.");
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@destroy");
             if ($e instanceof ImageException) {
                 return $this->errorResponse('Ocurrio un problema al anular la firma del check in');
             } else if ($e instanceof QueryException) {

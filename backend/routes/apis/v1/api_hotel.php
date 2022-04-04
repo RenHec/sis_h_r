@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 /* Prefix route: servicio/hotel/version_uno */
 
-Route::resource('/tipo_cama', 'Habitacion\TipoCamaController')->only('index', 'store', 'show', 'destroy');
+Route::resource('/tipo_cama', 'Habitacion\TipoCamaController')->only('index', 'store', 'destroy');
 Route::resource('/habitacion', 'Habitacion\HabitacionController')->only('index', 'store', 'update', 'destroy');
 Route::resource('/habitacion_foto', 'Habitacion\HabitacionFotoController')->only('show', 'update', 'destroy');
 Route::resource('/habitacion_precio', 'Habitacion\HabitacionPrecioController')->only('update', 'destroy');
@@ -28,3 +28,6 @@ Route::resource('/check_in', 'Reservacion\CheckInController')->only('show', 'sto
 Route::resource('/check_out', 'Reservacion\CheckOutController')->only('show', 'store', 'destroy');
 
 Route::resource('/pago', 'Pago\PagoController')->only('index', 'show', 'store', 'destroy');
+
+Route::resource('/hotel_caja', 'Caja\CajaChicaController')->only('index', 'store', 'show');
+Route::resource('/hotel_caja_movimiento', 'Caja\CajaChicaMovimientoController')->only('update', 'destroy');

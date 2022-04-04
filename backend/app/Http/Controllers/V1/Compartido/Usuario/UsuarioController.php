@@ -155,6 +155,7 @@ class UsuarioController extends ApiController
             return $this->successResponse('Registro agregado.');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             return $this->errorResponse('Error en el controlador');
         }
     }
@@ -207,6 +208,7 @@ class UsuarioController extends ApiController
             return $this->successResponse('Contraseña actualizada.');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@cambiar_password");
             return $this->errorResponse('Error en el controlador', 423);
         }
     }
@@ -258,7 +260,7 @@ class UsuarioController extends ApiController
      */
     public function update(Request $request, Usuario $user)
     {
-        $this->validate($request, $this->rules($user->id), $this->messages());
+        $this->validate($request, $this->rules($user->empleado_id), $this->messages());
 
         try {
             DB::beginTransaction();
@@ -277,7 +279,7 @@ class UsuarioController extends ApiController
             $user->cui = $request->cui;
 
             if (!is_null($request->foto)) {
-                Storage::disk('user')->exists($user->foto) ? Storage::disk('user')->delete($user->foto) : null;
+                Storage::disk('user')->exists($persona->foto) ? Storage::disk('user')->delete($persona->foto) : null;
 
                 $img = $this->getB64Image($request->foto);
                 $image = Image::make($img);
@@ -302,6 +304,7 @@ class UsuarioController extends ApiController
             return $this->successResponse('Registro actualizado.');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@update");
             return $this->errorResponse('Error en el controlador');
         }
     }
@@ -369,6 +372,7 @@ class UsuarioController extends ApiController
             return $this->successResponse("Registro {$message}");
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@destroy");
             return $this->errorResponse('Error en el controlador');
         }
     }

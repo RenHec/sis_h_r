@@ -6,6 +6,7 @@ use App\Models\V1\Catalogo\Municipio;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use App\Models\V1\Catalogo\Departamento;
+use App\Models\V1\Seguridad\Usuario;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -133,5 +134,15 @@ class Empleado extends Model
     public function municipio()
     {
         return $this->hasOne(Municipio::class, 'id', 'municipio_id');
+    }
+
+    /**
+     * Get the usuario associated with the user.
+     *
+     * @return object
+     */
+    public function usuario()
+    {
+        return $this->hasOne(Usuario::class, 'empleado_id', 'id');
     }
 }

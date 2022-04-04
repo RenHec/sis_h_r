@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models\V1\Seguridad;
+namespace App\Models\V1\Principal;
 
 use App\Models\V1\Seguridad\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Bitacora extends Model
+class TablaLog extends Model
 {
     use HasFactory;
 
@@ -15,7 +15,7 @@ class Bitacora extends Model
      *
      * @var string
      */
-    protected $table = 'bitacoras';
+    protected $table = 'logs';
 
     /**
      * The attributes that are mass assignable.
@@ -23,11 +23,8 @@ class Bitacora extends Model
      * @var array
      */
     protected $fillable = [
-        'tabla',
-        'accion',
         'descripcion',
         'controlador',
-        'usuario',
         'usuarios_id'
     ];
 

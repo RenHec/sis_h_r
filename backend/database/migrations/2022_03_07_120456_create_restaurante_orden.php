@@ -15,11 +15,10 @@ class CreateRestauranteOrden extends Migration
     {
         Schema::create('r_orden', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->decimal('monto',9,2);
+            $table->decimal('monto', 9, 2);
             $table->bigInteger('estado_orden_id')->unsigned();
             $table->bigInteger('tipo_orden_id')->unsigned();
             $table->bigInteger('mesa_id')->unsigned()->nullable();
-            $table->string('reservacion_id')->nullable();
             $table->date('fecha');
             $table->string('hora');
             $table->smallInteger('activo')->default(1);

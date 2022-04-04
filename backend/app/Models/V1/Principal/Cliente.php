@@ -44,7 +44,7 @@ class Cliente extends Model
      */
     public function scopeTodos($query)
     {
-        return $query->with('departamento', 'municipio')->withTrashed()->where('id', '<>', 1)->orderByDesc('id');
+        return $query->with('departamento', 'municipio')->withTrashed()->orderByDesc('id');
     }
 
     /**

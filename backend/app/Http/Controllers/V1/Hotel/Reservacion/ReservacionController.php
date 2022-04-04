@@ -7,11 +7,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\V1\Hotel\HReservacion;
 use App\Http\Controllers\ApiController;
+use App\Models\V1\Hotel\HHabitacionPrecio;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Storage;
 use App\Models\V1\Hotel\HReservacionDetalle;
 
 class ReservacionController extends ApiController
 {
+    private $controlador_principal = 'ReservacionController';
+
     /**
      * Display a listing of the resource.
      *
@@ -40,7 +44,8 @@ class ReservacionController extends ApiController
             }
             return $this->successResponse($data);
         } catch (\Exception $e) {
-            return $this->errorResponse('Error en el controlador');
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
+            return $this->errorResponse('Error del controlador');
         }
     }
 
@@ -97,7 +102,8 @@ class ReservacionController extends ApiController
                 $inicio = date('Y-m-d');
                 $inicio = date('Y-m-d H:i:s', strtotime("{$inicio} {$request->inicio}"));
                 $fin = date('Y-m-d H:i:s', strtotime("+{$minutos} minute", strtotime($inicio)));
-                $formato_inicio = date('d/m/Y H:i:s', strtotime("{$inicio} {$request->inicio}"));
+
+                $formato_inicio = date('d/m/Y H:i:s', strtotime($inicio));
                 $formato_fin = date('d/m/Y H:i:s', strtotime("+{$minutos} minute", strtotime($inicio)));
             }
 
@@ -127,6 +133,8 @@ class ReservacionController extends ApiController
                     $mensaje_dia = $dias > 1 ? "{$dias} días" : "{$dias} día";
                 }
 
+                $incluye_desayuno = boolval($value['h_reservaciones_detalles']['incluye_desayuno']) ? " e incluye desayuno." : ".";
+
                 $detalle = HReservacionDetalle::create(
                     [
                         'codigo' => $reservacion->codigo,
@@ -137,14 +145,20 @@ class ReservacionController extends ApiController
                         'huespedes' => $huespedes,
                         'precio' => $precio,
                         'sub_total' => $request->consulta_por_hora ? $precio : $dias * $precio,
-                        'descripcion' => !$request->consulta_por_hora ? "La habitación #{$value['h_reservaciones_detalles']['habitacion']} fue reservado por {$mensaje_dia}, fecha de ingreso {$formato_inicio} y fecha de egreso {$formato_fin}." : "La habitación #{$value['h_reservaciones_detalles']['habitacion']} fue reservado por {$mensaje_hora}, fecha de ingreso {$formato_inicio} y fecha de egreso {$formato_fin}.",
+                        'descripcion' => !$request->consulta_por_hora ? "La habitación #{$value['h_reservaciones_detalles']['habitacion']} fue reservado por {$mensaje_dia}, fecha de ingreso {$formato_inicio} y fecha de egreso {$formato_fin}{$incluye_desayuno}" : "La habitación #{$value['h_reservaciones_detalles']['habitacion']} fue reservado por {$mensaje_hora}, fecha de ingreso {$formato_inicio} y fecha de egreso {$formato_fin}.",
                         'h_reservaciones_id' => $reservacion->id,
                         'h_habitaciones_precios_id' => $value['h_reservaciones_detalles']['id'],
                         'h_habitaciones_id' => $value['h_reservaciones_detalles']['habitacion_id'],
+                        'incluye_desayuno' => $value['h_reservaciones_detalles']['incluye_desayuno'],
                         'created_at' => date('Y-m-d H:i:s')
                     ]
                 );
 
+                $this->bitacora_general($detalle->getTable(), $this->acciones(0), $detalle, "{$this->controlador_principal}@store");
+
+                $buscar_desayuno = HHabitacionPrecio::find($value['h_reservaciones_detalles']['id']);
+                $extra = $buscar_desayuno->incluye_desayuno ? ($detalle->huespedes * $detalle->dias) * $buscar_desayuno->precio_desayuno : 0;
+                $reservacion->extra += $extra;
                 $reservacion->sub_total += $detalle->sub_total;
                 $reservacion->total = $reservacion->sub_total;
                 $reservacion->updated_at = date('Y-m-d H:i:s');
@@ -155,12 +169,22 @@ class ReservacionController extends ApiController
             }
             $cantidad_habitaciones = count(array_unique($nuevo_array));
 
+            $ticket = $this->ticketReservacion($reservacion);
+            $path = "/hotel/comprobante/{$reservacion->codigo}.pdf";
+            Storage::disk('ticket')->put($path, $ticket);
+
+            $reservacion->comprobante = $path;
+            $reservacion->save();
+
+            $this->bitacora_general($reservacion->getTable(), $this->acciones(0), $reservacion, "{$this->controlador_principal}@store");
+
             DB::commit();
-            return $this->successResponse("Reservacion: la reservación #{$reservacion->codigo} fue con {$cantidad_habitaciones} habitaciones para {$cantidad_personas} personas.");
+            return $this->successResponse(['mensaje' => "Reservacion: la reservación #{$reservacion->codigo} fue con {$cantidad_habitaciones} habitaciones para {$cantidad_personas} personas.", 'comprobante' => $reservacion->getTicketAttribute()]);
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             if ($e instanceof QueryException) {
-                return $this->errorResponse($e->getMessage());
+                return $this->errorResponse('Ocurrio un problema al guardar la información de la reservación.');
             }
             return $e->getCode() === 1 ? $this->errorResponse($e->getMessage()) : $this->errorResponse('Error en el controlador');
         }
@@ -177,14 +201,17 @@ class ReservacionController extends ApiController
         try {
             DB::beginTransaction();
 
-            HReservacionDetalle::where('h_reservaciones_id', $reservacion->id)->update(['disponible' => true, 'updated_at' => date('Y-m-d H:i:s')]);
+            $detalle = HReservacionDetalle::where('h_reservaciones_id', $reservacion->id)->update(['disponible' => true, 'updated_at' => date('Y-m-d H:i:s')]);
+            $this->bitacora_general($detalle->getTable(), $this->acciones(3), $detalle, "{$this->controlador_principal}@destroy");
             $reservacion->anulado = true;
             $reservacion->save();
+            $this->bitacora_general($reservacion->getTable(), $this->acciones(3), $reservacion, "{$this->controlador_principal}@destroy");
 
             DB::commit();
             return $this->successResponse("La reservación con código {$reservacion->codigo} fue anulada.");
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             return $this->errorResponse('Error en el controlador');
         }
     }

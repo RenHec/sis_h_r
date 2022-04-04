@@ -61,6 +61,7 @@ class PresentacionController extends ApiController
             return $this->successResponse($mensaje);
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             return $this->errorResponse('Error en el controlador');
         }
     }
@@ -87,11 +88,10 @@ class PresentacionController extends ApiController
                     return $this->errorResponse('No hay datos para actualizar', 423);
 
                 $presentacion->save();
+
                 $this->bitacora_general($this->tabla_principal, $this->acciones(1), $presentacion, "{$this->controlador_principal}@update");
 
                 $mensaje = "La presentación {$presentacion->nombre} fue actualizada.";
-
-                AsignarPresentacion::where('presentaciones_id', $presentacion->id)->update(['presentaciones' => $presentacion->nombre]);
             }
 
             DB::commit();
@@ -99,6 +99,7 @@ class PresentacionController extends ApiController
             return $this->successResponse($mensaje);
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@update");
             return $this->errorResponse('Error en el controlador');
         }
     }
@@ -126,14 +127,16 @@ class PresentacionController extends ApiController
                     $item->restore();
                     $message = 'activada';
                 }
+
+                $this->bitacora_general($this->tabla_principal, $message == 'eliminada' ? $this->acciones(2) : $this->acciones(3), $item, "{$this->controlador_principal}@destroy");
+                DB::commit();
             } else {
                 DB::rollBack();
                 return $this->errorResponse('Error en el controlador');
             }
-        }
 
-        $this->bitacora_general($this->tabla_principal, $message == 'eliminada' ? $this->acciones(2) : $this->acciones(3), $item, "{$this->controlador_principal}@destroy");
-        DB::commit();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@destroy");
+        }
         return $this->successResponse("La presentación {$item->nombre} fue {$message}");
     }
 }

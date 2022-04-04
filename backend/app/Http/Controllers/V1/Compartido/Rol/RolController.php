@@ -60,6 +60,7 @@ class RolController extends ApiController
             return $this->successResponse('Registro agregado.');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             return $this->errorResponse($e->getMessage());
         }
     }
@@ -80,6 +81,7 @@ class RolController extends ApiController
             return $this->successResponse('Registro eliminado');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@destroy");
             if ($e instanceof QueryException) {
                 return $this->errorResponse('El registro se encuentra en uso', 423);
             }

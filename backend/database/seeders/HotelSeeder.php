@@ -31,8 +31,8 @@ class HotelSeeder extends Seeder
             ['nombre' => 'King', 'cantidad' => 2]
         ]);
 
-        HHabitacion::factory(20)->create();
-        HHabitacionPrecio::factory(150)->create();
+        HHabitacion::factory(10)->create();
+        HHabitacionPrecio::factory(30)->create();
         HKardexHistorial::factory(250)->create();
     }
 }

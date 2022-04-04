@@ -21,9 +21,15 @@ use App\Models\V1\Catalogo\Presentacion;
 use App\Models\V1\Hotel\HHabitacionFoto;
 use App\Models\V1\Catalogo\SAT as V1CatalogoSAT;
 use App\Models\V1\Principal\Empleado;
+use App\Models\V1\Seguridad\Bitacora;
 
 class SelectController extends ApiController
 {
+    public function bitacora()
+    {
+        return $this->showAll(Bitacora::orderBy('created_at')->get());
+    }
+
     public function departamento()
     {
         return $this->showAll(Departamento::orderBy('nombre')->get());
@@ -213,7 +219,8 @@ class SelectController extends ApiController
                         'h_tipos_camas.cantidad AS cantidad',
                         'h_habitaciones.numero AS habitacion',
                         'h_habitaciones.id AS habitacion_id',
-                        DB::RAW("CONCAT('Habitación ',h_habitaciones.numero,' | Cama: ',h_tipos_camas.nombre) AS nombre_completo"),
+                        'h_habitaciones_precios.incluye_desayuno AS incluye_desayuno',
+                        DB::RAW("CONCAT(h_habitaciones_precios.nombre,' | Cama: ',h_tipos_camas.nombre,' | Cantidad: ',h_tipos_camas.cantidad) AS nombre_completo"),
                         DB::RAW("IF(h_tipos_camas.id=1, true, false) AS mostrar"),
                         DB::RAW("false AS seleccionado")
                     )
@@ -227,7 +234,8 @@ class SelectController extends ApiController
             }
 
             return $this->successResponse([$habitaciones]);
-        } catch (\Throwable $th) {
+        } catch (\Throwable $e) {
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@destroy");
             return $this->errorResponse("Ocurrio un error", 500);
         }
     }
@@ -330,7 +338,8 @@ class SelectController extends ApiController
             $mensaje = is_null($responseBodyAsString) ? null : "SAT: {$responseBodyAsString['error']} | {$responseBodyAsString['error_description']}";
             return $this->errorResponse($mensaje);
         } catch (Exception $e) {
-            return $this->errorResponse($e->getMessage());
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@destroy");
+            return $this->errorResponse('Error en el controlador');
         }
     }
 

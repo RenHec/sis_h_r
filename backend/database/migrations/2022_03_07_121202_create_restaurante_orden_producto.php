@@ -18,8 +18,9 @@ class CreateRestauranteOrdenProducto extends Migration
             $table->smallInteger('cantidad')->default(1);
             $table->text('notas')->nullable();
             $table->uuid('orden_id')->nullable(false);
-            $table->decimal('precio',9,2);
+            $table->decimal('precio', 9, 2);
             $table->bigInteger('producto_id')->unsigned();
+            $table->string('reservacion_id')->nullable();
             $table->smallInteger('activo')->default(1);
             $table->foreign('producto_id')->references('id')->on('r_producto');
             $table->foreign('orden_id')->references('id')->on('r_orden');

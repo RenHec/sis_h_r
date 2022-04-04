@@ -36,6 +36,7 @@ Route::name('rol_menu.eliminar_masivo')->post('rol_menu/eliminar_masivo', 'Rol\R
 Route::resource('menu', 'Menu\MenuController')->only('index');
 
 //rutas para SelectController
+Route::name('select.bitacora')->get('select/bitacora', 'Catalogo\SelectController@bitacora');
 Route::name('select.departamento')->get('select/departamento', 'Catalogo\SelectController@departamento');
 Route::name('select.municipio')->get('select/municipio', 'Catalogo\SelectController@municipio');
 Route::name('select.presentacion')->get('select/presentacion', 'Catalogo\SelectController@presentacion');
@@ -54,3 +55,12 @@ Route::name('select.empleado')->get('select/empleado', 'Catalogo\SelectControlle
 
 //rutas para PresentacionController
 Route::resource('presentacion', 'Catalogo\PresentacionController')->only(['index', 'store', 'update', 'destroy']);
+
+//rutas para ClienteController
+Route::resource('cliente_management', 'Persona\ClienteController')->only(['index', 'update', 'destroy']);
+
+//rutas para ProveedorController
+Route::resource('proveedor_management', 'Persona\ProveedorController')->only(['index', 'update', 'destroy']);
+
+//rutas para EmpleadoController
+Route::resource('empleado', 'Persona\EmpleadoController')->except(['create', 'edit']);

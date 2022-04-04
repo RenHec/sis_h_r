@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 
 class InsumoController extends ApiController
 {
+    private $controlador_principal = 'InsumoController';
+
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +27,8 @@ class InsumoController extends ApiController
             $anulados = HInsumo::with('proveedor', 'detalle', 'usuario')->where('anulado', true)->get();
             return $this->successResponse(['no_anulados' => $no_anulados, 'anulados' => $anulados]);
         } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage());
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@index");
+            return $this->errorResponse('Error en el controlador');
         }
     }
 
@@ -66,7 +69,7 @@ class InsumoController extends ApiController
             );
 
             $cantidad_registrados = 0;
-            foreach ($request->h_insumos_detalles as $key => $value) {
+            foreach ($request->h_detalles_detalles as $key => $value) {
                 $kardex = HKardex::find($value['h_productos_id']['id']); // h_productos_id, en este valor viene el ID del kardex
 
                 if (is_null($kardex)) {
@@ -96,11 +99,15 @@ class InsumoController extends ApiController
                     ]
                 );
 
+                $this->bitacora_general($detalle->getTable(), $this->acciones(0), $detalle, "{$this->controlador_principal}@store");
+
                 $kardex->stock_inicial = $kardex->stock_inicial > 0 ? $kardex->stock_inicial : $cantidad;
                 $kardex->stock_actual += $cantidad;
                 $kardex->activo = $kardex->stock_actual > 0 ? true : false;
                 $kardex->updated_at = date('Y-m-d H:i:s');
                 $kardex->save();
+
+                $this->bitacora_general($kardex->getTable(), $this->acciones(1), $kardex, "{$this->controlador_principal}@store");
 
                 $this->historial_kardex("+i", $kardex->stock_actual, $cantidad, $detalle->id, $kardex, $detalle->producto, $insumo->getTable(), "Insumo - {$insumo->documento}");
 
@@ -112,10 +119,14 @@ class InsumoController extends ApiController
                 $cantidad_registrados += 1;
             }
 
+            $this->bitacora_general($insumo->getTable(), $this->acciones(0), $insumo, "{$this->controlador_principal}@store");
+            $this->registrar_historia_caja("Movimiento de insumo número {$insumo->documento}", $insumo->total, "NA", "0", "{$this->controlador_principal}@store");
+
             DB::commit();
             return $this->successResponse("Insumo: el documento {$insumo->documento} fue registrado con un total de {$cantidad_registrados} registros y un total de Q{$insumo->total}.");
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             if ($e instanceof QueryException) {
                 return $this->errorResponse('Ocurrio un problema al grabar la información de la compra de insumo');
             }
@@ -148,6 +159,8 @@ class InsumoController extends ApiController
                 $kardex->activo = $kardex->stock_actual > 0 ? true : false;
                 $kardex->save();
 
+                $this->bitacora_general($kardex->getTable(), $this->acciones(1), $kardex, "{$this->controlador_principal}@destroy");
+
                 $this->historial_kardex("ai", $kardex->stock_actual, $value->cantidad, $detalle->id, $kardex, $kardex->producto->nombre, $insumo->getTable(), "Insumo - {$insumo->documento}", true);
 
                 $cantidad_anulados += 1;
@@ -156,10 +169,14 @@ class InsumoController extends ApiController
             $insumo->anulado = true;
             $insumo->save();
 
+            $this->bitacora_general($insumo->getTable(), $this->acciones(1), $insumo, "{$this->controlador_principal}@destroy");
+            $this->registrar_historia_caja("Anulación de movimiento de insumo número {$insumo->documento}", $insumo->total, "NA", "0", "{$this->controlador_principal}@destroy");
+
             DB::commit();
             return $this->successResponse("Insumo: el documento {$insumo->documento} fue anulado con un total de {$cantidad_anulados} registros.");
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@destroy");
             if ($e instanceof QueryException) {
                 return $this->errorResponse('Ocurrio un problema al grabar la información de la compra de insumo');
             }

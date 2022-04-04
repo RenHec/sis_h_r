@@ -9,10 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class TipoPago extends Model
 {
     use HasFactory;
-    //use SoftDeletes;
-
-    public const CREDITO = 3;
-    public const PRODUCTO = 6;
 
     /**
      * The table associated with the model.
@@ -28,7 +24,6 @@ class TipoPago extends Model
      */
     protected $fillable = [
         'nombre',
-        'movimientos_id',
         'ticket'
     ];
 
@@ -39,8 +34,7 @@ class TipoPago extends Model
      */
     protected $casts = [
         'created_at' => 'datetime:d/m/Y h:i:s a',
-        'updated_at' => 'datetime:d/m/Y h:i:s a',
-        'deleted_at' => 'datetime:d/m/Y h:i:s a'
+        'updated_at' => 'datetime:d/m/Y h:i:s a'
     ];
 
     /**
@@ -48,15 +42,5 @@ class TipoPago extends Model
      *
      * @var array
      */
-    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
-
-    /**
-     * Get the movimientos associated with the configuracion.
-     *
-     * @return array
-     */
-    public function movimientos()
-    {
-        return $this->hasOne(Movimiento::class, 'movimientos_id', 'id');
-    }
+    protected $dates = ['created_at', 'updated_at'];
 }

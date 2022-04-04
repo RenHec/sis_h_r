@@ -10,6 +10,8 @@ use Illuminate\Database\QueryException;
 
 class RolMenuController extends ApiController
 {
+    private $controlador_principal = 'RolMenuController';
+
     public function __construct()
     {
         parent::__construct();
@@ -24,18 +26,23 @@ class RolMenuController extends ApiController
     public function store(Request $request)
     {
         $this->validate($request, $this->rules(), $this->messages());
+        try {
 
-        foreach ($request->menus_id as $value) {
-            if ($value['principal'] > 0) {
-                RolMenu::firstOrCreate(['rol_id' => $request->id, 'menu_id' => $value['principal']]);
+            foreach ($request->menus_id as $value) {
+                if ($value['principal'] > 0) {
+                    RolMenu::firstOrCreate(['rol_id' => $request->id, 'menu_id' => $value['principal']]);
+                }
+                if ($value['padre'] > 0) {
+                    RolMenu::firstOrCreate(['rol_id' => $request->id, 'menu_id' => $value['padre']]);
+                }
+                RolMenu::firstOrCreate(['rol_id' => $request->id, 'menu_id' => $value['id']]);
             }
-            if ($value['padre'] > 0) {
-                RolMenu::firstOrCreate(['rol_id' => $request->id, 'menu_id' => $value['padre']]);
-            }
-            RolMenu::firstOrCreate(['rol_id' => $request->id, 'menu_id' => $value['id']]);
+
+            return $this->successResponse('Registro agregado');
+        } catch (\Exception $e) {
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
+            return $this->errorResponse('Error en el controlador');
         }
-
-        return $this->successResponse('Registro agregado');
     }
 
     /**
@@ -50,6 +57,7 @@ class RolMenuController extends ApiController
             $rol_menu->forceDelete();
             return $this->successResponse('Registro desactivado');
         } catch (\Exception $e) {
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             if ($e instanceof QueryException) {
                 return $this->errorResponse('El registro se encuentra en uso', 423);
             }
@@ -66,6 +74,7 @@ class RolMenuController extends ApiController
 
             return $this->successResponse('Registro desactivado');
         } catch (\Exception $e) {
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             if ($e instanceof QueryException) {
                 return $this->errorResponse('El registro se encuentra en uso', 423);
             }

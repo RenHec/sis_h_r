@@ -72,6 +72,7 @@ class UsuarioRolController extends ApiController
             return $this->successResponse('Registro agregado.');
         } catch (\Exception $e) {
             DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
             return $this->errorResponse('Error en el controlador');
         }
     }
@@ -128,6 +129,7 @@ class UsuarioRolController extends ApiController
             $menus = RolMenu::select('menu_id')->whereIn('rol_id', $rols)->distinct('menu_id')->with('menu')->get();
             return $this->successResponse($menus);
         } catch (\Exception $e) {
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@show");
             return $this->errorResponse('Error en el controlador');
         }
     }
@@ -186,9 +188,13 @@ class UsuarioRolController extends ApiController
             DB::commit();
             return $this->successResponse('Registro desactivado');
         } catch (\Exception $e) {
+            DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@destroy");
             if ($e instanceof QueryException) {
                 return $this->errorResponse('El registro se encuentra en uso', 423);
             }
+
+            return $this->errorResponse('Error en el controlador');
         }
     }
 

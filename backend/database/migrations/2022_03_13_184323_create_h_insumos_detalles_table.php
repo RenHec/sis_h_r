@@ -21,6 +21,7 @@ class CreateHInsumosDetallesTable extends Migration
             $table->decimal('precio', 10, 2);
             $table->decimal('descuento', 10, 2);
             $table->decimal('sub_total', 10, 2);
+            $table->boolean('incluye_desayuno')->default(false);
             $table->foreignId('h_insumos_id')->constrained('h_insumos');
             $table->foreignId('h_productos_id')->constrained('h_productos');
             $table->timestamps();

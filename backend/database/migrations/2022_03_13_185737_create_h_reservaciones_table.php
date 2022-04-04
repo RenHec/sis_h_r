@@ -25,6 +25,7 @@ class CreateHReservacionesTable extends Migration
             $table->boolean('check_out')->default(false);
             $table->boolean('pagado')->default(false);
             $table->boolean('anulado')->default(false);
+            $table->string('comprobante')->nullable();
             $table->longText('distribucion')->nullable();
             $table->foreignId('clientes_id')->constrained('clientes');
             $table->foreignId('usuarios_id')->constrained('usuarios');

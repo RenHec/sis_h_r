@@ -18,7 +18,7 @@ class HPago extends Model
     protected $fillable = [
         'correlativo', 'nit', 'nombre', 'ubicacion', 'vaucher_pago', 'detalle', 'factura',
         'sub_total', 'descuento', 'total', 'consumo_restaurante', 'h_reservaciones_id',
-        'tipos_pagos_id', 'usuarios_id', 'path'
+        'tipos_pagos_id', 'usuarios_id', 'path', 'anulado', 'restaurante'
     ];
 
     /**
@@ -33,7 +33,8 @@ class HPago extends Model
         'descuento' => 'float',
         'consumo_restaurante' => 'float',
         'total' => 'float',
-        'detalle' => 'array'
+        'detalle' => 'array',
+        'anulado' => 'boolean'
     ];
 
     /**
@@ -41,16 +42,28 @@ class HPago extends Model
      *
      * @var array
      */
-    protected $appends = ['ticket'];
+    protected $appends = ['ticket', 'anula'];
 
     /**
-     * Get the user's link base64 foto.
+     * Get the ticket link base64 foto.
      *
      * @return string
      */
     public function getTicketAttribute()
     {
         return Storage::disk('ticket')->exists($this->path) ? Storage::disk('ticket')->url($this->path) : null;
+    }
+
+    /**
+     * Get the eliminar pago.
+     *
+     * @return bool
+     */
+    public function getAnulaAttribute()
+    {
+        $fecha_hoy = date('d/m/Y');
+        $created_at = date('d/m/Y', strtotime($this->created_at));
+        return strtotime($created_at) == strtotime($fecha_hoy);
     }
 
     /**

@@ -9,12 +9,18 @@ use Illuminate\Support\Collection;
 use App\Models\V1\Principal\Cliente;
 use Illuminate\Support\Facades\Auth;
 use App\Models\V1\Catalogo\Municipio;
+use App\Models\V1\Hotel\HCajaChica;
+use App\Models\V1\Hotel\HCajaChicaMovimiento;
 use App\Models\V1\Principal\CajaPago;
 use App\Models\V1\Seguridad\Bitacora;
 use App\Models\V1\Principal\Proveedor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use App\Models\V1\Hotel\HKardexHistorial;
+use App\Models\V1\Hotel\HReservacion;
+use App\Models\V1\Hotel\HReservacionDetalle;
+use App\Models\V1\Principal\Empleado;
+use App\Models\V1\Principal\TablaLog;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 trait ApiResponser
@@ -191,6 +197,20 @@ trait ApiResponser
 		return "{$palabra}{$codigo}{$anio}";
 	}
 
+	protected function grabarLog(string $excepcion, string $controlador)
+	{
+		TablaLog::create(
+			[
+				'descripcion' => $excepcion,
+				'controlador' => $controlador,
+				'usuarios_id' => is_null(
+					Auth::user()
+				) ? 0 : Auth::user()->id,
+				'created_at' => date('Y-m-d H:i:s')
+			]
+		);
+	}
+
 	protected function acciones($key)
 	{
 		$acciones = [
@@ -239,9 +259,8 @@ trait ApiResponser
 
 	protected function bitacora_general($tabla, $accion, $instance, $controlador, $user = null)
 	{
-		if (is_null($user)) {
-			$user = Auth::user();
-		}
+		$user = Auth::user();
+		$user = Empleado::find(Auth::user()->empleado_id);
 
 		Bitacora::create(
 			[
@@ -250,23 +269,74 @@ trait ApiResponser
 				'descripcion' => $instance,
 				'controlador' => $controlador,
 				'usuario' => "{$user->primer_nombre} {$user->primer_apellido}",
-				'usuarios_id' => $user->id
+				'usuarios_id' => $user->id,
+				'created_at' => date('Y-m-d H:i:s')
 			]
 		);
 	}
 
-	protected function registrar_historia_caja($operacion, $caja, $controlador)
+	protected function registrar_historia_caja(string $descripcion, float $monto_total, string $tipo_pago = HCajaChicaMovimiento::EFECTIVO, string $comprobante = null, string $controlador, float $restaurante = 0)
 	{
-		$pago = CajaPago::create([
-			'monto_total' => $operacion->total,
-			'tipos_pagos_id' => $operacion->tipos_pagos_id,
-			'cajas_id' => $caja->id,
-			'usuarios_id' => $operacion->usuarios_id
-		]);
+		try {
+			$caja = null;
+			$hoy = date('Y-m-d');
+			$caja = HCajaChica::whereDate('inicio', $hoy)->where('abierta', true)->first();
 
-		$caja->save();
+			if (!is_null($caja)) {
+				try {
 
-		$this->bitacora_general('cajas_pagos', $this->acciones(0), $pago, $controlador);
+					$caja_movimiento = HCajaChicaMovimiento::create([
+						'descripcion' => $descripcion,
+						'monto_total' => $monto_total,
+						'tipo_pago' => $tipo_pago,
+						'comprobante' => $comprobante,
+						'usuarios_id' => Auth::user()->id,
+						'h_caja_chica_id' => $caja->id,
+						'resta' => false,
+						'registro_manual' => false
+					]);
+
+					switch ($controlador) {
+						case "InsumoController@store":
+							$caja->insumos += $caja_movimiento->monto_total;
+							break;
+						case "InsumoController@destroy":
+							$caja->insumos -= $caja_movimiento->monto_total;
+							$caja_movimiento->resta = true;
+							break;
+						case "PagoController@store":
+							$caja->pagos += ($caja_movimiento->monto_total - $restaurante);
+							$caja->restaurante += $restaurante;
+							break;
+						case "PagoController@destroy":
+							$caja->pagos -= ($caja_movimiento->monto_total - $restaurante);
+							$caja->restaurante -= $restaurante;
+							$caja_movimiento->resta = true;
+							break;
+						case "CajaChicaMovimientoController@update":
+							$caja->compras += $caja_movimiento->monto_total;
+							$caja_movimiento->registro_manual = true;
+							break;
+						case "CajaChicaMovimientoController@destroy":
+							$caja->compras -= $caja_movimiento->monto_total;
+							$caja_movimiento->resta = true;
+							break;
+					}
+
+					$caja_movimiento->save();
+					$caja->save();
+
+					$this->bitacora_general($caja_movimiento->getTable(), $this->acciones(0), $caja_movimiento, $controlador);
+					$this->bitacora_general($caja->getTable(), $this->acciones(1), $caja_movimiento, $controlador);
+				} catch (\Exception $e) {
+					throw new \Exception("No se encontro la apertura de caja correspondiente ", 1);
+				}
+			} else {
+				throw new \Exception("No se encontro la apertura de caja correspondiente al día de hoy {$hoy}", 1);
+			}
+		} catch (\Exception $e) {
+			throw new \Exception($e->getMessage(), 1);
+		}
 	}
 
 	protected function generarTicket($hotel, $restaurante)
@@ -317,7 +387,7 @@ trait ApiResponser
 			$qr = Storage::disk('logo')->path("qr.png");
 		}
 
-		$largo = 55;
+		$largo = 90;
 		$agregar_largo = is_null($restaurante) ? count($hotel->detalle) * 40 : 0;
 		$largo += $agregar_largo;
 
@@ -457,7 +527,7 @@ trait ApiResponser
 		$this->fpdf->Cell(10, 10, number_format($total, 2), 0, 0, 'R');
 
 		// FOOTER
-		$this->fpdf->SetY(-28);
+		$this->fpdf->SetY(-25);
 		//is_null($qr) ? null : $this->fpdf->Image($qr, 27, 100, 25, 0, 'PNG');
 		$this->fpdf->SetFont(
 			'Helvetica',
@@ -478,8 +548,91 @@ trait ApiResponser
 			'C'
 		);
 
+		$this->fpdf->Close();
 		return $this->fpdf->Output("S", "PRUEBA.PDF", true);
 	}
+
+	protected function ticketReservacion(HReservacion $reservacion)
+	{
+		$empresa_nombre = "Hotel y Resutante El Mirador";
+		$empresa_direccion = "Chiquimulilla, Santa Rosa";
+
+		$desayunos = HReservacionDetalle::where('h_reservaciones_id', $reservacion->id)->where('incluye_desayuno', true)->get();
+
+		$cantidad = 0;
+		foreach ($desayunos as $value) {
+			$cantidad += $value->huespedes;
+		}
+
+		$largo = 80;
+
+		$this->fpdf = new FPDF('P', 'mm', array(80, $largo));
+		$this->fpdf->AddPage();
+
+		// AUTOR
+		$this->fpdf->SetTitle(utf8_decode("Reservación: {$reservacion->codigo}"), true);
+		$this->fpdf->SetAuthor(utf8_decode($empresa_nombre), true);
+
+		// CABECERA
+		$this->fpdf->SetFont(
+			'Helvetica',
+			'',
+			8
+		);
+
+		$logo = Storage::disk('logo')->path("logo_ticket.png");
+		$fecha = date('d/m/Y H:i:s');
+
+		$this->fpdf->Image($logo, 27, 4, 25, 0, 'PNG');
+		$this->fpdf->Ln(7);
+		$this->fpdf->Cell(60, 4, utf8_decode($empresa_nombre), 0, 1, 'C');
+		$this->fpdf->SetFont('Helvetica', '', 7);
+		$this->fpdf->Cell(
+			60,
+			4,
+			utf8_decode($empresa_direccion),
+			0,
+			1,
+			'C'
+		);
+		$this->fpdf->Cell(60, 4, "Fecha: {$fecha}", 0, 1, 'C');
+
+		$this->fpdf->Ln(2);
+		$this->fpdf->SetFont('Helvetica', '', 5);
+		$this->fpdf->MultiCell(60, 4, utf8_decode("Reservación: {$reservacion->codigo}"), 0, 'J');
+		$this->fpdf->MultiCell(60, 4, utf8_decode("Cliente: {$reservacion->nombre}"), 0, 'J');
+		$this->fpdf->MultiCell(60, 4, utf8_decode("Fecha de reservación: {$reservacion->created_at}"), 0, 'J');
+		$this->fpdf->MultiCell(60, 4, utf8_decode("Fecha de Check In: {$reservacion->detalle[0]->inicio}"), 0, 'J');
+		$this->fpdf->MultiCell(60, 4, utf8_decode("Fecha de Check Out: {$reservacion->detalle[0]->fin}"), 0, 'J');
+
+		$this->fpdf->SetY(-25);
+		$this->fpdf->SetFont(
+			'Helvetica',
+			'',
+			3
+		);
+		$this->fpdf->Cell(60, 0, utf8_decode('BIENVENIDO'), 0, 1, 'C');
+		$this->fpdf->Ln(2);
+		if ($cantidad > 0) {
+			$this->fpdf->Cell(60, 0, utf8_decode(":::::: SU RESERVACIÓN INCLUYE ::::::"), 0, 1, 'C');
+			$this->fpdf->Ln(2);
+			$mensaje = $cantidad == 1 ? "DESAYUNO" : "DESAYUNOS";
+			$this->fpdf->Cell(60, 0, utf8_decode(":::::: {$cantidad} {$mensaje} ::::::"), 0, 1, 'C');
+			$this->fpdf->Ln(2);
+		}
+		$this->fpdf->SetFont('Arial', 'I', 4);
+		$this->fpdf->Cell(
+			60,
+			0,
+			utf8_decode("Página {$this->fpdf->PageNo()}"),
+			0,
+			1,
+			'C'
+		);
+		$this->fpdf->Close();
+		return $this->fpdf->Output("S", "PRUEBA.PDF", true);
+	}
+
 
 	protected function traInformacion($data)
 	{

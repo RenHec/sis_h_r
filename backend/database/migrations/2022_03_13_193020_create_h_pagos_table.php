@@ -28,6 +28,7 @@ class CreateHPagosTable extends Migration
             $table->decimal('consumo_restaurante', 11, 2)->default(0);
             $table->decimal('total', 11, 2);
             $table->string('path')->nullable();
+            $table->boolean('anulado')->default(false);
 
             $table->foreignId('h_reservaciones_id')->constrained('h_reservaciones');
             $table->foreignId('tipos_pagos_id')->constrained('tipos_pagos');

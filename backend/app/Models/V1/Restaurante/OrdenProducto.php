@@ -11,5 +11,5 @@ class OrdenProducto extends Model
 
     protected $table = 'r_orden_producto';
 
-    protected $fillable = ['id','orden_id','precio','producto_id','cantidad','notas','activo'];
+    protected $fillable = ['id', 'orden_id', 'precio', 'producto_id', 'cantidad', 'notas', 'activo', 'reservacion_id'];
 }

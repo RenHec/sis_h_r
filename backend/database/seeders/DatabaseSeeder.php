@@ -150,19 +150,6 @@ class DatabaseSeeder extends Seeder
             'ticket' => 1
         ]);
 
-        Caja::create([
-            'inicio' => date('Y-m-d H:i:s'),
-            'finalizo' => null,
-            'inicia_caja' => 0,
-            'venta_total' => 0,
-            'compra_total' => 0,
-            'creditos' => 0,
-            'devolucion' => 0,
-            'abierta' => false,
-            'meses_id' => date('n'),
-            'usuarios_id' => 1
-        ]);
-
         Proveedor::factory(100)->create();
         Cliente::factory(100)->create();
 

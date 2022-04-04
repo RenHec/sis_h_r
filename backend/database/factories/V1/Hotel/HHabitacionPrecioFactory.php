@@ -30,24 +30,34 @@ class HHabitacionPrecioFactory extends Factory
                 $precio = 100;
                 break;
             case 2:
-                $precio = 200;
+                $precio = 150;
                 break;
             case 3:
-                $precio = 250;
+                $precio = 200;
                 break;
             case 4:
-                $precio = 300;
+                $precio = 250;
                 break;
         }
 
         $habitacion = HHabitacion::all()->random();
         $habitacion->huespedes += $tipo->cantidad;
         $habitacion->save();
+
+        $incuye = $tipo->id != 1 ? $this->faker->randomElement([true, false]) : false;
+        $precio_desayuno = $incuye ? $this->faker->numberBetween(10, 25) : 0;
+        $precio_total = ($tipo->cantidad * $precio_desayuno) + $precio;
+
         return [
-            'precio' => $precio,
+            'nombre' => $this->faker->company,
+            'precio_desayuno' => $precio_desayuno,
+            'precio_habitacion' => $precio,
+            'precio' => $precio_total,
             'activo' => true,
+            'incluye_desayuno' => $incuye,
             'h_tipos_camas_id' => $tipo->id,
-            'h_habitaciones_id' => $habitacion->id
+            'h_habitaciones_id' => $habitacion->id,
+            'created_at' => date('Y-m-d H:i:s')
         ];
     }
 }
