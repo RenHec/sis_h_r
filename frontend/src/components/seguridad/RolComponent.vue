@@ -310,37 +310,14 @@ export default {
       this.$store.state.services.rolService
         .index()
         .then((r) => {
-          if (r.response) {
-            if (r.response.data.code === 423) {
-              this.$toastr.error(r.response.data.error, 'Mensaje')
-            } else {
-              for (let value of Object.values(r.response.data.error)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            this.loading = false
-            return
-          }
           this.desserts = r.data.data
-          this.close()
-          this.loading = false
         })
-        .catch((r) => {
-          if (r.response) {
-            this.loading = false
-            if (r.response.data.code === 404) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else if (r.response.data.code === 423) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else {
-              for (let value of Object.values(r.response.data)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            return
-          }
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
+          this.loading = false
+          this.close()
         })
     },
 
@@ -384,42 +361,14 @@ export default {
           this.$store.state.services.rolService
             .destroy(data)
             .then((r) => {
-              this.loading = false
-
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
-              if (r.response) {
-                this.loading = false
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
+              this.loading = false
             })
         } else {
           this.close()
@@ -444,42 +393,14 @@ export default {
           this.$store.state.services.rolMenuService
             .eliminar_masivo(set)
             .then((r) => {
-              this.loading = false
-
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
-              if (r.response) {
-                this.loading = false
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
+              this.loading = false
             })
         } else {
           this.close()
@@ -499,42 +420,14 @@ export default {
           this.$store.state.services.rolService
             .store(data)
             .then((r) => {
-              this.loading = false
-
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
-              if (r.response) {
-                this.loading = false
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
+              this.loading = false
             })
         } else {
           this.close()
@@ -554,42 +447,14 @@ export default {
           this.$store.state.services.rolMenuService
             .store(data)
             .then((r) => {
-              this.loading = false
-
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
-              if (r.response) {
-                this.loading = false
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
+              this.loading = false
             })
         } else {
           this.close()
@@ -604,37 +469,13 @@ export default {
       this.$store.state.services.menuService
         .index()
         .then((r) => {
-          if (r.response) {
-            if (r.response.data.code === 423) {
-              this.$toastr.error(r.response.data.error, 'Mensaje')
-            } else {
-              for (let value of Object.values(r.response.data.error)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            this.loading = false
-            return
-          }
-
           this.menus = r.data.data
-          this.loading = false
         })
-        .catch((r) => {
-          if (r.response) {
-            this.loading = false
-            if (r.response.data.code === 404) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else if (r.response.data.code === 423) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else {
-              for (let value of Object.values(r.response.data)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            return
-          }
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
 

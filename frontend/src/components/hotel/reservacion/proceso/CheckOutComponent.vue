@@ -33,26 +33,24 @@
                 <div class="invoice-box">
                   <table cellpadding="0" cellspacing="0">
                     <tr class="top">
-                      <td colspan="2">
-                        <table>
-                          <tr>
-                            <td class="title">
-                              <img
-                                :src="logotipo"
-                                style="width: 100%; max-width: 300px;"
-                              />
-                            </td>
-
-                            <td>
-                              {{ `Reservación ${reservacion.codigo}` }}
-                              <br />
-                              NIT
-                              <br />
-                              Dirección de la Empresa
-                            </td>
-                          </tr>
-                        </table>
+                      <td colspan="2" class="text-center">
+                        <img
+                          :src="logotipo"
+                          style="width: 100%; max-width: 300px;"
+                        />
                       </td>
+                    </tr>
+                    <tr class="top">
+                      <td colspan="2" class="text-center">
+                        {{ `Reservación ${reservacion.codigo}` }}
+                        <br />
+                        NIT
+                        <br />
+                        Dirección de la Empresa
+                      </td>
+                    </tr>
+                    <tr class="top">
+                      <td colspan="2" class="text-center"><br /></td>
                     </tr>
 
                     <tr class="information">
@@ -284,6 +282,7 @@
                         v-on="on"
                         :loading="loading"
                         :disabled="loading"
+                        @click="ver_informacion(reservacion)"
                       >
                         <v-icon>info</v-icon>
                       </v-btn>
@@ -323,40 +322,63 @@
         </v-col>
       </v-row>
     </v-col>
-    <v-col cols="12">
-      <v-dialog v-model="dialog_print" max-width="65%" persistent>
-        <v-card color="success">
+
+    <v-col cols="12" md="12">
+      <v-dialog v-model="dialog" color="primary" width="50%">
+        <v-card v-if="item_reservacion">
           <v-overlay :value="loading">
             <v-progress-circular indeterminate size="64"></v-progress-circular>
           </v-overlay>
           <v-card-title>
             <span class="headline">
-              Imprimir documento
+              {{ `Reservación ${item_reservacion.codigo}` }}
             </span>
             <v-spacer></v-spacer>
-            <v-btn color="red darken-1" @click="dialog_print = false">
-              Cerrar
+            <v-btn @click="dialog = false" color="red" small>
+              <v-icon>close</v-icon>
             </v-btn>
           </v-card-title>
 
-          <v-card-text v-if="documento_imprimir">
+          <v-card-text>
             <v-container>
               <v-row>
-                <v-col cols="12" md="12">
-                  <embed
-                    :src="documento_imprimir"
-                    type="application/pdf"
-                    width="100%"
-                    height="930"
-                    style="
-                      overflow: hidden;
-                      overflow-x: hidden;
-                      overflow-y: hidden;
-                      border: 1px solid #666ccc;
-                    "
-                    title="Comprobante"
-                    frameborder="1"
-                  />
+                <v-col cols="12" md="6">
+                  <div class="title text-center">Check In</div>
+                  <template
+                    v-for="(item, index) in item_reservacion.check_in_list"
+                  >
+                    <div class="subtitle-1" v-bind:key="`div${index}`">
+                      {{ item.habitacion }}
+                    </div>
+                    <ul v-bind:key="`ul${index}`">
+                      <li
+                        v-for="(iitem, index) in item.lista"
+                        v-bind:key="`ul${index}li${index}`"
+                      >
+                        {{ `${iitem.cantidad} | ${iitem.producto}` }}
+                      </li>
+                    </ul>
+                    <hr v-bind:key="`hr${index}`" />
+                  </template>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <div class="title text-center">Check Out</div>
+                  <template
+                    v-for="(item, index) in item_reservacion.check_out_list"
+                  >
+                    <div class="subtitle-1" v-bind:key="`div${index}`">
+                      {{ item.habitacion }}
+                    </div>
+                    <ul v-bind:key="`ul${index}`">
+                      <li
+                        v-for="(iitem, index) in item.lista"
+                        v-bind:key="`ul${index}li${index}`"
+                      >
+                        {{ `${iitem.cantidad} | ${iitem.producto}` }}
+                      </li>
+                    </ul>
+                    <hr v-bind:key="`hr${index}`" />
+                  </template>
                 </v-col>
               </v-row>
             </v-container>
@@ -383,8 +405,8 @@ export default {
 
       tipos_pago: [],
 
-      documento_imprimir: null,
-      dialog_print: false,
+      dialog: false,
+      item_reservacion: null,
     }
   },
 
@@ -418,31 +440,19 @@ export default {
     initialize() {
       this.loading = true
       this.desserts = []
+      this.dialog = false
+      this.item_reservacion = null
       this.$store.state.services.ReservacionService.getAll('o')
         .then((r) => {
-          if (r.response) {
-            this.loading = false
-            if (r.response.data.code === 404) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else if (r.response.data.code === 423) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else {
-              for (let value of Object.values(r.response.data)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            return
-          }
-
           r.data.forEach((ele) => {
             let objeto = new Object()
             objeto.id = ele.id
             objeto.codigo = ele.codigo
             objeto.nit = ele.cliente.nit
             objeto.nombre = ele.cliente.nombre
-            objeto.direccion = `${ele.cliente.municipio.full_name}, ${ele.cliente.direcciones}`.toLowerCase()
+            objeto.direccion = `${ele.cliente.municipio.full_name}, ${ele.cliente.direcciones}`
+              .toLowerCase()
+              .replace(', null', '')
             objeto.tipos_pagos_id = null
             objeto.vaucher_pago = null
             objeto.factura = false
@@ -458,17 +468,18 @@ export default {
             objeto.sub_total = ele.sub_total
             objeto.descuento = 0
             objeto.check_in_list = ele.check_in_list
-            objeto.ckeck_out_list = ele.ckeck_out_list
+            objeto.check_out_list = ele.check_out_list
 
             this.desserts.push(objeto)
           })
 
           this.$validator.reset()
           this.$validator.reset()
-          this.loading = false
         })
-        .catch((r) => {
-          console.log(r)
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
           this.loading = false
         })
     },
@@ -479,7 +490,9 @@ export default {
         .then((r) => {
           this.tipos_pago = r.data.data
         })
-        .catch((r) => {})
+        .catch((e) => {
+          this.errorResponse(e)
+        })
     },
 
     store(scope, item) {
@@ -493,43 +506,50 @@ export default {
           }).then((result) => {
             if (result.value) {
               this.loading = true
-              this.$store.state.services.PagoService.store(item).then((r) => {
-                this.loading = false
-                if (r.response) {
-                  if (r.response.data.code === 404) {
-                    this.$toastr.warning(r.response.data.error, 'Advertencia')
-                    return
-                  } else if (r.response.data.code === 423) {
-                    this.$toastr.warning(r.response.data.error, 'Advertencia')
-                    return
-                  } else {
-                    for (let value of Object.values(r.response.data)) {
-                      this.$toastr.error(value, 'Mensaje')
-                    }
-                  }
-                  return
-                }
+              this.$store.state.services.PagoService.store(item)
+                .then((r) => {
+                  this.documento_imprimir = null
+                  this.dialog_print = false
 
-                this.documento_imprimir = null
-                this.dialog_print = false
+                  this.$toastr.success(r.data.mensaje, 'Mensaje')
+                  this.notificador_audible(this.$store.state.audio.agregar)
+                  this.$swal({
+                    title: 'Imprimir',
+                    text: '¿Está seguro de realizar esta acción?',
+                    type: 'info',
+                    showCancelButton: true,
+                  })
+                    .then((result) => {
+                      if (result.value) {
+                        window.open(
+                          r.data.pago,
+                          'popup',
+                          'width=' +
+                            1000 +
+                            ', height=' +
+                            800 +
+                            ', left=' +
+                            500 / 2 +
+                            ', top=' +
+                            500 / 2 +
+                            '',
+                        )
 
-                this.$toastr.success(r.data.mensaje, 'Mensaje')
-                this.notificador_audible(this.$store.state.audio.agregar)
-                this.$swal({
-                  title: 'Imprimir',
-                  text: '¿Está seguro de realizar esta acción?',
-                  type: 'info',
-                  showCancelButton: true,
-                }).then((result) => {
-                  if (result.value) {
-                    this.documento_imprimir = r.data.pago
-                    this.dialog_print = true
-                    this.initialize()
-                  } else {
-                    this.initialize()
-                  }
+                        this.initialize()
+                      } else {
+                        this.initialize()
+                      }
+                    })
+                    .catch((e) => {
+                      this.errorResponse(e)
+                    })
                 })
-              })
+                .catch((e) => {
+                  this.errorResponse(e)
+                })
+                .finally(() => {
+                  this.loading = false
+                })
             }
           })
         }
@@ -547,31 +567,25 @@ export default {
           this.loading = true
           this.$store.state.services.CheckOutService.delete(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.notificador_audible(this.$store.state.audio.anular)
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         }
       })
+    },
+
+    ver_informacion(item) {
+      this.loading = true
+      this.item_reservacion = item
+      this.dialog = true
+      this.loading = false
     },
   },
 }

@@ -472,26 +472,13 @@ export default {
       this.loading = true
       this.$store.state.services.ReservacionService.getAll('i')
         .then((r) => {
-          this.loading = false
-          if (r.response) {
-            if (r.response.data.code === 404) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else if (r.response.data.code === 423) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else {
-              for (let value of Object.values(r.response.data)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            return
-          }
-
           this.desserts = r.data
           this.limpiar()
         })
-        .catch((r) => {
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
           this.loading = false
         })
     },
@@ -507,27 +494,14 @@ export default {
           this.loading = true
           this.$store.state.services.CheckInService.delete(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.notificador_audible(this.$store.state.audio.anular)
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         }
@@ -587,16 +561,17 @@ export default {
           this.form.check_out = nuevo.check_out
 
           this.dialog = true
-          this.loading = false
         })
         .catch((error) => {
-          this.loading = false
           this.$swal({
             title: 'Check Out',
             text: error,
             type: 'info',
             showCancelButton: false,
           })
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
 
@@ -627,8 +602,6 @@ export default {
         this.canvas.toDataURL(),
       )
         .then((res) => {
-          this.loading = false
-
           this.$validator.validateAll(scope).then((result) => {
             if (result) {
               this.$swal({
@@ -642,33 +615,14 @@ export default {
 
                   this.$store.state.services.CheckOutService.store(this.form)
                     .then((r) => {
-                      this.loading = false
-                      if (r.response) {
-                        if (r.response.data.code === 404) {
-                          this.$toastr.warning(
-                            r.response.data.error,
-                            'Advertencia',
-                          )
-                          return
-                        } else if (r.response.data.code === 423) {
-                          this.$toastr.warning(
-                            r.response.data.error,
-                            'Advertencia',
-                          )
-                          return
-                        } else {
-                          for (let value of Object.values(r.response.data)) {
-                            this.$toastr.error(value, 'Mensaje')
-                          }
-                        }
-                        return
-                      }
-
                       this.$toastr.success(r.data.mensaje, 'Mensaje')
                       this.notificador_audible(this.$store.state.audio.agregar)
                       this.initialize()
                     })
-                    .catch((r) => {
+                    .catch((e) => {
+                      this.errorResponse(e)
+                    })
+                    .finally(() => {
                       this.loading = false
                     })
                 }
@@ -677,13 +631,15 @@ export default {
           })
         })
         .catch((error) => {
-          this.loading = false
           this.$swal({
             title: error.titulo,
             text: error.text,
             type: 'info',
             showCancelButton: false,
           })
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
 

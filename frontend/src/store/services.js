@@ -14,24 +14,14 @@ import userService from '../services/seguridad/usuario/UserService'
 /* ::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE SEGURIDAD ::::::::::::::::::::::::::::::::::::: */
 
 /* ::::::::::::::::::::::::::::::::::::::::::::: CATALOGO :::::::::::::::::::::::::::::::::::::::::::::::: */
-import CategoriaController from '../services/catalogo/CategoriaControllerService'
-import MarcaController from '../services/catalogo/MarcaControllerService'
 import PresentacionController from '../services/catalogo/PresentacionControllerService'
 import SelectController from '../services/catalogo/SelectControllerService'
 /* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE CATALOGO ::::::::::::::::::::::::::::::::::::: */
 
 /* ::::::::::::::::::::::::::::::::::::::::::::: PRINCIPAL :::::::::::::::::::::::::::::::::::::::::::::::: */
-import AsignarPresentacionController from '../services/principal/AsignarPresentacionControllerService'
-import BodegaController from '../services/principal/BodegaControllerService'
-import CajaController from '../services/principal/CajaControllerService'
-import CompraVentaController from '../services/principal/CompraVentaControllerService'
-import DevolucionController from '../services/principal/DevolucionControllerService'
-import EmpresaController from '../services/principal/EmpresaControllerService'
-import PersonaController from '../services/principal/PersonaControllerService'
-import ProductoController from '../services/principal/ProductoControllerService'
-import StockController from '../services/principal/StockControllerService'
-import TrasladoStockController from '../services/principal/TrasladoStockControllerService'
-import ReporteController from '../services/principal/ReporteControllerService'
+import ClienteCatalogoService from '../services/principal/ClienteService'
+import ProveedorCatalogoService from '../services/principal/ProveedorService'
+import EmpleadoCatalogoService from '../services/principal/EmpleadoService'
 
 /*
 |--------------------------------------------------------------------------
@@ -133,22 +123,22 @@ export default {
   userRolService: new userRolService(Axios, baseUrl),
   userService: new userService(Axios, baseUrl),
 
+  /*
+  |--------------------------------------------------------------------------
+  | Catalogo Services
+  |--------------------------------------------------------------------------
+  */
   selectController: new SelectController(Axios, baseUrl),
-  categoriaController: new CategoriaController(Axios, baseUrl),
-  marcaController: new MarcaController(Axios, baseUrl),
   presentacionController: new PresentacionController(Axios, baseUrl),
 
-  asignarPresentacionController: new AsignarPresentacionController(Axios, baseUrl),
-  bodegaController: new BodegaController(Axios, baseUrl),
-  cajaController: new CajaController(Axios, baseUrl),
-  compraVentaController: new CompraVentaController(Axios, baseUrl),
-  devolucionController: new DevolucionController(Axios, baseUrl),
-  empresaController: new EmpresaController(Axios, baseUrl),
-  personaController: new PersonaController(Axios, baseUrl),
-  productoController: new ProductoController(Axios, baseUrl),
-  stockController: new StockController(Axios, baseUrl),
-  trasladoStockController: new TrasladoStockController(Axios, baseUrl),
-  reporteController: new ReporteController(Axios, baseUrl),
+  /*
+  |--------------------------------------------------------------------------
+  | Principal Services
+  |--------------------------------------------------------------------------
+  */
+  ClienteCatalogoService: new ClienteCatalogoService(Axios, baseUrl),
+  ProveedorCatalogoService: new ProveedorCatalogoService(Axios, baseUrl),
+  EmpleadoCatalogoService: new EmpleadoCatalogoService(Axios, baseUrl),
 
   /*
   |--------------------------------------------------------------------------

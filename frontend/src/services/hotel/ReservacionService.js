@@ -7,7 +7,7 @@ class ReservacionService {
         this.baseUrl = `${baseUrl}${prefix}reservacion`
     }
 
-    getAll(consulta) {
+    getAll(consulta = "t") {
         /*
             r - devuelve todas las reservaciones que se encuentran en reserva
             i - devuelve todas las reservaciones que se encuentran en check in

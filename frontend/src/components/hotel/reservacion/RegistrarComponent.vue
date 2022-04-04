@@ -472,7 +472,13 @@
                                               <v-icon>check</v-icon>
                                             </v-btn>
                                             {{
-                                              `${precio.cantidad} | ${precio.nombre_completo} - Q${precio.precio}`
+                                              `${precio.nombre_completo} - Q${
+                                                precio.precio
+                                              } ${
+                                                precio.incluye_desayuno == 1
+                                                  ? ' | Incluye desayuno'
+                                                  : ''
+                                              }`
                                             }}
                                           </p>
                                         </template>
@@ -820,13 +826,17 @@ export default {
         text: '¿Está seguro de realizar esta acción?',
         type: 'info',
         showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          this.loading = true
-          this.form.horas = null
-          this.serviceHabitaciones(this.form)
-        }
       })
+        .then((result) => {
+          if (result.value) {
+            this.loading = true
+            this.form.horas = null
+            this.serviceHabitaciones(this.form)
+          }
+        })
+        .catch((e) => {
+          this.errorResponse(e)
+        })
     },
 
     //formato de la hora
@@ -848,34 +858,22 @@ export default {
         text: '¿Está seguro de realizar esta acción?',
         type: 'info',
         showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          this.loading = true
-          this.serviceHabitaciones(this.form)
-        }
       })
+        .then((result) => {
+          if (result.value) {
+            this.loading = true
+            this.serviceHabitaciones(this.form)
+          }
+        })
+        .catch((e) => {
+          this.errorResponse(e)
+        })
     },
 
     serviceHabitaciones(data) {
       this.$store.state.services.selectController
         .buscar_habitaciones(data)
         .then((r) => {
-          this.loading = false
-          if (r.response) {
-            if (r.response.data.code === 404) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else if (r.response.data.code === 423) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else {
-              for (let value of Object.values(r.response.data)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            return
-          }
-
           this.habitaciones_disponibles = r.data[0]
           this.filtro_aplicado = this.habitaciones_disponibles
           this.dialog = true
@@ -884,7 +882,10 @@ export default {
           this.dialog_pickture = false
           this.foto = null
         })
-        .catch((r) => {
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
           this.loading = false
         })
     },
@@ -895,14 +896,18 @@ export default {
         .then((r) => {
           this.clientes = r.data.data
         })
-        .catch((r) => {})
+        .catch((e) => {
+          this.errorResponse(e)
+        })
 
       this.$store.state.services.selectController
         .municipio()
         .then((r) => {
           this.municipios = r.data.data
         })
-        .catch((r) => {})
+        .catch((e) => {
+          this.errorResponse(e)
+        })
     },
 
     limpiar() {
@@ -1031,27 +1036,28 @@ export default {
           this.loading = true
           this.$store.state.services.ReservacionService.store(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
-              this.$toastr.success(r.data, 'Mensaje')
+              this.$toastr.success(r.data.mensaje, 'Mensaje')
               this.notificador_audible(this.$store.state.audio.agregar)
               this.limpiar()
+
+              window.open(
+                r.data.comprobante,
+                'popup',
+                'width=' +
+                  1000 +
+                  ', height=' +
+                  800 +
+                  ', left=' +
+                  500 / 2 +
+                  ', top=' +
+                  500 / 2 +
+                  '',
+              )
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         }

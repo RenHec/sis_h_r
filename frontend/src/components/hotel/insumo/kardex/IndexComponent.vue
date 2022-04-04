@@ -673,27 +673,14 @@ export default {
 
       this.$store.state.services.KardexService.getAll()
         .then((r) => {
-          this.loading = false
-          if (r.response) {
-            if (r.response.data.code === 404) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else if (r.response.data.code === 423) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else {
-              for (let value of Object.values(r.response.data)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            return
-          }
-
           this.desserts = r.data
           this.items = r.data
           this.close()
         })
-        .catch((r) => {
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
           this.loading = false
         })
     },
@@ -732,26 +719,13 @@ export default {
           this.loading = true
           this.$store.state.services.KardexService.delete(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         } else {
@@ -771,26 +745,13 @@ export default {
           this.loading = true
           this.$store.state.services.KardexService.update(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         } else {

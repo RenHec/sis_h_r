@@ -574,7 +574,7 @@ export default {
         email: null,
         observation: null,
         ubicacion: null,
-        phone: null,
+        telefono: null,
         municipio_id: null,
         roles: [],
         password: null,
@@ -649,24 +649,14 @@ export default {
       this.$store.state.services.userService
         .index()
         .then((r) => {
-          if (r.response) {
-            if (r.response.data.code === 423) {
-              this.$toastr.error(r.response.data.error, 'Mensaje')
-            } else {
-              for (let value of Object.values(r.response.data.error)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            this.loading = false
-            return
-          }
-
           this.desserts = r.data.data
-          this.close()
-          this.loading = false
         })
-        .catch((r) => {
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
           this.loading = false
+          this.close()
         })
     },
 
@@ -711,43 +701,15 @@ export default {
               this.$store.state.services.userService
                 .reset(this.form)
                 .then((r) => {
-                  this.loading = false
-
-                  if (r.response) {
-                    if (r.response.data.code === 404) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else if (r.response.data.code === 423) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else {
-                      for (let value of Object.values(r.response.data)) {
-                        this.$toastr.error(value, 'Mensaje')
-                      }
-                    }
-                    return
-                  }
-
                   this.$toastr.success(r.data, 'Mensaje')
                   this.limpiar()
                   this.dialog_password = false
                 })
-                .catch((r) => {
-                  if (r.response) {
-                    this.loading = false
-                    if (r.response.data.code === 404) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else if (r.response.data.code === 423) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else {
-                      for (let value of Object.values(r.response.data)) {
-                        this.$toastr.error(value, 'Mensaje')
-                      }
-                    }
-                    return
-                  }
+                .catch((e) => {
+                  this.errorResponse(e)
+                })
+                .finally(() => {
+                  this.loading = false
                 })
             } else {
               this.close()
@@ -784,42 +746,14 @@ export default {
           this.$store.state.services.userService
             .destroy(data)
             .then((r) => {
-              this.loading = false
-
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
-              if (r.response) {
-                this.loading = false
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
+              this.loading = false
             })
         } else {
           this.close()
@@ -840,42 +774,14 @@ export default {
           this.$store.state.services.userService
             .store(data)
             .then((r) => {
-              this.loading = false
-
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
-              if (r.response) {
-                this.loading = false
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
+              this.loading = false
             })
         } else {
           this.close()
@@ -895,27 +801,14 @@ export default {
           this.$store.state.services.userService
             .update(data)
             .then((r) => {
-              this.loading = false
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
-              if (r.response) {
-                this.loading = false
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
+              this.loading = false
             })
         } else {
           this.close()
@@ -956,15 +849,6 @@ export default {
         .catch((r) => {})
     },
 
-    getEmpresa() {
-      this.$store.state.services.selectController
-        .empresa()
-        .then((r) => {
-          this.empresas = r.data.data
-        })
-        .catch((r) => {})
-    },
-
     limipiar_form_rol() {
       this.form_rol.id = 0
       this.form_rol.roles = []
@@ -999,42 +883,14 @@ export default {
               this.$store.state.services.userRolService
                 .store(this.form_rol)
                 .then((r) => {
-                  this.loading = false
-
-                  if (r.response) {
-                    if (r.response.data.code === 404) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else if (r.response.data.code === 423) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else {
-                      for (let value of Object.values(r.response.data)) {
-                        this.$toastr.error(value, 'Mensaje')
-                      }
-                    }
-                    return
-                  }
-
                   this.$toastr.success(r.data, 'Mensaje')
                   this.initialize()
                 })
-                .catch((r) => {
-                  if (r.response) {
-                    this.loading = false
-                    if (r.response.data.code === 404) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else if (r.response.data.code === 423) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else {
-                      for (let value of Object.values(r.response.data)) {
-                        this.$toastr.error(value, 'Mensaje')
-                      }
-                    }
-                    return
-                  }
+                .catch((e) => {
+                  this.errorResponse(e)
+                })
+                .finally(() => {
+                  this.loading = false
                 })
             } else {
               this.close()

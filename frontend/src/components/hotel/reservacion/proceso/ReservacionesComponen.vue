@@ -504,7 +504,9 @@ export default {
         .then((r) => {
           this.productos = r.data.data
         })
-        .catch((r) => {})
+        .catch((e) => {
+          this.errorResponse(e)
+        })
     },
 
     initialize() {
@@ -512,27 +514,14 @@ export default {
 
       this.$store.state.services.ReservacionService.getAll('r')
         .then((r) => {
-          this.loading = false
-          if (r.response) {
-            if (r.response.data.code === 404) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else if (r.response.data.code === 423) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else {
-              for (let value of Object.values(r.response.data)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            return
-          }
-
           this.desserts = r.data
           this.dialog = false
           this.limpiar()
         })
-        .catch((r) => {
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
           this.loading = false
         })
     },
@@ -545,22 +534,6 @@ export default {
       this.$store.state.services.selectController
         .producto_check_in()
         .then((r) => {
-          if (r.response) {
-            this.loading = false
-            if (r.response.data.code === 404) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else if (r.response.data.code === 423) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else {
-              for (let value of Object.values(r.response.data)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            return
-          }
-
           this.productos = r.data
           this.form.foto = null
           this.form.codigo = item.codigo
@@ -587,9 +560,11 @@ export default {
           })
 
           this.dialog = true
-          this.loading = false
         })
-        .catch((r) => {
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
           this.loading = false
         })
     },
@@ -621,17 +596,17 @@ export default {
         this.form.check_in[selected].lista[index],
         event,
       )
-        .then((res) => {
-          this.loading = false
-        })
+        .then((res) => {})
         .catch((error) => {
-          this.loading = false
           this.$swal({
             title: 'Producto',
             text: error,
             type: 'info',
             showCancelButton: false,
           })
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
 
@@ -675,16 +650,17 @@ export default {
         .then((res) => {
           this.$toastr.success(res, 'Lista de productos')
           this.selected = index
-          this.loading = false
         })
         .catch((error) => {
-          this.loading = false
           this.$swal({
             title: 'Lista de productos',
             text: error,
             type: 'info',
             showCancelButton: false,
           })
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
 
@@ -734,67 +710,59 @@ export default {
         this.canvas.toDataURL(),
       )
         .then((res) => {
-          this.loading = false
+          this.$validator
+            .validateAll(scope)
+            .then((result) => {
+              if (result) {
+                this.$swal({
+                  title: 'Registrar Check In',
+                  text: '¿Está seguro de realizar esta acción?',
+                  type: 'success',
+                  showCancelButton: true,
+                })
+                  .then((result) => {
+                    if (result.value) {
+                      this.loading = true
 
-          this.$validator.validateAll(scope).then((result) => {
-            if (result) {
-              this.$swal({
-                title: 'Registrar Check In',
-                text: '¿Está seguro de realizar esta acción?',
-                type: 'success',
-                showCancelButton: true,
-              }).then((result) => {
-                if (result.value) {
-                  this.loading = true
+                      this.form.check_in.forEach((element, index) => {
+                        element.lista = resultantes[index]
+                      })
 
-                  this.form.check_in.forEach((element, index) => {
-                    element.lista = resultantes[index]
+                      this.$store.state.services.CheckInService.store(this.form)
+                        .then((r) => {
+                          this.$toastr.success(r.data.mensaje, 'Mensaje')
+                          this.notificador_audible(
+                            this.$store.state.audio.agregar,
+                          )
+                          this.initialize()
+                        })
+                        .catch((e) => {
+                          this.errorResponse(e)
+                        })
+                        .finally(() => {
+                          this.loading = false
+                        })
+                    }
                   })
-
-                  this.$store.state.services.CheckInService.store(this.form)
-                    .then((r) => {
-                      this.loading = false
-                      if (r.response) {
-                        if (r.response.data.code === 404) {
-                          this.$toastr.warning(
-                            r.response.data.error,
-                            'Advertencia',
-                          )
-                          return
-                        } else if (r.response.data.code === 423) {
-                          this.$toastr.warning(
-                            r.response.data.error,
-                            'Advertencia',
-                          )
-                          return
-                        } else {
-                          for (let value of Object.values(r.response.data)) {
-                            this.$toastr.error(value, 'Mensaje')
-                          }
-                        }
-                        return
-                      }
-
-                      this.$toastr.success(r.data.mensaje, 'Mensaje')
-                      this.notificador_audible(this.$store.state.audio.agregar)
-                      this.initialize()
-                    })
-                    .catch((r) => {
-                      this.loading = false
-                    })
-                }
-              })
-            }
-          })
+                  .catch((e) => {
+                    this.errorResponse(e)
+                  })
+              }
+            })
+            .catch((e) => {
+              this.errorResponse(e)
+            })
         })
         .catch((error) => {
-          this.loading = false
           this.$swal({
             title: error.titulo,
             text: error.text,
             type: 'info',
             showCancelButton: false,
           })
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
 
@@ -809,27 +777,14 @@ export default {
           this.loading = true
           this.$store.state.services.ReservacionService.delete(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.notificador_audible(this.$store.state.audio.anular)
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         }

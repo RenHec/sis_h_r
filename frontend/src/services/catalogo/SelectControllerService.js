@@ -7,6 +7,12 @@ class SelectControllerService {
         this.baseUrl = `${baseUrl}servicio/compartido/version_uno/select`
     }
 
+    bitacora() {
+        let self = this;
+        return self.axios.get(`${self.baseUrl}/bitacora`);
+    }
+
+
     departamento() {
         let self = this;
         return self.axios.get(`${self.baseUrl}/departamento`);

@@ -13,30 +13,14 @@ import Rol from '@/components/seguridad/RolComponent'
 import Usuario from '@/components/seguridad/UsuarioComponent'
 
 //Catalogo General
-import Categoria from '@/components/catalogo/CategoriaComponent'
-import Marca from '@/components/catalogo/MarcaComponent'
 import Presentacion from '@/components/catalogo/PresentacionComponent'
-import Bodegas from '@/components/catalogo/BodegasComponent'
 
 //Principal
-import ComprasyVentas from '@/components/principal/ComprasyVentasComponent'
-import RegistrarCompras from '@/components/principal/RegistrarComprasComponent'
-import RegistrarVentas from '@/components/principal/RegistrarVentasComponent'
-import Devoluciones from '@/components/principal/DevolucionesComponent'
-import Proveedores from '@/components/principal/ProveedoresComponent'
-import TrasladosBodega from '@/components/principal/TrasladosBodegaComponent'
-import ProductosStock from '@/components/principal/ProductosStockComponent'
-import Movimientos from '@/components/principal/MovimientosComponent'
 import Ayuda from '@/components/principal/AyudaComponent'
-
-import Ventasgenerales from '@/components/reporte/VentasGeneralesComponent'
-import Productosmasvendidos from '@/components/reporte/ProductosmasvendidosComponent'
-import Productosproximoavencer from '@/components/reporte/ProductosproximoavencerComponent'
-import Stockporcategoriayproducto from '@/components/reporte/StockporcategoriayproductoComponent'
-import Ventasdiarias from '@/components/reporte/VentasdiariasComponent'
-import Gananciasdiariasymensuales from '@/components/reporte/GananciasdiariasymensualesComponent'
-import Movimientoenbodegas from '@/components/reporte/MovimientoenbodegasComponent'
-import Logdeaccesos from '@/components/reporte/LogdeaccesosComponent'
+import Bitacora from '@/components/principal/BitacoraComponent'
+import Cliente from '@/components/principal/ClienteComponent'
+import Proveedor from '@/components/principal/ProveedorComponent'
+import Empleado from '@/components/principal/EmpleadoComponent'
 /*
 |--------------------------------------------------------------------------
 | Restaurant Components
@@ -162,131 +146,41 @@ const routes = [
   },
 
   {
-    path: '/categorias',
-    name: 'Categoria',
-    component: Categoria,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
-    path: '/marcas',
-    name: 'Marca',
-    component: Marca,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
     path: '/presentaciones',
     name: 'Presentacion',
     component: Presentacion,
     beforeEnter: multiguard([isLoggedIn])
   },
-  {
-    path: '/bodegas',
-    name: 'Bodegas',
-    component: Bodegas,
-    beforeEnter: multiguard([isLoggedIn])
-  },
 
-  {
-    path: '/compras_ventas',
-    name: 'ComprasyVentas',
-    component: ComprasyVentas,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
-    path: '/registrar_venta',
-    name: 'RegistrarVentas',
-    component: RegistrarVentas,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
-    path: '/registrar_compra',
-    name: 'RegistrarCompras',
-    component: RegistrarCompras,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
-    path: '/devoluciones',
-    name: 'Devoluciones',
-    component: Devoluciones,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
-    path: '/proveedores',
-    name: 'Proveedores',
-    component: Proveedores,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
-    path: '/productos',
-    name: 'ProductosStock',
-    component: ProductosStock,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
-    path: '/traslado_bodega',
-    name: 'TrasladosBodega',
-    component: TrasladosBodega,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
-    path: '/movimientos',
-    name: 'Movimientos',
-    component: Movimientos,
-    beforeEnter: multiguard([isLoggedIn])
-  },
+  //Principal
   {
     path: '/ayuda',
     name: 'Ayuda',
     component: Ayuda,
     beforeEnter: multiguard([isLoggedIn])
   },
-
   {
-    path: '/ventas_generales',
-    name: 'Ventasgenerales',
-    component: Ventasgenerales,
+    path: '/bitacora',
+    name: 'Bitacora',
+    component: Bitacora,
     beforeEnter: multiguard([isLoggedIn])
   },
   {
-    path: '/productos_mas_vendidos',
-    name: 'Productosmasvendidos',
-    component: Productosmasvendidos,
+    path: '/empleados',
+    name: 'Empleado',
+    component: Empleado,
     beforeEnter: multiguard([isLoggedIn])
   },
   {
-    path: '/productos_proximos_vencer',
-    name: 'Productosproximoavencer',
-    component: Productosproximoavencer,
+    path: '/clientes',
+    name: 'Cliente',
+    component: Cliente,
     beforeEnter: multiguard([isLoggedIn])
   },
   {
-    path: '/stock_categoria_productos',
-    name: 'Stockporcategoriayproducto',
-    component: Stockporcategoriayproducto,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
-    path: '/ventas_diarias',
-    name: 'Ventasdiarias',
-    component: Ventasdiarias,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
-    path: '/ganancias_diarias_mensuales',
-    name: 'Gananciasdiariasymensuales',
-    component: Gananciasdiariasymensuales,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
-    path: '/movimiento_bodegas',
-    name: 'Movimientoenbodegas',
-    component: Movimientoenbodegas,
-    beforeEnter: multiguard([isLoggedIn])
-  },
-  {
-    path: '/log_accessos',
-    name: 'Logdeaccesos',
-    component: Logdeaccesos,
+    path: '/proveedores',
+    name: 'Proveedor',
+    component: Proveedor,
     beforeEnter: multiguard([isLoggedIn])
   },
 

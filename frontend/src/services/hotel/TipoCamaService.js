@@ -11,10 +11,6 @@ class TipoCamaService {
         return data == null ? this.axios.get(`${this.baseUrl}`) : this.axios.get(`${this.baseUrl}?sortBy=${data.sortBy}&sortDesc=${data.sortDesc}&perPage=${data.perPage}&page=${data.page}&search=${data.search}`)
     }
 
-    get(id) {
-        return this.axios.get(`${this.baseUrl}/${id}`)
-    }
-
     store(data) {
         return this.axios.post(`${this.baseUrl}`, data)
     }

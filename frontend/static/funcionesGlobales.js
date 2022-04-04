@@ -30,4 +30,29 @@ exports.install = function (Vue, options) {
             minimumFractionDigits: 2,
         })
     };
+
+    //Captura error catch
+    Vue.prototype.catalogo_tipo_pago = function () {
+        return ['EFECTIVO', 'TARJETA', 'CHEQUE']
+    };
+
+    //Captura error catch
+    Vue.prototype.errorResponse = function (e) {
+        if (e.response) {
+            if (e.response.data.code === 404) {
+                this.$toastr.warning(e.response.data.error, 'Advertencia')
+                return
+            } else if (e.response.data.code === 423) {
+                this.$toastr.warning(e.response.data.error, 'Advertencia')
+                return
+            } else {
+                for (let value of Object.values(e.response.data)) {
+                    this.$toastr.error(value, 'Mensaje')
+                }
+            }
+            return
+        } else {
+            console.info(e)
+        }
+    };
 };

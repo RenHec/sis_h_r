@@ -91,52 +91,6 @@
       <v-app-bar-nav-icon @click="mostar"></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
 
-      <v-menu bottom width="30%" rounded offset-y v-if="notIsVendedor">
-        <template v-slot:activator="{ on }">
-          <v-chip class="ma-2" text-color="white" v-on="on">
-            <v-avatar left class="green darken-4">
-              {{ registros.length }}
-            </v-avatar>
-            Movimientos recientes
-          </v-chip>
-        </template>
-        <v-card>
-          <v-list two-line disabled>
-            <v-list-item-group>
-              <template v-for="(item, index) in registros">
-                <v-list-item :key="item.id">
-                  <v-list-item-content>
-                    <v-list-item-title
-                      v-text="item.codigo_stocks"
-                    ></v-list-item-title>
-
-                    <v-list-item-subtitle
-                      class="text--primary"
-                      v-text="item.movimientos"
-                    ></v-list-item-subtitle>
-
-                    <v-list-item-subtitle
-                      v-text="item.descripcion"
-                    ></v-list-item-subtitle>
-                  </v-list-item-content>
-
-                  <v-list-item-action>
-                    <v-list-item-action-text
-                      v-text="`${item.usuarios.full_name}-${item.created_at}`"
-                    ></v-list-item-action-text>
-                  </v-list-item-action>
-                </v-list-item>
-
-                <v-divider
-                  v-if="index < registros.length - 1"
-                  :key="index"
-                ></v-divider>
-              </template>
-            </v-list-item-group>
-          </v-list>
-        </v-card>
-      </v-menu>
-
       <v-menu bottom min-width="300px" rounded offset-y>
         <template v-slot:activator="{ on }">
           <v-btn icon x-large v-on="on">
@@ -168,9 +122,20 @@
                     @click="dialog_caja = true"
                     outlined
                     color="primary"
-                    v-if="notIsVendedor"
                   >
                     CAJA
+                  </v-btn>
+                </div>
+                <div class="my-2">
+                  <v-btn
+                    small
+                    fab
+                    outlined
+                    color="primary"
+                    @click="redirect('/ayuda')"
+                    link
+                  >
+                    <v-icon>info</v-icon>
                   </v-btn>
                 </div>
               </div>
@@ -253,9 +218,7 @@
           </v-card-title>
 
           <v-card-text>
-            <v-container>
-              <Caja v-if="dialog_caja"></Caja>
-            </v-container>
+            <v-container></v-container>
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -271,12 +234,10 @@
 
 <script>
 import FormError from './components/shared/FormError'
-import Caja from './components/principal/extras/CajaComponent'
 
 export default {
   components: {
     FormError,
-    Caja,
   },
   data() {
     return {
@@ -294,37 +255,12 @@ export default {
     }
   },
   created() {
-    //this.initialize()
+    this.initialize()
   },
 
   methods: {
     initialize() {
-      this.loading = true
-
-      this.$store.state.services.selectController
-        .movimientos_registrados(10)
-        .then((r) => {
-          this.loading = false
-          if (r.response) {
-            if (r.response.data.code === 404) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else if (r.response.data.code === 423) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else {
-              for (let value of Object.values(r.response.data)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            return
-          }
-
-          this.registros = r.data.data
-        })
-        .catch((r) => {
-          this.loading = false
-        })
+      this.loading = false
     },
 
     logout() {
@@ -350,12 +286,10 @@ export default {
 
     mostar() {
       let self = this
-      //this.initialize()
       self.drawer = self.drawer ? false : true
     },
 
     cambiar_password() {
-      console.log(this.$store.state.usuario)
       this.loading = true
       this.form.id = this.$store.state.usuario.id
       this.dialog_password = true
@@ -376,16 +310,6 @@ export default {
       }
 
       return self.$store.state.is_login
-    },
-
-    notIsVendedor() {
-      let self = this
-      return self.$store.state.roles.length > 0
-        ? _.includes(self.$store.state.roles, 'GERENTE') ||
-          _.includes(self.$store.state.roles, 'ADMINISTRADOR')
-          ? true
-          : false
-        : false
     },
 
     isAdmin() {

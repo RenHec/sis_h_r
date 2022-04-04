@@ -1102,21 +1102,27 @@ export default {
         .then((r) => {
           this.proveedores = r.data.data
         })
-        .catch((r) => {})
+        .catch((e) => {
+          this.errorResponse(e)
+        })
 
       this.$store.state.services.selectController
         .municipio()
         .then((r) => {
           this.municipios = r.data.data
         })
-        .catch((r) => {})
+        .catch((e) => {
+          this.errorResponse(e)
+        })
 
       this.$store.state.services.selectController
         .producto_insumo()
         .then((r) => {
           this.producto_insumo = r.data.data
         })
-        .catch((r) => {})
+        .catch((e) => {
+          this.errorResponse(e)
+        })
     },
 
     initialize() {
@@ -1124,26 +1130,14 @@ export default {
 
       this.$store.state.services.InsumoService.getAll()
         .then((r) => {
-          this.loading = false
-          if (r.response) {
-            if (r.response.data.code === 404) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else if (r.response.data.code === 423) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else {
-              for (let value of Object.values(r.response.data)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            return
-          }
           this.no_anulados = r.data.no_anulados
           this.anulados = r.data.anulados
           this.close()
         })
-        .catch((r) => {
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
           this.loading = false
         })
     },
@@ -1177,26 +1171,13 @@ export default {
           this.loading = true
           this.$store.state.services.InsumoService.delete(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         } else {
@@ -1216,26 +1197,13 @@ export default {
           this.loading = true
           this.$store.state.services.InsumoService.store(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         } else {
@@ -1269,16 +1237,22 @@ export default {
         text: '¿Está seguro de realizar esta acción?',
         type: 'error',
         showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          this.loading = true
-          this.form.h_insumos_detalles.splice(
-            this.form.h_insumos_detalles.indexOf(index),
-            1,
-          )
-          this.loading = false
-        }
       })
+        .then((result) => {
+          if (result.value) {
+            this.loading = true
+            this.form.h_insumos_detalles.splice(
+              this.form.h_insumos_detalles.indexOf(index),
+              1,
+            )
+          }
+        })
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
 
     dialog_producto() {
@@ -1303,27 +1277,14 @@ export default {
           this.loading = true
           this.$store.state.services.KardexService.store(this.form_producto)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.form_producto.dialog = false
               this.getSelects()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         }

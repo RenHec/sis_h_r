@@ -55,13 +55,67 @@
                 <v-card-text>
                   <v-container>
                     <v-row v-if="!editedIndex">
-                      <v-col cols="12" md="4">
+                      <v-col cols="12" md="12">
                         <v-text-field
                           class="mx-2"
                           prepend-icon="fiber_new"
                           counter
                           outlined
-                          v-model="form.precio"
+                          v-model="form.nombre"
+                          type="text"
+                          label="nombre del cobro"
+                          data-vv-scope="crear"
+                          data-vv-name="nombre del cobro"
+                          v-validate="'required|max:75'"
+                        ></v-text-field>
+                        <FormError
+                          :attribute_name="'crear.nombre del cobro'"
+                          :errors_form="errors"
+                        ></FormError>
+                      </v-col>
+                      <v-col cols="12" md="3">
+                        <v-checkbox
+                          class="mx-2"
+                          prepend-icon="fiber_new"
+                          v-model="form.incluye_desayuno"
+                          hide-details
+                          :label="`¿Incluye desayuno? ${
+                            form.incluye_desayuno ? 'SI' : 'NO'
+                          }`"
+                          data-vv-scope="crear"
+                          data-vv-name="incluye desayuno"
+                          v-validate="'required'"
+                        ></v-checkbox>
+                        <FormError
+                          :attribute_name="'crear.incluye desayuno'"
+                          :errors_form="errors"
+                        ></FormError>
+                      </v-col>
+                      <v-col cols="12" md="3" v-if="form.incluye_desayuno">
+                        <v-text-field
+                          class="mx-2"
+                          prepend-icon="fiber_new"
+                          counter
+                          outlined
+                          v-model="form.precio_desayuno"
+                          type="text"
+                          label="precio del desayuno"
+                          data-vv-scope="crear"
+                          data-vv-name="precio del desayuno"
+                          v-validate="'required|integer'"
+                        ></v-text-field>
+                        <FormError
+                          :attribute_name="'crear.precio del desayuno'"
+                          :errors_form="errors"
+                        ></FormError>
+                      </v-col>
+                      <v-col cols="12" md="3">
+                        <v-text-field
+                          class="mx-2"
+                          prepend-icon="fiber_new"
+                          counter
+                          outlined
+                          v-model="form.precio_habitacion"
                           type="text"
                           label="precio de la habitación"
                           data-vv-scope="crear"
@@ -73,7 +127,7 @@
                           :errors_form="errors"
                         ></FormError>
                       </v-col>
-                      <v-col cols="12" md="8">
+                      <v-col cols="12" :md="form.incluye_desayuno ? '3' : '6'">
                         <v-select
                           prepend-icon="view_carousel"
                           v-model="form.h_tipos_camas_id"
@@ -226,11 +280,47 @@
                 <v-list-item three-line>
                   <v-list-item-content>
                     <v-list-item-title
-                      v-text="formato_moneda(1, habitacion_precio.precio, 0)"
+                      v-text="
+                        `Precio habitación: ${formato_moneda(
+                          1,
+                          habitacion_precio.precio_habitacion,
+                          0,
+                        )}`
+                      "
+                      v-if="habitacion_precio.incluye_desayuno"
                     ></v-list-item-title>
+                    <v-list-item-title
+                      v-text="
+                        `Precio desayuno: ${formato_moneda(
+                          1,
+                          habitacion_precio.precio_desayuno,
+                          0,
+                        )}`
+                      "
+                      v-if="habitacion_precio.incluye_desayuno"
+                    ></v-list-item-title>
+                    <v-list-item-title
+                      v-text="
+                        `Precio total: ${formato_moneda(
+                          1,
+                          habitacion_precio.precio,
+                          0,
+                        )}`
+                      "
+                    ></v-list-item-title>
+                    <v-list-item-subtitle
+                      v-text="`${habitacion_precio.nombre}`"
+                    ></v-list-item-subtitle>
                     <v-list-item-subtitle
                       v-text="
                         `${habitacion_precio.tipo_cama.nombre} | Persona: ${habitacion_precio.tipo_cama.cantidad}`
+                      "
+                    ></v-list-item-subtitle>
+                    <v-list-item-subtitle
+                      v-text="
+                        `Incluye desayuno: ${
+                          habitacion_precio.incluye_desayuno ? 'SI' : 'NO'
+                        }`
                       "
                     ></v-list-item-subtitle>
                     <v-list-item-subtitle
@@ -422,7 +512,61 @@
                     prepend-icon="fiber_new"
                     counter
                     outlined
-                    v-model="form_precio.precio"
+                    v-model="form_precio.nombre"
+                    type="text"
+                    label="nombre del cobro"
+                    data-vv-scope="crear_precio"
+                    data-vv-name="nombre del cobro"
+                    v-validate="'required|max:75'"
+                  ></v-text-field>
+                  <FormError
+                    :attribute_name="'crear_precio.nombre del cobro'"
+                    :errors_form="errors"
+                  ></FormError>
+                </v-col>
+                <v-col cols="12" md="12">
+                  <v-checkbox
+                    class="mx-2"
+                    prepend-icon="fiber_new"
+                    v-model="form_precio.incluye_desayuno"
+                    hide-details
+                    :label="`¿Incluye desayuno? ${
+                      form_precio.incluye_desayuno ? 'SI' : 'NO'
+                    }`"
+                    data-vv-scope="crear_precio"
+                    data-vv-name="incluye desayuno"
+                    v-validate="'required'"
+                  ></v-checkbox>
+                  <FormError
+                    :attribute_name="'crear_precio.incluye desayuno'"
+                    :errors_form="errors"
+                  ></FormError>
+                </v-col>
+                <v-col cols="12" md="12" v-if="form.incluye_desayuno">
+                  <v-text-field
+                    class="mx-2"
+                    prepend-icon="fiber_new"
+                    counter
+                    outlined
+                    v-model="form_precio.precio_desayuno"
+                    type="text"
+                    label="precio del desayuno"
+                    data-vv-scope="crear_precio"
+                    data-vv-name="precio del desayuno"
+                    v-validate="'required|integer'"
+                  ></v-text-field>
+                  <FormError
+                    :attribute_name="'crear_precio.precio del desayuno'"
+                    :errors_form="errors"
+                  ></FormError>
+                </v-col>
+                <v-col cols="12" md="3">
+                  <v-text-field
+                    class="mx-2"
+                    prepend-icon="fiber_new"
+                    counter
+                    outlined
+                    v-model="form_precio.precio_habitacion"
                     type="text"
                     label="precio de la habitación"
                     data-vv-scope="crear_precio"
@@ -602,7 +746,12 @@ export default {
         id: 0,
         foto: null,
         descripcion: null,
-        precio: 0,
+
+        nombre: null,
+        precio_desayuno: 0,
+        precio_habitacion: 0,
+        incluye_desayuno: false,
+
         h_tipos_camas_id: null,
         h_estados_id: null,
         imagen: null,
@@ -610,7 +759,10 @@ export default {
 
       form_precio: {
         id: null,
-        precio: 0,
+        nombre: null,
+        precio_desayuno: 0,
+        precio_habitacion: 0,
+        incluye_desayuno: false,
         h_tipos_camas_id: null,
         dialog: false,
         h_habitaciones_id: null,
@@ -722,7 +874,10 @@ export default {
 
       //PRECIO
       this.form_precio.id = null
-      this.form_precio.precio = 0
+      this.form_precio.nombre = null
+      this.form_precio.precio_desayuno = 0
+      this.form_precio.precio_habitacion = 0
+      this.form_precio.incluye_desayuno = false
       this.form_precio.h_tipos_camas_id = null
       this.form_precio.h_habitaciones_id = null
       this.form_precio.dialog = false
@@ -759,26 +914,13 @@ export default {
 
       this.$store.state.services.HabitacionService.getAll()
         .then((r) => {
-          this.loading = false
-          if (r.response) {
-            if (r.response.data.code === 404) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else if (r.response.data.code === 423) {
-              this.$toastr.warning(r.response.data.error, 'Advertencia')
-              return
-            } else {
-              for (let value of Object.values(r.response.data)) {
-                this.$toastr.error(value, 'Mensaje')
-              }
-            }
-            return
-          }
-
           this.desserts = r.data
           this.close()
         })
-        .catch((r) => {
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
           this.loading = false
         })
     },
@@ -815,26 +957,13 @@ export default {
           this.loading = true
           this.$store.state.services.HabitacionService.delete(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         } else {
@@ -854,26 +983,13 @@ export default {
           this.loading = true
           this.$store.state.services.HabitacionService.store(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         } else {
@@ -893,26 +1009,13 @@ export default {
           this.loading = true
           this.$store.state.services.HabitacionService.update(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         } else {
@@ -925,7 +1028,10 @@ export default {
     modal_precio(item) {
       this.loading = true
       this.form_precio.id = item.id
-      this.form_precio.precio = 0
+      this.form_precio.nombre = null
+      this.form_precio.precio_desayuno = 0
+      this.form_precio.precio_habitacion = 0
+      this.form_precio.incluye_desayuno = false
       this.form_precio.h_tipos_camas_id = null
       this.form_precio.h_habitaciones_id = item
       this.form_precio.dialog = true
@@ -947,26 +1053,13 @@ export default {
                 this.form_precio,
               )
                 .then((r) => {
-                  this.loading = false
-                  if (r.response) {
-                    if (r.response.data.code === 404) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else if (r.response.data.code === 423) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else {
-                      for (let value of Object.values(r.response.data)) {
-                        this.$toastr.error(value, 'Mensaje')
-                      }
-                    }
-                    return
-                  }
-
                   this.$toastr.success(r.data, 'Mensaje')
                   this.initialize()
                 })
-                .catch((r) => {
+                .catch((e) => {
+                  this.errorResponse(e)
+                })
+                .finally(() => {
                   this.loading = false
                 })
             }
@@ -986,26 +1079,13 @@ export default {
           this.loading = true
           this.$store.state.services.HabitacionPrecioService.delete(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         }
@@ -1038,26 +1118,13 @@ export default {
                 this.form_foto,
               )
                 .then((r) => {
-                  this.loading = false
-                  if (r.response) {
-                    if (r.response.data.code === 404) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else if (r.response.data.code === 423) {
-                      this.$toastr.warning(r.response.data.error, 'Advertencia')
-                      return
-                    } else {
-                      for (let value of Object.values(r.response.data)) {
-                        this.$toastr.error(value, 'Mensaje')
-                      }
-                    }
-                    return
-                  }
-
                   this.$toastr.success(r.data, 'Mensaje')
                   this.initialize()
                 })
-                .catch((r) => {
+                .catch((e) => {
+                  this.errorResponse(e)
+                })
+                .finally(() => {
                   this.loading = false
                 })
             }
@@ -1084,8 +1151,11 @@ export default {
             index === 0 ? null : this.quitar_foto(imagen)
           }
         })
-        .catch((err) => {
-          console.error(err)
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
 
@@ -1100,26 +1170,13 @@ export default {
           this.loading = true
           this.$store.state.services.HabitacionFotoService.get(data.id)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         }
@@ -1137,26 +1194,13 @@ export default {
           this.loading = true
           this.$store.state.services.HabitacionFotoService.delete(data)
             .then((r) => {
-              this.loading = false
-              if (r.response) {
-                if (r.response.data.code === 404) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else if (r.response.data.code === 423) {
-                  this.$toastr.warning(r.response.data.error, 'Advertencia')
-                  return
-                } else {
-                  for (let value of Object.values(r.response.data)) {
-                    this.$toastr.error(value, 'Mensaje')
-                  }
-                }
-                return
-              }
-
               this.$toastr.success(r.data, 'Mensaje')
               this.initialize()
             })
-            .catch((r) => {
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
               this.loading = false
             })
         }
