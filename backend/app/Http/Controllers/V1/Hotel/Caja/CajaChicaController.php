@@ -5,7 +5,6 @@ namespace App\Http\Controllers\V1\Hotel\Caja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\V1\Hotel\HCajaChica;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\ApiController;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +29,28 @@ class CajaChicaController extends ApiController
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        try {
+            $hoy = date('Y-m-d');
+            $caja = HCajaChica::with('movimientos', 'usuario')->whereDate('inicio', $hoy)->where('abierta', true)->get();
+
+            if (count($caja) == 0) {
+                throw new \Exception("Es necesario que aperture la caja para poder operar, insumos, compras, reservaciones, etc..., en el sistema.", 1);
+            }
+
+            return $this->successResponse($caja[0]);
+        } catch (\Exception $e) {
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@index");
+            return $e->getCode() === 1 ? $this->errorResponse($e->getMessage()) : $this->errorResponse('Error en el controlador');
+        }
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -39,6 +60,13 @@ class CajaChicaController extends ApiController
     {
         try {
             DB::beginTransaction();
+
+            $hoy = date('Y-m-d');
+            $caja = HCajaChica::whereDate('inicio', $hoy)->where('abierta', true)->first();
+
+            if (!is_null($caja)) {
+                throw new \Exception("Ya cuenta con la apertura de caja.", 1);
+            }
 
             $caja_chica = HCajaChica::create(
                 [
@@ -69,7 +97,7 @@ class CajaChicaController extends ApiController
             if ($e instanceof QueryException) {
                 return $this->errorResponse('Ocurrio un problema al guardar la información de la caja chica');
             }
-            return $this->errorResponse('Error en el controlador');
+            return $e->getCode() === 1 ? $this->errorResponse($e->getMessage()) : $this->errorResponse('Error en el controlador');
         }
     }
 
@@ -85,7 +113,7 @@ class CajaChicaController extends ApiController
             DB::beginTransaction();
 
             $hotel_caja->finalizo = date('Y-m-d H:i:s');
-            $hotel_caja->cierre_caja = ($hotel_caja->inicia_caja + $hotel_caja->pagos) - ($hotel_caja->insumos + $hotel_caja->compras);
+            $hotel_caja->cierre_caja = ($hotel_caja->inicia_caja + $hotel_caja->pagos + $hotel_caja->restaurante) - ($hotel_caja->insumos + $hotel_caja->compras);
             $hotel_caja->abierta = false;
             $hotel_caja->save();
 

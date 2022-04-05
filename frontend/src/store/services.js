@@ -22,6 +22,7 @@ import SelectController from '../services/catalogo/SelectControllerService'
 import ClienteCatalogoService from '../services/principal/ClienteService'
 import ProveedorCatalogoService from '../services/principal/ProveedorService'
 import EmpleadoCatalogoService from '../services/principal/EmpleadoService'
+/* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
 
 /*
 |--------------------------------------------------------------------------
@@ -57,7 +58,9 @@ import ReservacionService from '../services/hotel/ReservacionService'
 import CheckInService from '../services/hotel/CheckInService'
 import CheckOutService from '../services/hotel/CheckOutService'
 import PagoService from '../services/hotel/PagoService'
-/* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE PRINCIPAL ::::::::::::::::::::::::::::::::::::: */
+import CajaService from '../services/hotel/CajaService'
+import CajaMovimientoService from '../services/hotel/CajaMovimientoService'
+/* :::::::::::::::::::::::::::::::::::: FIN DE LOS IMPORT DE HOTEL ::::::::::::::::::::::::::::::::::::: */
 
 let baseUrl = process.env.BASE_URL
 let token_data = $cookies.get('token_data')
@@ -174,4 +177,6 @@ export default {
   CheckInService: new CheckInService(Axios, baseUrl, hotelUrl),
   CheckOutService: new CheckOutService(Axios, baseUrl, hotelUrl),
   PagoService: new PagoService(Axios, baseUrl, hotelUrl),
+  CajaService: new CajaService(Axios, baseUrl, hotelUrl),
+  CajaMovimientoService: new CajaMovimientoService(Axios, baseUrl, hotelUrl),
 }

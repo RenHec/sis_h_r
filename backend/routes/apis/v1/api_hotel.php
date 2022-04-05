@@ -29,5 +29,5 @@ Route::resource('/check_out', 'Reservacion\CheckOutController')->only('show', 's
 
 Route::resource('/pago', 'Pago\PagoController')->only('index', 'show', 'store', 'destroy');
 
-Route::resource('/hotel_caja', 'Caja\CajaChicaController')->only('index', 'store', 'show');
+Route::resource('/hotel_caja', 'Caja\CajaChicaController')->only('index', 'create', 'store', 'show');
 Route::resource('/hotel_caja_movimiento', 'Caja\CajaChicaMovimientoController')->only('update', 'destroy');

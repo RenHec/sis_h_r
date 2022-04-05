@@ -11,6 +11,10 @@ class CajaService {
         return this.axios.get(`${this.baseUrl}`)
     }
 
+    getCreate() {
+        return this.axios.get(`${this.baseUrl}/create`)
+    }
+
     get(id) {
         return this.axios.get(`${this.baseUrl}/${id}`)
     }

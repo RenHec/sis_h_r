@@ -95,7 +95,7 @@
         <template v-slot:activator="{ on }">
           <v-btn icon x-large v-on="on">
             <v-avatar size="40">
-              <img :src="iniciales" :alt="cui" />
+              <img :src="fotografia" :alt="cui" />
             </v-avatar>
           </v-btn>
         </template>
@@ -103,7 +103,7 @@
           <v-list-item-content class="justify-center">
             <div class="mx-auto text-center">
               <v-avatar size="100">
-                <img :src="iniciales" :alt="cui" />
+                <img :src="fotografia" :alt="cui" />
               </v-avatar>
               <h3>{{ userName }}</h3>
               <p class="text-caption mt-1">
@@ -117,12 +117,7 @@
                   </v-btn>
                 </div>
                 <div class="my-2">
-                  <v-btn
-                    small
-                    @click="dialog_caja = true"
-                    outlined
-                    color="primary"
-                  >
+                  <v-btn small @click="aperturar_caja" outlined color="primary">
                     CAJA
                   </v-btn>
                 </div>
@@ -196,7 +191,7 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="dialog_caja" width="80%" persistent>
+      <v-dialog v-model="dialog_caja" width="30%" persistent>
         <v-card>
           <v-overlay :value="loading">
             <v-progress-circular indeterminate size="64"></v-progress-circular>
@@ -206,8 +201,9 @@
               <v-list-item-content>
                 <v-list-item-title class="text-h5">
                   Caja
+                  <v-spacer></v-spacer>
                   <v-btn color="red darken-1" @click="dialog_caja = false">
-                    Cerrar
+                    <v-icon>close</v-icon>
                   </v-btn>
                 </v-list-item-title>
                 <v-list-item-subtitle
@@ -217,8 +213,12 @@
             </v-list-item>
           </v-card-title>
 
-          <v-card-text>
-            <v-container></v-container>
+          <v-card-text v-if="registros.length === 0">
+            <v-container>
+              <v-row>
+                <v-col cols="12"></v-col>
+              </v-row>
+            </v-container>
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -243,13 +243,15 @@ export default {
     return {
       loading: false,
       dialog_password: false,
-      dialog_configuration: false,
       dialog_caja: false,
       drawer: false,
       menu: false,
       form: {
         id: 0,
         password: null,
+      },
+      form_caja: {
+        inicia_caja: 0,
       },
       registros: [],
     }
@@ -268,14 +270,17 @@ export default {
       self.loading = true
       self.$store.state.services.loginService
         .logout()
-        .then((r) => {
+        .then((r) => {})
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
           self.$store.dispatch('logout')
           self.$router.push('/login')
           self.drawer = null
           self.$store.state.is_login = false
           self.loading = false
         })
-        .catch((e) => {})
     },
 
     redirect(item) {
@@ -294,6 +299,24 @@ export default {
       this.form.id = this.$store.state.usuario.id
       this.dialog_password = true
       this.loading = false
+    },
+
+    aperturar_caja() {
+      let self = this
+      self.loading = true
+      self.registros = []
+
+      self.$store.state.services.CajaService.getCreate()
+        .then((r) => {
+          self.registros = r.data.data
+        })
+        .catch((e) => {
+          this.errorResponse(e)
+        })
+        .finally(() => {
+          self.dialog_caja = true
+          self.loading = false
+        })
     },
   },
 
@@ -321,7 +344,7 @@ export default {
         : false
     },
 
-    iniciales() {
+    fotografia() {
       let self = this
       return self.$store.state.usuario
         ? self.$store.state.usuario.picture
@@ -344,6 +367,7 @@ export default {
       let self = this
       return self.$store.state.menu
     },
+
     logo() {
       return `${this.$store.state.base_url}img/logo.png`
     },
