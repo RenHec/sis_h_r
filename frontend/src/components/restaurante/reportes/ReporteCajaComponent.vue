@@ -6,7 +6,7 @@
           <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
         <v-toolbar class="d-flex justify-center">
-          <v-toolbar-title>Total ventas del {{ getFormaDate() }}</v-toolbar-title>
+          <v-toolbar-title><v-icon color="green" large>local_atm</v-icon> Total ventas del {{ getFormaDate() }}</v-toolbar-title>
         </v-toolbar>
         <template v-for="(fila, key) in reporte">
             <div v-bind:key="key">

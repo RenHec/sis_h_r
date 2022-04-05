@@ -161,6 +161,7 @@ class OrdenController extends ApiController
                         ->join('r_producto as p','op.producto_id','p.id')
                         ->select('op.id','op.cantidad','op.notas','p.nombre as producto','p.img','op.precio')
                         ->where('op.orden_id',$value->id)
+                        ->where('op.pagado',0)
                         ->get();
 
             $datos            = (array)$value;
@@ -261,7 +262,8 @@ class OrdenController extends ApiController
             'tipo_pago_id'  => 'required',
             'cliente_id'    => 'required',
             'monto'         => 'required',
-            'voucher'       => 'nullable'
+            'voucher'       => 'nullable',
+            'detalle'       => 'required|array'
         ];
 
         $this->validate($request, $rules);
@@ -272,22 +274,56 @@ class OrdenController extends ApiController
         }
 
         return DB::transaction(function() use($request){
-            $registro = new Venta();
-            $registro->id = $request->get('id');
-            $registro->orden_id = $request->get('orden_id');
+            $registro               = new Venta();
+            $registro->id           = $request->get('id');
+            $registro->orden_id     = $request->get('orden_id');
             $registro->tipo_pago_id = $request->get('tipo_pago_id');
-            $registro->cliente_id = $request->get('cliente_id');
-            $registro->voucher          = $request->get('voucher');
-            $registro->usuario_id = $request->user()->id;
-            $registro->monto = $request->get('monto');
+            $registro->cliente_id   = $request->get('cliente_id');
+            $registro->voucher      = $request->get('voucher');
+            $registro->usuario_id   = $request->user()->id;
+            $registro->monto        = $request->get('monto');
             $registro->save();
 
             $orden = Orden::findOrFail($request->get('orden_id'));
-            $orden->activo = 0;
+
+            if($orden->monto > $request->get('monto')) //será pago dividido
+            {
+                $orden->monto = ($orden->monto - $request->get('monto'));
+                $orden->cuenta_dividida = 1;
+            }
+
+            if($orden->monto == $request->get('monto'))//se completará el pago
+            {
+                if($orden->cuenta_dividida == 1){
+                    $orden->monto = $this->ensureJoinSeparatePayments($orden->id);
+                }
+
+                $orden->activo = 0;
+            }
             $orden->save();
+
+            $this->updateItemsOrderProducts($request->get('detalle'));
 
             return $this->showMessage('',201);
         });
+    }
+
+    public function ensureJoinSeparatePayments($ordenId)
+    {
+        $registro = DB::table('r_orden_producto')
+                    ->select(DB::raw('SUM(precio*cantidad) as monto'))
+                    ->where('orden_id',$ordenId)
+                    ->first();
+
+        return $registro->monto;
+    }
+
+    public function updateItemsOrderProducts($detalle)
+    {
+        $detalle =  DB::table('r_orden_producto')
+                        ->whereIn('id', $detalle)
+                        ->update(['pagado' => 1]);
+        return;
     }
 
     public function ensureHasNotOrderInKitchen($ordenId)

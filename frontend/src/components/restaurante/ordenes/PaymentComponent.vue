@@ -38,23 +38,24 @@
               <div  style="height: 80vh; overflow-y:scroll;">
                 <template v-for="(item) in recordDetail.detalle">
                   <v-card v-bind:key="item.id" class="mx-2 my-2" style="padding:15px">
-                    <v-row class="justify-center">
-                      <v-col md='3' sm='3'>
+                    <!--  -->
+                    <div class="d-flex justify-md-space-between justify-sm-center justify-xs-center">
                         <v-img
                           :src="getAbsoluteImagePath(item.img)"
                           style="border-radius:75%; height:64px; width:64px;"
                           class="mx-2 py-2 mr-4">
                         </v-img>
-                      </v-col>
-                      <v-col md='9' sm='9' class="d-flex flex-row">
-                        <v-card-text class="text-h6 col-9">
+                        <v-card-text class="text-h6">
                           {{ item.cantidad }}&nbsp;{{ item.producto }}
                         </v-card-text>
-                        <v-card-text class="text-h6 col-3 justify-end">
+                        <v-card-text class="text-h6 justify-end">
                           {{ setSubtotalItem(item) }}
                         </v-card-text>
-                      </v-col>
-                    </v-row>
+                        <v-btn icon>
+                          <v-icon style="cursor:pointer" large color="red" @click="deleteMenu(item)">fas fa-trash</v-icon>
+                        </v-btn>
+                    </div>
+                    <!--  -->
                   </v-card>
                 </template>
               </div>
@@ -69,43 +70,45 @@
                       {{ recordDetail.estado_orden }}
                     </v-chip>
                   <v-card-text>
-                    <div class="d-flex flex-row">
-                      <v-autocomplete
-                        outlined
-                        dense
-                        v-validate="'required'"
-                        name="cliente"
-                        v-model="cliente"
-                        :items="items"
-                        :search-input.sync="search"
-                        item-text="nombre"
-                        placeholder="Buscar cliente"
-                        @change="setPaymentCustomer"
-                        return-object>
-                      </v-autocomplete>
-                    <v-btn class="info" @click="newCustomer"><v-icon>add</v-icon></v-btn>
-                    </div>
-                    <form-error :attribute_name="'cliente'" :errors_form="errors"> </form-error>
-                    <v-card-text>NIT: {{ nit }}</v-card-text>
-                    <v-card-text>Dirección: {{ direccion }}</v-card-text>
-                    <div class="d-flex flex-column">
-                      <v-radio-group name="metodo-pago" v-model="paymentMethodToPay" row v-validate="'required'">
-                        <v-radio
-                          v-for="item in paymentMethodList"
-                          :key="item.id"
-                          :label="item.nombre"
-                          :value="item.id"
-                          @click="verifyNeedVoucher(item.ticket)"
-                        >
-                        </v-radio>
-                      </v-radio-group>
-                      <form-error :attribute_name="'metodo-pago'" :errors_form="errors"> </form-error>
-                    </div>
-                    <v-text-field outlined dense name="Número de voucher" v-model="voucher" label="Número de voucher" v-show="showInputVoucher"></v-text-field>
-                    <form-error :attribute_name="'voucher'" :errors_form="errors"> </form-error>
-                    <v-card-title class="text-h4 justify-center">Q. {{ recordDetail.monto }}</v-card-title>
+                    <v-form autocomplete="off">
+                      <div class="d-flex flex-row">
+                        <v-autocomplete
+                          outlined
+                          dense
+                          v-validate="'required'"
+                          name="cliente"
+                          v-model="cliente"
+                          :items="items"
+                          :search-input.sync="search"
+                          item-text="nombre"
+                          placeholder="Buscar cliente"
+                          @change="setPaymentCustomer"
+                          return-object>
+                        </v-autocomplete>
+                      <v-btn class="info" @click="newCustomer"><v-icon>add</v-icon></v-btn>
+                      </div>
+                      <form-error :attribute_name="'cliente'" :errors_form="errors"> </form-error>
+                      <v-card-text>NIT: {{ nit }}</v-card-text>
+                      <v-card-text>Dirección: {{ direccion }}</v-card-text>
+                      <div class="d-flex flex-column">
+                        <v-radio-group name="metodo-pago" v-model="paymentMethodToPay" row v-validate="'required'">
+                          <v-radio
+                            v-for="item in paymentMethodList"
+                            :key="item.id"
+                            :label="item.nombre"
+                            :value="item.id"
+                            @click="verifyNeedVoucher(item.ticket)"
+                          >
+                          </v-radio>
+                        </v-radio-group>
+                        <form-error :attribute_name="'metodo-pago'" :errors_form="errors"> </form-error>
+                      </div>
+                      <v-text-field outlined dense name="Número de voucher" v-model="voucher" label="Número de voucher" v-show="showInputVoucher"></v-text-field>
+                      <form-error :attribute_name="'voucher'" :errors_form="errors"> </form-error>
+                    </v-form>
+                    <v-card-title class="text-h4 justify-center">Q. {{ totalOrder }}</v-card-title>
                     <br/>
-                    <v-btn rounded block color="primary" x-large class="float: bottom" @click="validateForm()">
+                    <v-btn rounded block color="primary" x-large class="float: bottom" @click="validateForm()" v-if="showPaymentButton">
                       Generar pago
                     </v-btn>
                   </v-card-text>
@@ -148,7 +151,9 @@ export default{
       paymentId:'',
       voucher:'',
 
-      recordDetail:{}
+      recordDetail:{},
+      totalOrder:'',
+      tmp:[],
     }
   },
   mounted(){
@@ -180,9 +185,26 @@ export default{
   computed:{
     showInputVoucher(){
       return this.no_voucher
+    },
+    showPaymentButton(){
+      return this.tmp.length > 0
     }
   },
   methods:{
+    getNewAmountOrderTotal(){
+      let temp = 0
+
+      this.recordDetail.detalle.forEach((item) =>{
+        temp += (parseFloat(item.precio) * parseInt(item.cantidad))
+      })
+      this.totalOrder = temp.toFixed(2)
+    },
+    deleteMenu(item){
+      let index = this.recordDetail.detalle.indexOf(item)
+      this.recordDetail.detalle.splice(index,1)
+      this.getNewAmountOrderTotal()
+      return
+    },
     verifyNeedVoucher(item){
       this.no_voucher = item === 1 ? true : false
     },
@@ -195,14 +217,19 @@ export default{
         })
     },
     savePayment(){
+      let detail = []
+      this.recordDetail.detalle.forEach((item) =>{
+        detail.push(item.id)
+      })
 
       let data = {
         'id': this.paymentId,
         'orden_id':this.item,
         'tipo_pago_id':this.paymentMethodToPay,
         'cliente_id':this.cliente.id,
-        'monto':this.recordDetail.monto,
-        'voucher':this.voucher
+        'monto':this.totalOrder,
+        'voucher':this.voucher,
+        'detalle':detail
       }
 
       this.loading = true
@@ -292,6 +319,8 @@ export default{
           .getOneOrders(id)
           .then((r)=>{
             this.recordDetail = r.data.data
+            this.totalOrder = this.recordDetail.monto
+            this.tmp = this.recordDetail.detalle
             resolve()
           })
           .catch((e)=>{

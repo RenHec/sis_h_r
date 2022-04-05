@@ -22,6 +22,7 @@ class CreateRestauranteOrden extends Migration
             $table->date('fecha');
             $table->string('hora');
             $table->smallInteger('activo')->default(1);
+            $table->smallInteger('cuenta_dividida')->default(0);
             $table->bigInteger('usuario_id')->unsigned();
             $table->foreign('estado_orden_id')->references('id')->on('r_estado_orden');
             $table->foreign('tipo_orden_id')->references('id')->on('r_tipo_orden');
