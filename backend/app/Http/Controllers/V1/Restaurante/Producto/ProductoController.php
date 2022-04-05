@@ -28,7 +28,7 @@ class ProductoController extends ApiController
         $pagina     = $request['page'];
 
         $productos  = DB::table('r_producto')
-            ->select('id', 'nombre', 'precio', 'img')
+            ->select('id', 'nombre', 'precio', 'img','quien_prepara')
             ->where($columna, 'LIKE', '%' . $criterio . '%')
             ->orderBy($columna, $orden)
             ->skip($pagina)
@@ -81,6 +81,7 @@ class ProductoController extends ApiController
             'imagen' => 'required|image',
             'categorias' => 'nullable|array',
             'costo' => 'required|numeric',
+            'preparacion' => 'required|numeric|min:1|max:2',
         ];
 
         $this->validate($request, $rules, $message);
@@ -96,6 +97,7 @@ class ProductoController extends ApiController
             $registro->precio   = $request->get('precio');
             $registro->img      = $this->pathImage . $name;
             $registro->costo    = $request->get('costo');
+            $registro->quien_prepara    = $request->get('preparacion');
             $registro->save();
 
             foreach ($request->get('categorias') as $key => $value) {
@@ -148,7 +150,8 @@ class ProductoController extends ApiController
             'precio' => 'required|numeric|min:1',
             'imagen' => 'nullable|image',
             'categorias' => 'nullable|array',
-            'costo'     => 'required|numeric'
+            'costo'     => 'required|numeric',
+            'preparacion' => 'required|numeric|min:1|max:2'
         ];
 
         $this->validate($request, $rules);
@@ -169,6 +172,7 @@ class ProductoController extends ApiController
             $registro->nombre   = $request->get('nombre');
             $registro->precio   = $request->get('precio');
             $registro->costo    = $request->get('costo');
+            $registro->quien_prepara    = $request->get('preparacion');
 
             if ($request->hasFile('imagen')) {
                 $file    = $request->file('imagen');
@@ -218,7 +222,7 @@ class ProductoController extends ApiController
 
     public function productsList()
     {
-        $registros =  Producto::select('id', 'nombre', 'precio', 'img')
+        $registros =  Producto::select('id', 'nombre', 'precio', 'img', 'quien_prepara as preparacion')
             ->with('producto_categoria_comida')
             ->where('r_producto.activo', 1)
             ->get();

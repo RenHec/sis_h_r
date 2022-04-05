@@ -36,6 +36,15 @@
 
               <v-file-input @change="loadImage" accept="image/*" type="file" outlined dense name="imagen" v-model="imagen" label="Imagen"></v-file-input>
               <form-error :attribute_name="'imagen'" :errors_form="errors"> </form-error>
+
+              <v-select outlined dense
+                v-validate="'required'"
+                v-model="preparacion"
+                item-value="id"
+                name="preparacion"
+                item-text="nombre"
+                :items="prepara" label="Cocina prepara este producto?"></v-select>
+              <form-error :attribute_name="'preparacion'" :errors_form="errors"> </form-error>
           </v-form>
           <v-card-title>Categorías</v-card-title>
             <v-list-item-group dense class="py-0">
@@ -76,12 +85,17 @@ export default{
       precio:'',
       costo:'',
       imagen:null,
+      preparacion:'',
       categories:[],
       opc:[],
 
       loading:false,
       foodCategoryList:[],
       imageAccept: ['image/png', 'image/jpeg', 'image/jpg'],
+      prepara:[
+        {'id':1,'nombre':'Si'},
+        {'id':2,'nombre':'No'}
+      ],
     }
   },
   props:{
@@ -152,6 +166,7 @@ export default{
       this.nombre = item.nombre
       this.precio = item.precio
       this.costo = item.costo
+      this.preparacion = item.quien_prepara
       this.categories = item.producto_categoria_comida
     },
     closeForm(){
@@ -174,6 +189,7 @@ export default{
       data.append('nombre',this.nombre)
       data.append('precio',this.precio)
       data.append('costo',this.costo)
+      data.append('preparacion',this.preparacion)
       this.imagen ? data.append('imagen',this.imagen,this.imagen.name) : ''
       this.opc.forEach((item)=>{
         data.append('categorias[]',item)

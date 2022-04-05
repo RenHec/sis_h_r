@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\V1\Restaurante\Orden;
 use App\Models\V1\Restaurante\Venta;
 use App\Http\Controllers\ApiController;
+use App\Models\V1\Restaurante\Producto;
 use App\Models\V1\Restaurante\EstadoOrden;
 use App\Models\V1\Restaurante\OrdenProducto;
 
@@ -42,6 +43,7 @@ class OrdenController extends ApiController
                         ->select('op.id','op.cantidad','op.notas','p.nombre as producto','p.img','op.precio')
                         ->where('op.orden_id',$value->id)
                         ->where('op.activo',1)
+                        ->where('p.quien_prepara', Producto::COCINA)
                         ->get();
 
             $datos[$key]            = (array)$value;
@@ -107,6 +109,7 @@ class OrdenController extends ApiController
             }
 
             foreach ($request->get('detalle') as $value) {
+
                 OrdenProducto::create([
                     'cantidad'      => $value['cantidad'],
                     'orden_id'      => $registro->id,

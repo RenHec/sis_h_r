@@ -3,7 +3,7 @@
       <v-overlay :value="loading">
         <v-progress-circular indeterminate size="64"></v-progress-circular>
       </v-overlay>
-      <v-col md='12' sm='12' v-if="!paymentScreen  && !showUpdateOrderScreen">
+      <v-col md='12' sm='12' v-if="!paymentScreen  && !showUpdateOrderScreen && !showDetailOrderScreen">
         <v-card>
           <v-toolbar>
             <v-toolbar-title>Listado de órdenes</v-toolbar-title>
@@ -47,6 +47,7 @@
       </v-col>
       <PaymentComponent v-if="showPaymentScreen" :item="orderId"></PaymentComponent>
       <UpdateOrderComponent v-if="showUpdateOrderScreen" :tableName="tableName" :orderId="orderId"></UpdateOrderComponent>
+      <DetailOrderComponent v-if="showDetailOrderScreen" :tableName="tableName" :orderId="orderId"></DetailOrderComponent>
     </v-row>
 </template>
 
@@ -54,11 +55,13 @@
 import moment from 'moment'
 import PaymentComponent from './PaymentComponent.vue'
 import UpdateOrderComponent from './UpdateOrderComponent.vue'
+import DetailOrderComponent from './DetailOrdenComponent.vue'
 
 export default{
   components:{
     PaymentComponent,
-    UpdateOrderComponent
+    UpdateOrderComponent,
+    DetailOrderComponent
   },
   data(){
     return{
@@ -73,6 +76,7 @@ export default{
 
       paymentScreen:false,
       updateOrderScreen:false,
+      detailOrderScreen:false,
       orderId:0,
       tableName:'',
     }
@@ -83,10 +87,12 @@ export default{
   created(){
     events.$on('close_payment_form',this.eventClosePaymentForm)
     events.$on('close_update_order',this.eventCloseUpdateOrder)
+    events.$on('close_detail_order',this.eventCloseDetailOrder)
   },
   beforeDestroy(){
     events.$off('close_payment_form')
     events.$off('close_update_order')
+    events.$off('close_detail_order')
   },
   methods:{
     eventClosePaymentForm(){
@@ -97,6 +103,12 @@ export default{
     eventCloseUpdateOrder(){
       this.orderId = 0
       this.updateOrderScreen = false
+      this.tableName = ''
+      this.getAllFoodCategory()
+    },
+    eventCloseDetailOrder(){
+      this.orderId = 0
+      this.detailOrderScreen = false
       this.tableName = ''
       this.getAllFoodCategory()
     },
@@ -139,10 +151,12 @@ export default{
         this.updateOrderScreen = true
         this.orderId = item.id
         this.tableName = item.mesa
-      }
-
-      if(item.finaliza === 1){
+      }else if(item.finaliza === 1){
         this.paymentScreen = true
+        this.orderId = item.id
+      }else{
+        this.detailOrderScreen = true
+        this.tableName = item.mesa
         this.orderId = item.id
       }
     },
@@ -193,6 +207,9 @@ export default{
     },
     showUpdateOrderScreen(){
       return this.updateOrderScreen
+    },
+    showDetailOrderScreen(){
+      return this.detailOrderScreen
     }
   }
 }

@@ -70,6 +70,15 @@
                 :attribute_name="'imagen'"
                 :errors_form="errors"
               ></form-error>
+
+              <v-select outlined dense
+                v-validate="'required'"
+                v-model="preparacion"
+                item-value="id"
+                name="preparacion"
+                item-text="nombre"
+                :items="prepara" label="Cocina prepara este producto?"></v-select>
+              <form-error :attribute_name="'preparacion'" :errors_form="errors"> </form-error>
             </v-form>
             <v-card-title>Categorías</v-card-title>
             <v-list-item-group dense class="py-0">
@@ -115,11 +124,16 @@ export default {
       precio: '',
       imagen: null,
       costo: '',
+      preparacion: '',
       opc: [],
 
       loading: false,
       foodCategoriesList: [],
       imageAccept: ['image/png', 'image/jpeg', 'image/jpg'],
+      prepara:[
+        {'id':1,'nombre':'Si'},
+        {'id':2,'nombre':'No'}
+      ],
     }
   },
   mounted() {
@@ -158,6 +172,7 @@ export default {
       this.imagen = null,
       this.costo = '',
       this.opc = [],
+      this.preparacion = '',
       this.$validator.reset()
     },
 
@@ -168,6 +183,7 @@ export default {
       data.append('nombre', this.nombre)
       data.append('precio', this.precio)
       data.append('costo', this.costo)
+      data.append('preparacion', this.preparacion)
       data.append('imagen', this.imagen, this.imagen.name)
       this.opc.forEach((item) => {
         data.append('categorias[]', item)
