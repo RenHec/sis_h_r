@@ -15,10 +15,13 @@ class CreateRestauranteAuditaVentaProductoTrigger extends Migration
     public function up()
     {
         DB::unprepared('
-        CREATE TRIGGER Venta_Producto AFTER UPDATE ON `r_orden_producto` FOR EACH ROW
+            CREATE DEFINER = CURRENT_USER TRIGGER `Venta_Producto` AFTER UPDATE ON `r_orden_producto` FOR EACH ROW
             BEGIN
+                DECLARE stock_anterio int default 0;
+                SET stock_anterio = (SELECT stock FROM r_inventario WHERE producto_id = NEW.producto_id ORDER BY id DESC LIMIT 1);
+                
                 IF (NEW.activo = 0) THEN
-                    UPDATE r_inventario SET stock = (stock - NEW.cantidad), consumido = (consumido + NEW.cantidad) WHERE producto_id = NEW.producto_id;
+                    INSERT INTO r_inventario (producto_id, stock, consumido) VALUES (NEW.producto_id, (stock_anterio - NEW.cantidad), NEW.cantidad);
                 END IF;
             END
         ');
