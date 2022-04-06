@@ -31,6 +31,6 @@ class CreateRestauranteInventarioTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inventario');
+        Schema::dropIfExists('r_inventario');
     }
 }
