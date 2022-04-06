@@ -71,23 +71,53 @@
                 :errors_form="errors"
               ></form-error>
 
-              <v-select outlined dense
+              <v-select
+                outlined
+                dense
                 v-validate="'required'"
                 v-model="preparacion"
                 item-value="id"
                 name="preparacion"
                 item-text="nombre"
-                :items="prepara" label="Cocina prepara este producto?"></v-select>
-              <form-error :attribute_name="'preparacion'" :errors_form="errors"> </form-error>
+                :items="prepara"
+                label="Cocina prepara este producto?"
+              ></v-select>
+              <form-error
+                :attribute_name="'preparacion'"
+                :errors_form="errors"
+              ></form-error>
 
-              <v-select outlined dense
+              <v-select
+                outlined
+                dense
                 v-validate="'required'"
                 v-model="inventario"
                 item-value="id"
                 name="inventario"
                 item-text="nombre"
-                :items="useInventory" label="Usa inventario?"></v-select>
-              <form-error :attribute_name="'inventario'" :errors_form="errors"> </form-error>
+                :items="useInventory"
+                label="Usa inventario?"
+              ></v-select>
+              <form-error
+                :attribute_name="'inventario'"
+                :errors_form="errors"
+              ></form-error>
+
+              <v-checkbox
+                dense
+                v-model="consumo_reservacion"
+                name="consumo en reservación"
+                :label="`${
+                  consumo_reservacion
+                    ? 'SI, aplica para consumir en reservación'
+                    : 'NO, aplica para consumir en reservación'
+                }`"
+                v-validate="'required'"
+              ></v-checkbox>
+              <form-error
+                :attribute_name="'consumo en reservación'"
+                :errors_form="errors"
+              ></form-error>
             </v-form>
             <v-card-title>Categorías</v-card-title>
             <v-list-item-group dense class="py-0">
@@ -134,19 +164,20 @@ export default {
       imagen: null,
       costo: '',
       preparacion: '',
-      inventario:'',
+      inventario: '',
+      consumo_reservacion: false,
       opc: [],
 
       loading: false,
       foodCategoriesList: [],
       imageAccept: ['image/png', 'image/jpeg', 'image/jpg'],
-      prepara:[
-        {'id':1,'nombre':'Si'},
-        {'id':2,'nombre':'No'}
+      prepara: [
+        { id: 1, nombre: 'Si' },
+        { id: 2, nombre: 'No' },
       ],
-      useInventory:[
-        {'id':1,'nombre':'Si'},
-        {'id':0,'nombre':'No'}
+      useInventory: [
+        { id: 1, nombre: 'Si' },
+        { id: 0, nombre: 'No' },
       ],
     }
   },
@@ -181,13 +212,14 @@ export default {
       })
     },
     intializeFields() {
-      this.nombre = '',
-      this.precio = '',
-      this.imagen = null,
-      this.costo = '',
-      this.opc = [],
-      this.preparacion = '',
-      this.inventario = '',
+      ;(this.nombre = ''),
+        (this.precio = ''),
+        (this.imagen = null),
+        (this.costo = ''),
+        (this.opc = []),
+        (this.preparacion = ''),
+        (this.inventario = ''),
+        (this.consumo_reservacion = false)
       this.$validator.reset()
     },
 
@@ -200,6 +232,7 @@ export default {
       data.append('costo', this.costo)
       data.append('preparacion', this.preparacion)
       data.append('inventario', this.inventario)
+      data.append('consumo_reservacion', this.consumo_reservacion)
       data.append('imagen', this.imagen, this.imagen.name)
       this.opc.forEach((item) => {
         data.append('categorias[]', item)

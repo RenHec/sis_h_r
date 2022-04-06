@@ -14,7 +14,16 @@ class Producto extends Model
 
     protected $table = 'r_producto';
 
-    protected $fillable = ['id','nombre','precio','img','activo','tipo_producto_id','costo','quien_prepara','usa_inventario'];
+    protected $fillable = ['id', 'nombre', 'precio', 'img', 'activo', 'tipo_producto_id', 'costo', 'quien_prepara', 'usa_inventario', 'consumo_reservacion'];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'consumo_reservacion' => 'boolean'
+    ];
 
     public function producto_categoria_comida()
     {

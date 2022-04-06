@@ -250,9 +250,16 @@ export default {
         id: 0,
         password: null,
       },
+
       form_caja: {
         inicia_caja: 0,
+
+        descripcion: null,
+        monto_total: 0,
+        tipo_pago: null,
+        comprobante: null,
       },
+
       registros: [],
     }
   },
@@ -302,20 +309,25 @@ export default {
     },
 
     aperturar_caja() {
-      let self = this
-      self.loading = true
-      self.registros = []
+      this.loading = true
+      this.registros = []
+      this.form.inicia_caja = 0
 
-      self.$store.state.services.CajaService.getCreate()
+      this.form.descripcion = null
+      this.form_caja.monto_total = 0
+      this.form_caja.tipo_pago = null
+      this.form_caja.comprobante = null
+
+      this.$store.state.services.CajaService.getCreate()
         .then((r) => {
-          self.registros = r.data.data
+          this.registros = r.data.data
         })
         .catch((e) => {
           this.errorResponse(e)
         })
         .finally(() => {
-          self.dialog_caja = true
-          self.loading = false
+          this.dialog_caja = true
+          this.loading = false
         })
     },
   },

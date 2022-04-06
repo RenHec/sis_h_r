@@ -28,7 +28,7 @@ class ProductoController extends ApiController
         $pagina     = $request['page'];
 
         $productos  = DB::table('r_producto')
-            ->select('id', 'nombre', 'precio', 'img','quien_prepara','usa_inventario as inventario')
+            ->select('id', 'nombre', 'precio', 'img', 'quien_prepara', 'usa_inventario as inventario', 'costo')
             ->where($columna, 'LIKE', '%' . $criterio . '%')
             ->orderBy($columna, $orden)
             ->skip($pagina)
@@ -83,6 +83,7 @@ class ProductoController extends ApiController
             'costo' => 'required|numeric',
             'preparacion' => 'required|numeric|min:1|max:2',
             'inventario' => 'required|numeric|min:0|max:1',
+            'consumo_reservacion' => 'required',
         ];
 
         $this->validate($request, $rules, $message);
@@ -100,6 +101,7 @@ class ProductoController extends ApiController
             $registro->costo    = $request->get('costo');
             $registro->quien_prepara    = $request->get('preparacion');
             $registro->usa_inventario   = $request->get('inventario');
+            $registro->consumo_reservacion   = $request->get('consumo_reservacion') ? 1 : 0;
             $registro->save();
 
             foreach ($request->get('categorias') as $key => $value) {
@@ -153,7 +155,8 @@ class ProductoController extends ApiController
             'imagen' => 'nullable|image',
             'categorias' => 'nullable|array',
             'costo'     => 'required|numeric',
-            'preparacion' => 'required|numeric|min:1|max:2'
+            'preparacion' => 'required|numeric|min:1|max:2',
+            'consumo_reservacion' => 'required'
         ];
 
         $this->validate($request, $rules);
@@ -175,6 +178,7 @@ class ProductoController extends ApiController
             $registro->precio   = $request->get('precio');
             $registro->costo    = $request->get('costo');
             $registro->quien_prepara    = $request->get('preparacion');
+            $registro->consumo_reservacion   = $request->get('consumo_reservacion') ? 1 : 0;
 
             if ($request->hasFile('imagen')) {
                 $file    = $request->file('imagen');
