@@ -73,23 +73,38 @@ class OrdenController extends ApiController
     {
         $rules = [
             'id'            => 'required',
-            'monto'         => 'required|numeric|min:1',
+            'monto'         => 'required|numeric|min:0',
             'tipo_orden_id' => 'required|numeric',
             'fecha'         => 'required|date',
             'hora'          => 'required',
             'detalle'       => 'required|array',
-            'mesa_id'       => 'required|numeric|min:1'
+            'mesa_id'       => 'required|numeric|min:1',
+            'reservacion'   => 'nullable|numeric|min:0|max:1',
+            'no_reservacion'=> 'nullable'
         ];
 
         $this->validate($request, $rules);
 
         return DB::transaction(function() use($request){
 
+            if($request->get('monto') == 0){
+                if($request->get('reservacion') == 1 && empty($request->get('no_reservacion'))){
+                    return $this->errorResponse('Hace falta el número de reservación');
+                }
+                //Verificar si codigo de reservación existe
+                if(!strcmp('CODIGO',$request->get('no_reservacion')) == 0){
+                    return $this->errorResponse('El número de reservación es incorrecto');
+                }
+
+                //Verificar si tiene items gratis todavia
+            }
+
             $estado = EstadoOrden::select('id')
                         ->where('inicia',1)
                         ->first();
 
             $registro = $this->ensureExistsOrderActive($request->get('mesa_id'));
+
 
             if($registro){
                 $registro->monto            += $request->get('monto');
@@ -110,11 +125,15 @@ class OrdenController extends ApiController
 
             foreach ($request->get('detalle') as $value) {
 
+                if($value['reservacion'] == 0 && $request->get('reservacion') == 1){
+                    return $this->errorResponse('Hay un producto no válido para este tipo de orden');
+                }
+
                 OrdenProducto::create([
                     'cantidad'      => $value['cantidad'],
                     'orden_id'      => $registro->id,
                     'producto_id'   => $value['id'],
-                    'precio'        => $value['precio']
+                    'precio'        => $request->get('reservacion') == 1 ? 0 : $value['precio']
                 ]);
             }
 

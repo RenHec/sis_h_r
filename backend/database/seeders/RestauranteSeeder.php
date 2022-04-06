@@ -27,7 +27,7 @@ class RestauranteSeeder extends Seeder
         TipoOrden::insert([
             ['nombre' => 'Consumo local', 'orden' => 1, 'reservacion' => 0], //le agregue esto: 'reservacion' => 0 para que funcionara el seeder
             ['nombre' => 'Para llevar', 'orden' => 2, 'reservacion' => 0], //le agregue esto: 'reservacion' => 0 para que funcionara el seeder
-            ['nombre' => 'Reservación', 'orden' => 3, 'reservacion' => 1, 'reservacion' => 0] //le agregue esto: 'reservacion' => 0 para que funcionara el seeder
+            ['nombre' => 'Reservación', 'orden' => 3, 'reservacion' => 1] //le agregue esto: 'reservacion' => 0 para que funcionara el seeder
         ]);
 
         CategoriaComida::insert([
@@ -36,6 +36,7 @@ class RestauranteSeeder extends Seeder
             ['nombre' => 'Cena', 'orden' => 3, 'icono' => 'mdi-noodles'],
             ['nombre' => 'Refacciones', 'orden' => 4, 'icono' => 'mdi-food'],
             ['nombre' => 'Bebidas', 'orden' => 5, 'icono' => 'mdi-bottle-soda'],
+            ['nombre' => 'Reservaciones', 'orden' => 6, 'icono' => 'home'],
         ]);
 
         Mesa::insert([

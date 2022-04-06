@@ -21,6 +21,7 @@ class CreateRestauranteOrden extends Migration
             $table->bigInteger('mesa_id')->unsigned()->nullable();
             $table->date('fecha');
             $table->string('hora');
+            $table->string('codigo_reservacion')->nullable();
             $table->smallInteger('activo')->default(1);
             $table->smallInteger('cuenta_dividida')->default(0);
             $table->bigInteger('usuario_id')->unsigned();

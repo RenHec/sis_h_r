@@ -35,6 +35,7 @@
                         <div>
                           <p class="text-center" dark><v-icon>{{ item.icono }}</v-icon>&nbsp;{{ item.estado_orden }}</p>
                           <p class="text-center" dark>{{ setFormatDate(item.fecha) }} {{ item.hora }}</p>
+                          <p class="text-center text-h6 mb-0" >{{ item.tipo_orden }}</p>
                         </div>
                         <v-card-title class="justify-center text-h4" >{{ getAmountTitle(item.monto) }}</v-card-title>
                         </div>

@@ -41,10 +41,15 @@
               :key="item.id"
               :label="item.nombre"
               :value="item.id"
+              @click="verifyNeedReservation(item.reservacion)"
             >
             </v-radio>
           </v-radio-group>
           <form-error :attribute_name="'tipo-orden'" :errors_form="errors"> </form-error>
+          <v-form autocomplete="off">
+            <v-text-field outlined dense name="reservacion" v-model="reservacion" label="Número de reservación" v-show="showInputReservation"></v-text-field>
+            <form-error :attribute_name="'reservacion'" :errors_form="errors"> </form-error>
+          </v-form>
 
           <h2>Total: Q. {{ formatPrice(totalAmountOrdersRestaurant) }}</h2>
         </div>
@@ -84,6 +89,9 @@ export default{
       orderType:'',
       orderId:'',
       loading:false,
+
+      reservacion:'',
+      hasReservation:false,
     }
   },
   mounted(){
@@ -109,17 +117,29 @@ export default{
       })
     },
 
+    verifyNeedReservation(item){
+      this.hasReservation = item === 1 ? true : false
+    },
+
     generateOrder(){
        this.loading = true
+       let amount = this.totalAmountOrdersRestaurant
+
+       if(this.hasReservation)
+       {
+         amount = 0
+       }
 
        let data = {
         'id': this.orderId,
-        'monto': this.totalAmountOrdersRestaurant,
+        'monto': amount,
         'tipo_orden_id': this.orderType,
         'fecha': moment().format('YYYY-MM-D'),
         'hora': moment().format('h:mm a'),
         'detalle':this.ordersRestaurant,
-        'mesa_id':this.selectedTable
+        'mesa_id':this.selectedTable,
+        'reservacion':this.hasReservation ? 1 : 0,
+        'no_reservacion':this.reservacion
        }
 
        this.$store.state.services.waiterService
@@ -132,7 +152,7 @@ export default{
             this.$validator.reset()
           })
           .catch((e)=>{
-            this.$toastr.error(e,'Error')
+            this.$toastr.error(e.response.data.error,'Error')
           })
           .finally(()=>{
             this.loading = false
@@ -223,6 +243,10 @@ export default{
       'totalAmountOrdersRestaurant',
       'selectedTable'
     ]),
+
+    showInputReservation(){
+      return this.hasReservation
+    },
   },
 }
 </script>
