@@ -35,6 +35,7 @@ import ProductoRestaurante from '@/components/restaurante/producto/IndexComponen
 import Ordenes from '@/components/restaurante/ordenes/IndexComponent'
 import Mesa from '@/components/restaurante/mesa/IndexComponent'
 import ReporteCaja from '@/components/restaurante/reportes/ReporteCajaComponent'
+import InventarioRestaurante from '@/components/restaurante/reportes/InventarioComponent'
 /*
 |--------------------------------------------------------------------------
 | Hotel Components
@@ -256,9 +257,15 @@ const routes = [
     component: ReporteCaja,
     beforeEnter: multiguard([isLoggedIn])
   },
+  {
+    path: '/inventario',
+    name: 'Inventario',
+    component: InventarioRestaurante,
+    beforeEnter: multiguard([isLoggedIn])
+  },
   /*
 |--------------------------------------------------------------------------
-| Restaurant Components
+| Hotel Components
 |--------------------------------------------------------------------------
   */
   {

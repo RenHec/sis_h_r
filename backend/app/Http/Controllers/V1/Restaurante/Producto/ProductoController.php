@@ -28,7 +28,7 @@ class ProductoController extends ApiController
         $pagina     = $request['page'];
 
         $productos  = DB::table('r_producto')
-            ->select('id', 'nombre', 'precio', 'img','quien_prepara')
+            ->select('id', 'nombre', 'precio', 'img','quien_prepara','usa_inventario as inventario')
             ->where($columna, 'LIKE', '%' . $criterio . '%')
             ->orderBy($columna, $orden)
             ->skip($pagina)
@@ -82,6 +82,7 @@ class ProductoController extends ApiController
             'categorias' => 'nullable|array',
             'costo' => 'required|numeric',
             'preparacion' => 'required|numeric|min:1|max:2',
+            'inventario' => 'required|numeric|min:0|max:1',
         ];
 
         $this->validate($request, $rules, $message);
@@ -98,6 +99,7 @@ class ProductoController extends ApiController
             $registro->img      = $this->pathImage . $name;
             $registro->costo    = $request->get('costo');
             $registro->quien_prepara    = $request->get('preparacion');
+            $registro->usa_inventario   = $request->get('inventario');
             $registro->save();
 
             foreach ($request->get('categorias') as $key => $value) {

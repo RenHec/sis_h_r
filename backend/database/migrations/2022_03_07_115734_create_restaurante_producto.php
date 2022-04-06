@@ -20,6 +20,7 @@ class CreateRestauranteProducto extends Migration
             $table->decimal('costo',9,2)->default(0.00);
             $table->string('img');
             $table->smallInteger('quien_prepara');
+            $table->smallInteger('usa_inventario')->default(0);
             $table->smallInteger('activo')->default(1);
             $table->timestamps();
         });

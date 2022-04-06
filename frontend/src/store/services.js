@@ -42,6 +42,7 @@ import MesaService from '../services/restaurante/MesaService'
 import DepartamentoService from '../services/restaurante/DepartamentoService'
 import MunicipioService from '../services/restaurante/MunicipioService'
 import ReporteCajaService from '../services/restaurante/ReporteCajaService'
+import InventarioService from '../services/restaurante/InventarioService'
 
 /*
 |--------------------------------------------------------------------------
@@ -161,6 +162,7 @@ export default {
   orderDetailService: new OrdenDetailService(Axios, baseUrl, restaurantUrl),
   tableService: new MesaService(Axios, baseUrl, restaurantUrl),
   checkoutRestaurantService: new ReporteCajaService(Axios, baseUrl, restaurantUrl),
+  inventoryRestaurantService: new InventarioService(Axios, baseUrl, restaurantUrl),
 
   /*
   |--------------------------------------------------------------------------

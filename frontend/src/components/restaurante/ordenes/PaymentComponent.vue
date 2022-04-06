@@ -88,8 +88,8 @@
                       <v-btn class="info" @click="newCustomer"><v-icon>add</v-icon></v-btn>
                       </div>
                       <form-error :attribute_name="'cliente'" :errors_form="errors"> </form-error>
-                      <v-card-text>NIT: {{ nit }}</v-card-text>
-                      <v-card-text>Dirección: {{ direccion }}</v-card-text>
+                      <v-card-text class="text-h6">NIT: {{ nit }}</v-card-text>
+                      <v-card-text class="text-h6">Dirección: {{ direccion }}</v-card-text>
                       <div class="d-flex flex-column">
                         <v-radio-group name="metodo-pago" v-model="paymentMethodToPay" row v-validate="'required'">
                           <v-radio

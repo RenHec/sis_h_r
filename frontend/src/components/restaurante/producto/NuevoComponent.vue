@@ -79,6 +79,15 @@
                 item-text="nombre"
                 :items="prepara" label="Cocina prepara este producto?"></v-select>
               <form-error :attribute_name="'preparacion'" :errors_form="errors"> </form-error>
+
+              <v-select outlined dense
+                v-validate="'required'"
+                v-model="inventario"
+                item-value="id"
+                name="inventario"
+                item-text="nombre"
+                :items="useInventory" label="Usa inventario?"></v-select>
+              <form-error :attribute_name="'inventario'" :errors_form="errors"> </form-error>
             </v-form>
             <v-card-title>Categorías</v-card-title>
             <v-list-item-group dense class="py-0">
@@ -125,6 +134,7 @@ export default {
       imagen: null,
       costo: '',
       preparacion: '',
+      inventario:'',
       opc: [],
 
       loading: false,
@@ -133,6 +143,10 @@ export default {
       prepara:[
         {'id':1,'nombre':'Si'},
         {'id':2,'nombre':'No'}
+      ],
+      useInventory:[
+        {'id':1,'nombre':'Si'},
+        {'id':0,'nombre':'No'}
       ],
     }
   },
@@ -173,6 +187,7 @@ export default {
       this.costo = '',
       this.opc = [],
       this.preparacion = '',
+      this.inventario = '',
       this.$validator.reset()
     },
 
@@ -184,6 +199,7 @@ export default {
       data.append('precio', this.precio)
       data.append('costo', this.costo)
       data.append('preparacion', this.preparacion)
+      data.append('inventario', this.inventario)
       data.append('imagen', this.imagen, this.imagen.name)
       this.opc.forEach((item) => {
         data.append('categorias[]', item)

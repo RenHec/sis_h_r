@@ -5,6 +5,7 @@
     </v-overlay>
     <NuevoComponent v-if="showFormNewRecord"/>
     <EditarComponent :item="itemUpdate" v-if="showFormUpdateRecord"/>
+    <InventarioComponent :item="itemUpdate" v-if="showFormInventoryProduct"/>
     <v-data-table
       :page="page"
       :options.sync="options"
@@ -39,6 +40,11 @@
           alt="Food"
         >
       </v-avatar>
+    </template>
+    <template v-slot:item.inventario="{ item }">
+      <v-btn v-if="item.inventario == 1" primary small dark color="green" @click="addInventory(item)">
+        <v-icon>add</v-icon> Inventario
+      </v-btn>
     </template>
     <!--  -->
     <template v-slot:top>
@@ -103,11 +109,13 @@
 <script>
 import NuevoComponent from './NuevoComponent.vue'
 import EditarComponent from './EditarComponent.vue'
+import InventarioComponent from './InventarioComponent.vue'
 
 export default{
   components:{
     NuevoComponent,
     EditarComponent,
+    InventarioComponent,
   },
   data(){
     return{
@@ -125,11 +133,13 @@ export default{
       mainTable:true,
       formNewRecord:false,
       formUpdateRecord:false,
+      formInventoryProduct:false,
 
       headers:[
         { text: 'Nombre', value: 'nombre' },
         { text: 'Precio', value: 'precio' },
-        { text: 'Imagen', value: 'img', sortable:false }
+        { text: 'Imagen', value: 'img', sortable:false },
+        { text: 'Inventario', value: 'inventario', sortable:false }
       ],
       singleSelect: true,
       selected:[],
@@ -141,10 +151,12 @@ export default{
   created(){
     events.$on('close_form_new_product',this.eventCloseFormNewProducts)
     events.$on('close_form_update_product',this.eventCloseFormUpdateProducts)
+    events.$on('close_form_inventory_product',this.eventCloseFormInventoryProducts)
   },
   beforeDestroy(){
     events.$off('close_form_new_product')
     events.$off('close_form_update_product')
+    events.$off('close_form_inventory_product')
   },
   watch: {
     options: {
@@ -158,12 +170,20 @@ export default{
     deep: true,
   },
   methods:{
+    addInventory(item){
+      this.itemUpdate = item
+      this.formUpdateRecord = false
+      this.formNewRecord = false
+      this.formInventoryProduct = true
+      this.mainTable = false
+    },
     getAbsoluteImagePath(item){
       return this.$store.state.services.productService.domainUrl+item
     },
     initializeView(){
       this.formNewRecord = false
       this.formUpdateRecord = false
+      this.formInventoryProduct = false
       this.mainTable = true
     },
     eventCloseFormNewProducts(){
@@ -174,13 +194,19 @@ export default{
       this.initializeView()
       this.recharge()
     },
+    eventCloseFormInventoryProducts(){
+      this.initializeView()
+      this.recharge()
+    },
     updateRecord(item){
       this.itemUpdate = item
       this.formUpdateRecord = true
+      this.formInventoryProduct = false
       this.mainTable = false
     },
     newRecord(){
       this.formNewRecord = true
+      this.formInventoryProduct = false
       this.mainTable = false
     },
 
@@ -279,13 +305,16 @@ export default{
        return (this.selected.length > 0  && this.selected.length < 2) ? true : false
     },
     showMainTable(){
-      return !this.formNewRecord && !this.formUpdateRecord
+      return !this.formNewRecord && !this.formUpdateRecord && !this.formInventoryProduct
     },
     showFormNewRecord(){
-      return !this.mainTable && !this.formUpdateRecord
+      return !this.mainTable && !this.formUpdateRecord && !this.formInventoryProduct
     },
     showFormUpdateRecord(){
-      return !this.mainTable && !this.formNewRecord
+      return !this.mainTable && !this.formNewRecord && !this.formInventoryProduct
+    },
+    showFormInventoryProduct(){
+      return !this.mainTable && !this.formNewRecord && !this.formUpdateRecord
     },
   }
 }
