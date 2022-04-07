@@ -232,7 +232,7 @@ export default {
       data.append('costo', this.costo)
       data.append('preparacion', this.preparacion)
       data.append('inventario', this.inventario)
-      data.append('consumo_reservacion', this.consumo_reservacion)
+      data.append('consumo_reservacion', this.consumo_reservacion ? 1 : 0)
       data.append('imagen', this.imagen, this.imagen.name)
       this.opc.forEach((item) => {
         data.append('categorias[]', item)

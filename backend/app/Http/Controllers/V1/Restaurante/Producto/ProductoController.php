@@ -101,7 +101,7 @@ class ProductoController extends ApiController
             $registro->costo    = $request->get('costo');
             $registro->quien_prepara    = $request->get('preparacion');
             $registro->usa_inventario   = $request->get('inventario');
-            $registro->consumo_reservacion   = $request->get('consumo_reservacion') ? 1 : 0;
+            $registro->consumo_reservacion   = $request->get('consumo_reservacion');
             $registro->save();
 
             foreach ($request->get('categorias') as $key => $value) {
@@ -178,7 +178,7 @@ class ProductoController extends ApiController
             $registro->precio   = $request->get('precio');
             $registro->costo    = $request->get('costo');
             $registro->quien_prepara    = $request->get('preparacion');
-            $registro->consumo_reservacion   = $request->get('consumo_reservacion') ? 1 : 0;
+            $registro->consumo_reservacion   = $request->get('consumo_reservacion');
 
             if ($request->hasFile('imagen')) {
                 $file    = $request->file('imagen');
@@ -228,7 +228,7 @@ class ProductoController extends ApiController
 
     public function productsList()
     {
-        $registros =  Producto::select('id', 'nombre', 'precio', 'img', 'quien_prepara as preparacion')
+        $registros =  Producto::select('id', 'nombre', 'precio', 'img', 'quien_prepara as preparacion','consumo_reservacion as reservacion')
             ->with('producto_categoria_comida')
             ->where('r_producto.activo', 1)
             ->get();
