@@ -171,19 +171,39 @@ class SelectController extends ApiController
                     'h_habitaciones.foto AS foto',
                     'h_estados.nombre AS estado'
                 )
-                ->whereNotExists(function ($subquery) use ($inicio) {
-                    $subquery->select(DB::raw(1))
-                        ->from('h_reservaciones_detalles')
-                        ->where('h_reservaciones_detalles.disponible', false)
-                        ->whereBetween(DB::RAW("'$inicio'"), [DB::RAW('inicio'), DB::RAW('fin')])
-                        ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
+                ->when(!is_null($horas), function ($query) use ($inicio, $fin) {
+                    return $query
+                        ->whereNotExists(function ($subquery) use ($inicio) {
+                            $subquery->select(DB::raw(1))
+                                ->from('h_reservaciones_detalles')
+                                ->where('h_reservaciones_detalles.disponible', false)
+                                ->whereBetween(DB::RAW("'$inicio'"), [DB::RAW('inicio'), DB::RAW('fin')])
+                                ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
+                        })
+                        ->whereNotExists(function ($subquery) use ($fin) {
+                            $subquery->select(DB::raw(1))
+                                ->from('h_reservaciones_detalles')
+                                ->where('h_reservaciones_detalles.disponible', false)
+                                ->whereBetween(DB::RAW("'$fin'"), [DB::RAW('inicio'), DB::RAW('fin')])
+                                ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
+                        });
                 })
-                ->whereNotExists(function ($subquery) use ($fin) {
-                    $subquery->select(DB::raw(1))
-                        ->from('h_reservaciones_detalles')
-                        ->where('h_reservaciones_detalles.disponible', false)
-                        ->whereBetween(DB::RAW("'$fin'"), [DB::RAW('inicio'), DB::RAW('fin')])
-                        ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
+                ->when(is_null($horas), function ($query) use ($inicio, $fin) {
+                    return $query
+                        ->whereNotExists(function ($subquery) use ($inicio, $fin) {
+                            $subquery->select(DB::raw(1))
+                                ->from('h_reservaciones_detalles')
+                                ->where('h_reservaciones_detalles.disponible', false)
+                                ->whereBetween(DB::RAW('inicio'), [DB::RAW("'$inicio'"), DB::RAW("'$fin'")])
+                                ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
+                        })
+                        ->whereNotExists(function ($subquery) use ($inicio, $fin) {
+                            $subquery->select(DB::raw(1))
+                                ->from('h_reservaciones_detalles')
+                                ->where('h_reservaciones_detalles.disponible', false)
+                                ->whereBetween(DB::RAW('fin'), [DB::RAW("'$inicio'"), DB::RAW("'$fin'")])
+                                ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
+                        });
                 })
                 ->where('h_habitaciones.h_estados_id', HEstado::DISPONIBLE)
                 ->orderBy('h_habitaciones.numero')

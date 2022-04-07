@@ -201,8 +201,11 @@ class ReservacionController extends ApiController
         try {
             DB::beginTransaction();
 
-            $detalle = HReservacionDetalle::where('h_reservaciones_id', $reservacion->id)->update(['disponible' => true, 'updated_at' => date('Y-m-d H:i:s')]);
-            $this->bitacora_general($detalle->getTable(), $this->acciones(3), $detalle, "{$this->controlador_principal}@destroy");
+            HReservacionDetalle::where('h_reservaciones_id', $reservacion->id)->update(['disponible' => true, 'updated_at' => date('Y-m-d H:i:s')]);
+            $detalle = HReservacionDetalle::where('h_reservaciones_id', $reservacion->id)->get();
+            foreach ($detalle as $item) {
+                $this->bitacora_general($item->getTable(), $this->acciones(3), $item, "{$this->controlador_principal}@destroy");
+            }
             $reservacion->anulado = true;
             $reservacion->save();
             $this->bitacora_general($reservacion->getTable(), $this->acciones(3), $reservacion, "{$this->controlador_principal}@destroy");

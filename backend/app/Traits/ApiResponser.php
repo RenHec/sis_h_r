@@ -387,9 +387,7 @@ trait ApiResponser
 			$qr = Storage::disk('logo')->path("qr.png");
 		}
 
-		$largo = 90;
-		$agregar_largo = is_null($restaurante) ? count($hotel->detalle) * 40 : 0;
-		$largo += $agregar_largo;
+		$largo = 210;
 
 		$this->fpdf = new FPDF('P', 'mm', array(80, $largo));
 		$this->fpdf->AddPage();
@@ -402,15 +400,16 @@ trait ApiResponser
 		$this->fpdf->SetFont(
 			'Helvetica',
 			'',
-			8
+			10
 		);
 
 		$logo = Storage::disk('logo')->path("logo_ticket.png");
+		$fecha = date('d/m/Y H:i:s');
 
-		$this->fpdf->Image($logo, 27, 4, 25, 0, 'PNG');
-		$this->fpdf->Ln(7);
+		$this->fpdf->Image($logo, 27, 0, 25, 0, 'PNG');
+		$this->fpdf->Ln(4);
 		$this->fpdf->Cell(60, 4, utf8_decode($empresa_nombre), 0, 1, 'C');
-		$this->fpdf->SetFont('Helvetica', '', 7);
+		$this->fpdf->SetFont('Helvetica', '', 10);
 		$this->fpdf->Cell(
 			60,
 			4,
@@ -419,24 +418,30 @@ trait ApiResponser
 			1,
 			'C'
 		);
-		$fecha = date('d/m/Y');
-		$this->fpdf->SetFont('Helvetica', '', 6);
+		$this->fpdf->Cell(
+			60,
+			4,
+			"Fecha: {$fecha}",
+			0,
+			1,
+			'C'
+		);
 		$this->fpdf->Cell(60, 4, utf8_decode("Comprobante No: {$numero_comprobante}"), 0, 1, 'C');
 		$this->fpdf->Cell(60, 4, "Fecha: {$fecha}", 0, 1, 'C');
 
 		//FACTURA CLIENTE
 		$this->fpdf->Ln(2);
-		$this->fpdf->SetFont('Helvetica', '', 5);
-		$this->fpdf->Cell(60, 4, "NIT: {$nit}", 0, 1, 'L');
-		$this->fpdf->MultiCell(60, 4, utf8_decode("Cliente: {$cliente}"), 0, 'J');
-		$this->fpdf->MultiCell(60, 4, utf8_decode("Dirección: {$direccion}"), 0, 'J');
+		$this->fpdf->SetFont('Helvetica', '', 10);
+		$this->fpdf->MultiCell(60, 4, "NIT: {$nit}", 0, 'L');
+		$this->fpdf->MultiCell(60, 4, utf8_decode("Cliente: {$cliente}"), 0, 'L');
+		$this->fpdf->MultiCell(60, 4, utf8_decode("Dirección: {$direccion}"), 0, 'L');
 
 		// COLUMNAS
-		$this->fpdf->Ln(3);
+		$this->fpdf->Ln(2);
 		$this->fpdf->SetFont(
 			'Helvetica',
 			'B',
-			5
+			8
 		);
 		$this->fpdf->Cell(60, 0, '', 'T', 1);
 		$this->fpdf->Cell(30, 4, utf8_decode('Descripción'), 0);
@@ -445,11 +450,11 @@ trait ApiResponser
 		$this->fpdf->Cell(15, 4, 'Total', 0, 0, 'R');
 		$this->fpdf->Ln(4);
 		$this->fpdf->Cell(60, 0, '', 'T');
-		$this->fpdf->Ln(0);
+		$this->fpdf->Ln(1);
 
 		if (!is_null($hotel)) {
 			foreach ($hotel->detalle as $value) {
-				$this->fpdf->SetFont('Helvetica', '', 5);
+				$this->fpdf->SetFont('Helvetica', '', 9);
 				$this->fpdf->MultiCell(30, 4, utf8_decode($value['descripcion']), 0, 'L');
 				$this->fpdf->Cell(
 					35,
@@ -511,37 +516,32 @@ trait ApiResponser
 		$this->fpdf->Cell(60, 0, '', 'T');
 
 		// SUMATORIO DE LOS PRODUCTOS 
-		$this->fpdf->SetFont('Helvetica', '', 6);
+		$this->fpdf->SetFont('Helvetica', 'B', 10);
 		$this->fpdf->Ln(1);
-		$this->fpdf->Cell(50, 10, 'SUB TOTAL Q', 0, 0, 'R');
-		$this->fpdf->Cell(10, 10, number_format($sub_total, 2), 0, 0, 'R');
-		$this->fpdf->Ln(1);
-		$this->fpdf->Ln(1);
-		$this->fpdf->Ln(1);
-		$this->fpdf->Cell(50, 10, 'DESCUENTO Q', 0, 0, 'R');
-		$this->fpdf->Cell(10, 10, number_format($descuento, 2), 0, 0, 'R');
-		$this->fpdf->Ln(1);
-		$this->fpdf->Ln(1);
-		$this->fpdf->Ln(1);
-		$this->fpdf->Cell(50, 10, 'TOTAL Q', 0, 0, 'R');
-		$this->fpdf->Cell(10, 10, number_format($total, 2), 0, 0, 'R');
+		$this->fpdf->Cell(30, 4, 'SUB TOTAL Q', 0, 0, 'L');
+		$this->fpdf->Cell(30, 4, number_format($sub_total, 2), 0, 0, 'R');
+		$this->fpdf->Ln(4);
+		$this->fpdf->Cell(30, 4, 'DESCUENTO Q', 0, 0, 'L');
+		$this->fpdf->Cell(30, 4, number_format($descuento, 2), 0, 0, 'R');
+		$this->fpdf->Ln(4);
+		$this->fpdf->Cell(30, 4, 'TOTAL Q', 0, 0, 'L');
+		$this->fpdf->Cell(30, 4, number_format($total, 2), 0, 0, 'R');
 
+		$this->fpdf->Ln(4);
 		// FOOTER
-		$this->fpdf->SetY(-25);
 		//is_null($qr) ? null : $this->fpdf->Image($qr, 27, 100, 25, 0, 'PNG');
 		$this->fpdf->SetFont(
 			'Helvetica',
 			'',
-			3
+			8
 		);
-		$this->fpdf->Cell(60, 0, utf8_decode('EL PERIODO DE ANULACIÓN'), 0, 1, 'C');
-		$this->fpdf->Ln(2);
-		$this->fpdf->Cell(60, 0, utf8_decode("SOLO PUEDE SER APLICADO EL {$fecha}"), 0, 1, 'C');
-		$this->fpdf->Ln(2);
-		$this->fpdf->SetFont('Arial', 'I', 4);
+		$this->fpdf->Cell(60, 4, utf8_decode('EL PERIODO DE ANULACIÓN'), 0, 0, 'C');
+		$this->fpdf->Ln(4);
+		$this->fpdf->MultiCell(60, 4, utf8_decode("SOLO PUEDE SER APLICADO EL {$fecha}"), 0, 'C');
+		$this->fpdf->SetFont('Arial', 'I', 8);
 		$this->fpdf->Cell(
 			60,
-			0,
+			4,
 			utf8_decode("Página {$this->fpdf->PageNo()}"),
 			0,
 			1,
@@ -564,7 +564,7 @@ trait ApiResponser
 			$cantidad += $value->huespedes;
 		}
 
-		$largo = 80;
+		$largo = 120;
 
 		$this->fpdf = new FPDF('P', 'mm', array(80, $largo));
 		$this->fpdf->AddPage();
@@ -577,16 +577,16 @@ trait ApiResponser
 		$this->fpdf->SetFont(
 			'Helvetica',
 			'',
-			8
+			10
 		);
 
 		$logo = Storage::disk('logo')->path("logo_ticket.png");
 		$fecha = date('d/m/Y H:i:s');
 
-		$this->fpdf->Image($logo, 27, 4, 25, 0, 'PNG');
-		$this->fpdf->Ln(7);
+		$this->fpdf->Image($logo, 27, 0, 25, 0, 'PNG');
+		$this->fpdf->Ln(4);
 		$this->fpdf->Cell(60, 4, utf8_decode($empresa_nombre), 0, 1, 'C');
-		$this->fpdf->SetFont('Helvetica', '', 7);
+		$this->fpdf->SetFont('Helvetica', '', 10);
 		$this->fpdf->Cell(
 			60,
 			4,
@@ -598,32 +598,30 @@ trait ApiResponser
 		$this->fpdf->Cell(60, 4, "Fecha: {$fecha}", 0, 1, 'C');
 
 		$this->fpdf->Ln(2);
-		$this->fpdf->SetFont('Helvetica', '', 5);
+		$this->fpdf->SetFont('Helvetica', '', 10);
 		$this->fpdf->MultiCell(60, 4, utf8_decode("Reservación: {$reservacion->codigo}"), 0, 'J');
 		$this->fpdf->MultiCell(60, 4, utf8_decode("Cliente: {$reservacion->nombre}"), 0, 'J');
 		$this->fpdf->MultiCell(60, 4, utf8_decode("Fecha de reservación: {$reservacion->created_at}"), 0, 'J');
 		$this->fpdf->MultiCell(60, 4, utf8_decode("Fecha de Check In: {$reservacion->detalle[0]->inicio}"), 0, 'J');
 		$this->fpdf->MultiCell(60, 4, utf8_decode("Fecha de Check Out: {$reservacion->detalle[0]->fin}"), 0, 'J');
+		$this->fpdf->Ln(3);
 
-		$this->fpdf->SetY(-25);
 		$this->fpdf->SetFont(
 			'Helvetica',
 			'',
-			3
+			8
 		);
-		$this->fpdf->Cell(60, 0, utf8_decode('BIENVENIDO'), 0, 1, 'C');
+		$this->fpdf->Cell(60, 3, utf8_decode('BIENVENIDO'), 0, 1, 'C');
 		$this->fpdf->Ln(2);
 		if ($cantidad > 0) {
-			$this->fpdf->Cell(60, 0, utf8_decode(":::::: SU RESERVACIÓN INCLUYE ::::::"), 0, 1, 'C');
-			$this->fpdf->Ln(2);
+			$this->fpdf->Cell(60, 3, utf8_decode(":::::: SU RESERVACIÓN INCLUYE ::::::"), 0, 1, 'C');
 			$mensaje = $cantidad == 1 ? "DESAYUNO" : "DESAYUNOS";
-			$this->fpdf->Cell(60, 0, utf8_decode(":::::: {$cantidad} {$mensaje} ::::::"), 0, 1, 'C');
-			$this->fpdf->Ln(2);
+			$this->fpdf->Cell(60, 3, utf8_decode(":::::: {$cantidad} {$mensaje} ::::::"), 0, 1, 'C');
 		}
-		$this->fpdf->SetFont('Arial', 'I', 4);
+		$this->fpdf->SetFont('Arial', 'I', 8);
 		$this->fpdf->Cell(
 			60,
-			0,
+			3,
 			utf8_decode("Página {$this->fpdf->PageNo()}"),
 			0,
 			1,
