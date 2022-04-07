@@ -116,9 +116,9 @@
                     CAMBIAR PASSWORD
                   </v-btn>
                 </div>
-                <div class="my-2">
+                <div class="my-2" v-if="mostrar.apertura">
                   <v-btn small @click="aperturar_caja" outlined color="primary">
-                    Caja del Hotel
+                    CAJA DEL HOTEL
                   </v-btn>
                 </div>
                 <div class="my-2">
@@ -341,8 +341,7 @@
                         :errors_form="errors"
                       ></FormError>
                     </v-col>
-                    <v-col cols="12" md="12">
-                      <v-spacer></v-spacer>
+                    <v-col cols="12" md="12" class="text-right">
                       <v-btn
                         color="primary darken-1"
                         dark
@@ -390,9 +389,11 @@
                     color="warning darken-1"
                     dark
                     block
+                    x-large
                     @click="cerrar_caja()"
+                    v-if="mostrar.cerrar"
                   >
-                    Cerrar Caja
+                    CERRAR CAJA
                   </v-btn>
                 </v-col>
               </v-row>
@@ -448,6 +449,11 @@ export default {
         { valor: 'TARJETA' },
         { valor: 'CHEQUE' },
       ],
+
+      mostrar: {
+        apertura: false,
+        cierre: false,
+      },
     }
   },
   created() {
@@ -456,8 +462,9 @@ export default {
 
   methods: {
     initialize() {
-      this.loading = false
-      console.log(this.catalogo_tipo_pago)
+      var permissions = this.$store.state.permissions
+      this.mostrar.apertura = _.includes(permissions, 'apertura_caja_hotel')
+      this.mostrar.cierre = _.includes(permissions, 'cierre_caja_hotel')
     },
 
     logout() {

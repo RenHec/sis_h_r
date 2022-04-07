@@ -341,36 +341,10 @@ trait ApiResponser
 
 	protected function generarTicket($hotel, $restaurante)
 	{
-		//https://github.com/AlexanderBV/ticketer
-		/*$now = Carbon::now();
-
-		$ticketer = new Ticketer();
-		$ticketer->init('dummy');
-		$ticketer->setFechaEmision($now);
-		$ticketer->setComprobante('COMPROBANTE');
-		$ticketer->setSerieComprobante($serie);
-		$ticketer->setNumeroComprobante($numero_comprobante);
-		$ticketer->setCliente($cliente);
-		$ticketer->setTipoDocumento(1);
-		$ticketer->setNumeroDocumento($nit);
-		$ticketer->setDireccion($direccion);
-		$ticketer->setTipoDetalle($tipo_detalle);
-
-		foreach ($hotel->detalle as $agregado) {
-			// $nombre, $cantidad, $precio, $icbper, $gratuita
-			$ticketer->addItem($agregado['descripcion'], 1, $agregado['sub_total'], false, false);
-		}
-		$ticketer->addItem("prueba", 1, 2200, false, false);
-
-		$ticketer->setDescuento($hotel->descuento);
-		return $ticketer->printComprobante(true, true);*/
-
-		$serie = is_null($restaurante) ? date("Y") : "deivis lo tuyo";
 		$numero_comprobante = is_null($restaurante) ? $hotel->correlativo : "deivis lo tuyo";
 		$nit = is_null($restaurante) ? $hotel->nit : "deivis lo tuyo";
 		$cliente = is_null($restaurante) ? $hotel->nombre : "deivis lo tuyo";
 		$direccion = is_null($restaurante) ? $hotel->ubicacion : "deivis lo tuyo";
-		$tipo_detalle = is_null($restaurante) ? 'DETALLADO' : 'CONSUMO';
 		$total = is_null($restaurante) ? $hotel->total : 'deivis lo tuyo';
 		$sub_total = is_null($restaurante) ? $hotel->sub_total : 'deivis lo tuyo';
 		$descuento = is_null($restaurante) ? $hotel->descuento : 'deivis lo tuyo';
@@ -485,7 +459,7 @@ trait ApiResponser
 		if (!is_null($restaurante)) {
 			//deivis aca va lo tuyo
 			foreach ($hotel->detalle as $value) {
-				$this->fpdf->SetFont('Helvetica', '', 5);
+				$this->fpdf->SetFont('Helvetica', '', 9);
 				$this->fpdf->MultiCell(30, 4, utf8_decode($value['descripcion']), 0, 'L');
 				$this->fpdf->Cell(
 					35,
