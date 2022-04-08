@@ -21,7 +21,7 @@ class CajaChicaController extends ApiController
     public function index()
     {
         try {
-            return $this->successResponse(HCajaChica::with('movimientos', 'usuario')->get());
+            return $this->successResponse(HCajaChica::with('movimientos.usuario', 'usuario', 'mes')->orderByDesc('id')->get());
         } catch (\Exception $e) {
             $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@index");
             return $this->errorResponse('Error en el controlador');
@@ -90,7 +90,9 @@ class CajaChicaController extends ApiController
             $this->bitacora_general($caja_chica->getTable(), $this->acciones(7), $caja_chica, "{$this->controlador_principal}@store");
 
             DB::commit();
-            return $this->successResponse("Caja chica: Apertura de caja chica fue registrada con Q{$caja_chica->inicia_caja}.");
+
+            $formato = number_format($caja_chica->inicia_caja, 2);
+            return $this->successResponse("Caja chica: Apertura de caja chica fue registrada con Q {$formato}.");
         } catch (\Exception $e) {
             DB::rollBack();
             $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@store");
@@ -117,10 +119,14 @@ class CajaChicaController extends ApiController
             $hotel_caja->abierta = false;
             $hotel_caja->save();
 
-            $this->bitacora_general($hotel_caja->getTable(), $this->acciones(8), $hotel_caja, "{$this->controlador_principal}@update");
+            $this->bitacora_general($hotel_caja->getTable(), $this->acciones(8), $hotel_caja, "{$this->controlador_principal}@show");
+
+            $this->registrar_historia_caja("Cierre de la caja #{$hotel_caja->id}", $hotel_caja->cierre_caja, "EFECTIVO", null, "{$this->controlador_principal}@show");
 
             DB::commit();
-            return $this->successResponse("Caja chica: Cierre de caja chica fue registrada con Q{$hotel_caja->cierre_caja}.");
+
+            $formato = number_format($hotel_caja->cierre_caja, 2);
+            return $this->successResponse("Caja chica: Cierre de caja chica fue registrada con Q {$formato}.");
         } catch (\Exception $e) {
             DB::rollBack();
             $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@update");

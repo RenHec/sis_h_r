@@ -51,6 +51,8 @@ import HCheckIn from '@/components/hotel/reservacion/proceso/CheckInComponent'
 import HCheckOut from '@/components/hotel/reservacion/proceso/CheckOutComponent'
 import HPagos from '@/components/hotel/reservacion/proceso/PagosComponent'
 import HReservaciones from '@/components/hotel/reservacion/proceso/ReservacionesComponen'
+import HCajaChica from '@/components/hotel/CajaChicaComponent'
+import HDashboard from '@/components/hotel/DashboardComponent'
 
 Vue.use(Router)
 
@@ -328,6 +330,18 @@ const routes = [
     component: HHistorial,
     beforeEnter: multiguard([isLoggedIn])
   },
+  {
+    path: '/caja_chica_hotel',
+    name: 'HCajaChica',
+    component: HCajaChica,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/dashboard_hotel',
+    name: 'HDashboard',
+    component: HDashboard,
+    beforeEnter: multiguard([isLoggedIn])
+  }
 ]
 
 export default new Router({

@@ -293,7 +293,8 @@ trait ApiResponser
 						'usuarios_id' => Auth::user()->id,
 						'h_caja_chica_id' => $caja->id,
 						'resta' => false,
-						'registro_manual' => false
+						'registro_manual' => false,
+						'created_at' => date('Y-m-d H:i:s')
 					]);
 
 					switch ($controlador) {
@@ -317,9 +318,9 @@ trait ApiResponser
 							$caja->compras += $caja_movimiento->monto_total;
 							$caja_movimiento->registro_manual = true;
 							break;
-						case "CajaChicaMovimientoController@destroy":
-							$caja->compras -= $caja_movimiento->monto_total;
-							$caja_movimiento->resta = true;
+						case "CajaChicaMovimientoController@update":
+							$caja->compras += $caja_movimiento->monto_total;
+							$caja_movimiento->registro_manual = true;
 							break;
 					}
 
@@ -401,7 +402,6 @@ trait ApiResponser
 			'C'
 		);
 		$this->fpdf->Cell(60, 4, utf8_decode("Comprobante No: {$numero_comprobante}"), 0, 1, 'C');
-		$this->fpdf->Cell(60, 4, "Fecha: {$fecha}", 0, 1, 'C');
 
 		//FACTURA CLIENTE
 		$this->fpdf->Ln(2);

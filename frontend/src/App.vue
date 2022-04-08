@@ -191,30 +191,20 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="dialog_caja" width="50%" persistent>
-        <v-card>
+      <v-dialog v-model="dialog_caja" width="70%" persistent>
+        <v-toolbar flat :color="'primary'">
+          <v-toolbar-title>Caja del Hotel</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          {{ `Hola ${userName}` }}
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" x-small @click="dialog_caja = false">
+            Cerrar
+          </v-btn>
+        </v-toolbar>
+        <v-card color="white" flat>
           <v-overlay :value="loading">
             <v-progress-circular indeterminate size="64"></v-progress-circular>
           </v-overlay>
-          <v-card-title>
-            <v-list-item two-line>
-              <v-list-item-content>
-                <v-list-item-title class="text-h5">
-                  Caja del Hotel
-                  <v-btn
-                    color="red darken-1"
-                    x-small
-                    @click="dialog_caja = false"
-                  >
-                    Cerrar
-                  </v-btn>
-                </v-list-item-title>
-                <v-list-item-subtitle
-                  v-html="`Hola ${userName}</b>`"
-                ></v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-card-title>
 
           <v-card-text v-if="!existe_caja">
             <v-container>
@@ -268,7 +258,7 @@
                         ligth
                         data-vv-scope="movimiento"
                         data-vv-name="dinero de movimiento"
-                        v-validate="'required|integer|min_value:100'"
+                        v-validate="'required|integer|min_value:0'"
                       ></v-text-field>
                       <FormError
                         :attribute_name="'movimiento.dinero de movimiento'"
@@ -361,11 +351,12 @@
                       </span>
                     </v-col>
                     <v-col cols="12">
-                      <v-simple-table light dense>
+                      <v-simple-table light dense fixed-header height="80%">
                         <thead>
                           <tr>
                             <th class="text-center">Descripción</th>
                             <th class="text-center">Monto</th>
+                            <th class="text-center">Anular</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -377,6 +368,19 @@
                             <td class="text-center">{{ mov.descripcion }}</td>
                             <td class="text-center">
                               {{ formato_moneda(1, mov.monto_total, 0) }}
+                            </td>
+                            <td class="text-center">
+                              <v-btn
+                                color="red darken-1"
+                                dark
+                                text
+                                fab
+                                small
+                                @click="anular_movimiento(mov)"
+                                v-if="mov.registro_manual"
+                              >
+                                <v-icon>close</v-icon>
+                              </v-btn>
                             </td>
                           </tr>
                         </tbody>
@@ -606,6 +610,29 @@ export default {
                 })
             }
           })
+        }
+      })
+    },
+
+    anular_movimiento(data) {
+      this.$swal({
+        title: 'Anular Movimiento',
+        text: '¿Está seguro de realizar esta acción?',
+        type: 'error',
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.value) {
+          this.loading = true
+          this.$store.state.services.CajaMovimientoService.delete(data)
+            .then((r) => {
+              this.$toastr.success(r.data, 'Mensaje')
+            })
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
+              this.aperturar_caja()
+            })
         }
       })
     },
