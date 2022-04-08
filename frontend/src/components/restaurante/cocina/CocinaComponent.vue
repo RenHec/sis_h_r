@@ -15,7 +15,7 @@
           <div style="background-color:#e3f2fd; height:85vh; overflow-y:scroll">
               <v-row>
                 <template v-for="order in orders">
-                  <OrdenComponent v-bind:key="order.id" :item="order" :listStatus="listStatus" v-if="order.finaliza !== 1"/>
+                  <OrdenComponent v-bind:key="order.id" :item="order" :listStatus="listStatus" v-if="order.finaliza !== 1 && order.detalle.length > 0"/>
                 </template>
               </v-row>
           </div>

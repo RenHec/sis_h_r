@@ -43,6 +43,7 @@ import DepartamentoService from '../services/restaurante/DepartamentoService'
 import MunicipioService from '../services/restaurante/MunicipioService'
 import ReporteCajaService from '../services/restaurante/ReporteCajaService'
 import InventarioService from '../services/restaurante/InventarioService'
+import FacturaService from '../services/restaurante/FacturaService'
 
 /*
 |--------------------------------------------------------------------------
@@ -163,6 +164,7 @@ export default {
   tableService: new MesaService(Axios, baseUrl, restaurantUrl),
   checkoutRestaurantService: new ReporteCajaService(Axios, baseUrl, restaurantUrl),
   inventoryRestaurantService: new InventarioService(Axios, baseUrl, restaurantUrl),
+  invoiceRestaurantService: new FacturaService(Axios, baseUrl, restaurantUrl),
 
   /*
   |--------------------------------------------------------------------------

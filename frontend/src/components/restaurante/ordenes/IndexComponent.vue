@@ -15,18 +15,33 @@
           <div style="background-color:#e3f2fd; height:85vh; overflow-y:scroll">
               <v-row>
                 <template v-for="item in recordList">
-                    <v-col v-bind:key="item.id" md="4" lg="3" sm='6' xs='12'>
+                    <v-col v-bind:key="item.id" md="4" lg="3" sm='12' xs='12'>
                       <v-card class="mt-3 mx-2" :color="item.color" dark>
                         <div class="justify-center" v-if="checkStatusOrder(item)">
                           <v-btn
                             class="ma-1 float-right"
                             fab
+                            small
                             dark
                             color="white"
                             @click="deleteOrder(item)"
                           >
                             <v-icon dark color="red">
                               delete
+                            </v-icon>
+                          </v-btn>
+                        </div>
+                        <div class="justify-center" v-if="checkStatusOrder(item)">
+                          <v-btn
+                            class="ma-1 float-left"
+                            small
+                            fab
+                            dark
+                            color="white"
+                            @click="finishOrder(item)"
+                          >
+                            <v-icon dark color="green">
+                              check
                             </v-icon>
                           </v-btn>
                         </div>
@@ -113,8 +128,35 @@ export default{
       this.tableName = ''
       this.getAllFoodCategory()
     },
+    finishOrder(item){
+      let data = {
+        'orden':item.id
+      }
+      this.$swal({
+        title: 'Modificar estado',
+        text: '¿Está seguro de modificar estado de la orden?',
+        type: 'question',
+        showCancelButton: true,
+      }).then((r) => {
+        if(!r.value){
+          this.close
+          return
+        }
+        this.loading = true
+        this.$store.state.services.orderDetailService
+        .modifyStateOrderDetail(data)
+        .then((r) =>{
+          this.getAllFoodCategory()
+        })
+        .catch((e) =>{
+          this.$toastr.error(e,'Error')
+        })
+        .finally(()=>{
+          this.loading = false
+        })
+      })
+    },
     deleteOrder(item){
-      this.loading = true
 
       let data = {
         'orden':item.id
@@ -126,10 +168,10 @@ export default{
         showCancelButton: true,
       }).then((r) => {
         if(!r.value){
-          this.loading = false
           this.close
           return
         }
+        this.loading = true
         this.$store.state.services.orderDetailService
         .deleteAllOrderDetail(data)
         .then((r) =>{
