@@ -115,7 +115,7 @@
                 ></v-progress-circular>
               </v-overlay>
               <v-row class="pa-4" justify="space-between">
-                <v-col cols="12" md="2" sm="2">
+                <v-col cols="12" md="2">
                   <div
                     class="text-h6 white--text text--lighten-1 font-weight-light"
                     style="align-self: center;"
@@ -142,7 +142,7 @@
                   </v-list>
                 </v-col>
                 <v-divider vertical></v-divider>
-                <v-col cols="12" md="6" sm="6" class="d-flex text-center">
+                <v-col cols="12" md="6" class="d-flex text-center">
                   <v-expansion-panels tile dark flat>
                     <v-expansion-panel>
                       <v-expansion-panel-header
@@ -243,7 +243,7 @@
                   </v-expansion-panels>
                 </v-col>
                 <v-divider vertical></v-divider>
-                <v-col cols="12" md="4" sm="4">
+                <v-col cols="12" md="4">
                   <v-row>
                     <v-col cols="12">
                       <div

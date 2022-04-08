@@ -104,31 +104,25 @@
               hide-overlay
               transition="dialog-bottom-transition"
             >
-              <v-card>
+              <v-toolbar flat dark color="primary">
+                <v-btn icon @click="close">
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+                <v-toolbar-title>{{ formTitle }}</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-toolbar-items>
+                  <v-btn text @click="validar_formulario('create_menu_rol')">
+                    Guardar
+                  </v-btn>
+                </v-toolbar-items>
+              </v-toolbar>
+              <v-card dark>
                 <v-overlay :value="loading">
                   <v-progress-circular
                     indeterminate
                     size="64"
                   ></v-progress-circular>
                 </v-overlay>
-                <v-card-title>
-                  <v-toolbar dark color="primary">
-                    <v-btn icon @click="close">
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title>{{ formTitle }}</v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-toolbar-items>
-                      <v-btn
-                        text
-                        @click="validar_formulario('create_menu_rol')"
-                      >
-                        Guardar
-                      </v-btn>
-                    </v-toolbar-items>
-                  </v-toolbar>
-                </v-card-title>
-
                 <v-card-text>
                   <v-container>
                     <v-row>
@@ -160,8 +154,8 @@
                     </v-row>
                     <v-row>
                       <v-col cols="12" md="12">
-                        <v-card>
-                          <v-toolbar color="primary" dark flat>
+                        <v-card light>
+                          <v-toolbar color="primary" light flat>
                             <v-toolbar-title>Menu</v-toolbar-title>
                           </v-toolbar>
 
@@ -493,14 +487,14 @@ export default {
       })
 
       items.forEach(function (item) {
-        if (item.menu.padre == 0 && item.menu.mostrar) {
+        if (item.menu.padre == 0) {
           var primer_nivel = new Object()
           primer_nivel.id = item.id
           primer_nivel.name = item.menu.nombre
           primer_nivel.icon = item.menu.icono
           primer_nivel.children = []
           items.forEach(function (item2) {
-            if (item.menu.id == item2.menu.padre && item2.menu.mostrar) {
+            if (item.menu.id == item2.menu.padre) {
               var segundo_nivel = new Object()
               segundo_nivel.id = item2.id
               segundo_nivel.name = item2.menu.nombre
@@ -508,7 +502,7 @@ export default {
               segundo_nivel.children = []
 
               items.forEach(function (item3) {
-                if (item2.menu.id == item3.menu.padre && item3.menu.mostrar) {
+                if (item2.menu.id == item3.menu.padre) {
                   var tercer_nivel = new Object()
                   tercer_nivel.id = item3.id
                   tercer_nivel.name = item3.menu.nombre
