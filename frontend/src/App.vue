@@ -467,8 +467,8 @@ export default {
   methods: {
     initialize() {
       var permissions = this.$store.state.permissions
-      this.mostrar.apertura = true //_.includes(permissions, 'apertura_caja_hotel')
-      this.mostrar.cierre = true //_.includes(permissions, 'cierre_caja_hotel')
+      this.mostrar.apertura = _.includes(permissions, 'apertura_caja_hotel')
+      this.mostrar.cierre = _.includes(permissions, 'cierre_caja_hotel')
     },
 
     logout() {

@@ -402,7 +402,6 @@ trait ApiResponser
 			'C'
 		);
 		$this->fpdf->Cell(60, 4, utf8_decode("Comprobante No: {$numero_comprobante}"), 0, 1, 'C');
-		$this->fpdf->Cell(60, 4, "Fecha: {$fecha}", 0, 1, 'C');
 
 		//FACTURA CLIENTE
 		$this->fpdf->Ln(2);
