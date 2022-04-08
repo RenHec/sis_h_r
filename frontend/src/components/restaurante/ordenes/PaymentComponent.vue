@@ -1,22 +1,22 @@
 <template>
   <v-row  class="justify-center">
     <v-col md='12' sm='12'>
-        <v-dialog
-          persistent
-          v-model="dialog"
-          max-width="50%">
-            <v-card>
-              <v-toolbar>
-                <v-toolbar-title>Registrar nuevo cliente</v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-btn icon @click="closeCustomerForm()">
-                  <v-icon dark>close</v-icon>
-                </v-btn>
-              </v-toolbar>
-              <CustomerForm v-if="dialog"/>
-            </v-card>
-        </v-dialog>
-      </v-col>
+      <v-dialog
+        persistent
+        v-model="dialog"
+        max-width="50%">
+          <v-card>
+            <v-toolbar>
+              <v-toolbar-title>Registrar nuevo cliente</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn icon @click="closeCustomerForm()">
+                <v-icon dark>close</v-icon>
+              </v-btn>
+            </v-toolbar>
+            <CustomerForm v-if="dialog"/>
+          </v-card>
+      </v-dialog>
+    </v-col>
     <v-col md='12' sm='12'>
       <v-card class="mx-2 my-2">
         <v-overlay :value="loading">
@@ -125,6 +125,8 @@
 <script>
 import FormError from '../../shared/FormError.vue'
 import CustomerForm from '../cliente/IndexComponent.vue'
+import moment from 'moment'
+
 import { v4 as uuidv4 } from 'uuid'
 
 export default{
@@ -237,6 +239,7 @@ export default{
       this.$parent.$store.state.services.orderService
         .paymentOrders(data)
         .then((r) =>{
+          this.getInvoice(this.paymentId)
           this.$toastr.success('Registro generado con éxito','Mensaje')
           this.closeForm()
         })
@@ -261,6 +264,9 @@ export default{
     },
     eventCloseCustomerForm(){
       this.dialog = false
+    },
+    closePDFModal(){
+      this.dialogPdf = false
     },
     newCustomer(){
       this.dialog = true
@@ -290,6 +296,30 @@ export default{
       Promise.all([this.getPaymentMethods(),this.getOrderDetailToPayment()])
         .then((r)=>{})
         .catch((e) =>{
+          this.$toastr.error(e,'Error')
+        })
+        .finally(()=>{
+          this.loading = false
+        })
+    },
+    getInvoice(saleId){
+      this.loading = true
+
+      this.$parent.$store.state.services.invoiceRestaurantService
+        .getInvoice(saleId)
+        .then((r) =>{
+          const blob = new Blob([r.data], {type: r.data.type});
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          let fileName = moment().format('MMDDYYYY_h:mm:ss')+'.pdf';
+          link.setAttribute('download', fileName);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((e)=>{
           this.$toastr.error(e,'Error')
         })
         .finally(()=>{

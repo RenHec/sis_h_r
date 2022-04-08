@@ -7,6 +7,9 @@ class OrdenDetailService {
     this.baseUrl = baseUrl + urlRestaurant
   }
 
+  modifyStateOrderDetail (data) {
+    return this.axios.post(`${this.baseUrl}ordenes-modify-state`, data)
+  }
   getOrderDetail (orderId) {
     return this.axios.get(`${this.baseUrl}ordenes-edit-list/${orderId}`)
   }

@@ -7,10 +7,34 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\V1\Restaurante\Orden;
 use App\Http\Controllers\ApiController;
+use App\Models\V1\Restaurante\EstadoOrden;
 use App\Models\V1\Restaurante\OrdenProducto;
 
 class OrdenDetailController extends ApiController
 {
+    public function modifyStateAllOrderDetail(Request $request)
+    {
+        $rules = [
+            'orden'            => 'required'
+        ];
+
+        $this->validate($request, $rules);
+
+        return DB::transaction(function() use($request){
+
+            $final = EstadoOrden::where('finaliza',1)->first();
+
+            $detalle =  DB::table('r_orden_producto')
+                            ->where('orden_id', $request->get('orden'))
+                            ->update(['activo' => 0]);
+
+            $registro = Orden::findOrFail($request->get('orden'));
+            $registro->estado_orden_id = $final->id;
+            $registro->save();
+
+            return $this->showMessage('',204);
+        });
+    }
     public function getDetailOrder($orderId)
     {
         $details = DB::table('r_orden_producto as op')
