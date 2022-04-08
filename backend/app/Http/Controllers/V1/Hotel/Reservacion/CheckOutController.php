@@ -90,12 +90,15 @@ class CheckOutController extends ApiController
                 }
             }
 
-
-            $reservacion = HReservacion::where('id', $distribucion_check->h_reservaciones_id)->update(['pagado' => true]);
+            HReservacion::where('id', $distribucion_check->h_reservaciones_id)->update(['check_out' => true]);
+            $reservacion = HReservacion::find($distribucion_check->h_reservaciones_id);
             $this->bitacora_general($reservacion->getTable(), $this->acciones(3), $reservacion, "{$this->controlador_principal}@store");
 
-            $detalle = HReservacionDetalle::where('h_reservaciones_id', $distribucion_check->h_reservaciones_id)->update(['disponible' => true]);
-            $this->bitacora_general($detalle->getTable(), $this->acciones(3), $detalle, "{$this->controlador_principal}@store");
+            HReservacionDetalle::where('h_reservaciones_id', $distribucion_check->h_reservaciones_id)->update(['disponible' => true]);
+            $detalle = HReservacionDetalle::where('h_reservaciones_id', $distribucion_check->h_reservaciones_id)->get();
+            foreach ($detalle as $item) {
+                $this->bitacora_general($item->getTable(), $this->acciones(3), $item, "{$this->controlador_principal}@store");
+            }
 
             DB::commit();
 
@@ -174,8 +177,11 @@ class CheckOutController extends ApiController
             $check_out->save();
             $this->bitacora_general($check_out->getTable(), $this->acciones(3), $check_out, "{$this->controlador_principal}@destroy");
 
-            $detalle = HReservacionDetalle::where('h_reservaciones_id', $check_out->id)->update(['disponible' => false]);
-            $this->bitacora_general($detalle->getTable(), $this->acciones(3), $detalle, "{$this->controlador_principal}@store");
+            HReservacionDetalle::where('h_reservaciones_id', $check_out->id)->update(['disponible' => false]);
+            $detalle = HReservacionDetalle::where('h_reservaciones_id', $check_out->id)->get();
+            foreach ($detalle as $item) {
+                $this->bitacora_general($item->getTable(), $this->acciones(3), $item, "{$this->controlador_principal}@destroy");
+            }
 
             Storage::disk('firma')->exists($foto) ? Storage::disk('firma')->delete($foto) : null;
 

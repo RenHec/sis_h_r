@@ -32,11 +32,6 @@ exports.install = function (Vue, options) {
     };
 
     //Captura error catch
-    Vue.prototype.catalogo_tipo_pago = function () {
-        return ['EFECTIVO', 'TARJETA', 'CHEQUE']
-    };
-
-    //Captura error catch
     Vue.prototype.errorResponse = function (e) {
         if (e.response) {
             if (e.response.data.code === 404) {

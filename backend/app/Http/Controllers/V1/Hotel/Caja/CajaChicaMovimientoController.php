@@ -32,7 +32,7 @@ class CajaChicaMovimientoController extends ApiController
                 throw new \Exception("NO existe apertura de caja para hoy {$hoy}.", 1);
             }
 
-            $this->registrar_historia_caja($request->descripcion, $request->monto_total, $request->tipo_pago, $request->comprobante, "{$this->controlador_principal}@update");
+            $this->registrar_historia_caja($request->descripcion, $request->monto_total, $request->tipo_pago["valor"], $request->comprobante, "{$this->controlador_principal}@update");
 
             DB::commit();
             return $this->successResponse("Movimiento caja: Movimiento de caja chica fue registrada con Q{$request->monto_total}.");

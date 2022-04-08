@@ -116,7 +116,8 @@ class CheckInController extends ApiController
                 $h_reservaciones_id = $check->h_reservaciones_id;
             }
 
-            $reservacion = HReservacion::where('id', $h_reservaciones_id)->update(['check_in' => true]);
+            HReservacion::where('id', $h_reservaciones_id)->update(['check_in' => true]);
+            $reservacion = HReservacion::find($h_reservaciones_id);
 
             $distribucion_check->distribucion = $producto_entregar;
             $distribucion_check->save();

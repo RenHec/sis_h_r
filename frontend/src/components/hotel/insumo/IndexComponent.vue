@@ -116,7 +116,7 @@
                               :errors_form="errors"
                             ></FormError>
                           </v-col>
-                          <v-col cols="12" md="6" v-if="mostrar_nit">
+                          <v-col cols="12" md="6" v-show="mostrar_nit === true">
                             <strong>Resultados de la busqueda</strong>
                             <ul
                               v-for="(item, index) in filteredList"

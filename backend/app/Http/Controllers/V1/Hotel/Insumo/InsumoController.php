@@ -69,7 +69,7 @@ class InsumoController extends ApiController
             );
 
             $cantidad_registrados = 0;
-            foreach ($request->h_detalles_detalles as $key => $value) {
+            foreach ($request->h_insumos_detalles as $key => $value) {
                 $kardex = HKardex::find($value['h_productos_id']['id']); // h_productos_id, en este valor viene el ID del kardex
 
                 if (is_null($kardex)) {

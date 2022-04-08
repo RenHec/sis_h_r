@@ -116,9 +116,9 @@
                     CAMBIAR PASSWORD
                   </v-btn>
                 </div>
-                <div class="my-2">
+                <div class="my-2" v-if="mostrar.apertura">
                   <v-btn small @click="aperturar_caja" outlined color="primary">
-                    CAJA
+                    CAJA DEL HOTEL
                   </v-btn>
                 </div>
                 <div class="my-2">
@@ -191,7 +191,7 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="dialog_caja" width="30%" persistent>
+      <v-dialog v-model="dialog_caja" width="50%" persistent>
         <v-card>
           <v-overlay :value="loading">
             <v-progress-circular indeterminate size="64"></v-progress-circular>
@@ -200,10 +200,13 @@
             <v-list-item two-line>
               <v-list-item-content>
                 <v-list-item-title class="text-h5">
-                  Caja
-                  <v-spacer></v-spacer>
-                  <v-btn color="red darken-1" @click="dialog_caja = false">
-                    <v-icon>close</v-icon>
+                  Caja del Hotel
+                  <v-btn
+                    color="red darken-1"
+                    x-small
+                    @click="dialog_caja = false"
+                  >
+                    Cerrar
                   </v-btn>
                 </v-list-item-title>
                 <v-list-item-subtitle
@@ -213,10 +216,186 @@
             </v-list-item>
           </v-card-title>
 
-          <v-card-text v-if="registros.length === 0">
+          <v-card-text v-if="!existe_caja">
             <v-container>
               <v-row>
-                <v-col cols="12"></v-col>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    v-model="form_caja.inicia_caja"
+                    label="dinero de apertura"
+                    prefix="Q"
+                    filled
+                    shaped
+                    dense
+                    light
+                    data-vv-scope="apertura"
+                    data-vv-name="dinero de apertura"
+                    v-validate="'required|integer|min_value:100'"
+                  ></v-text-field>
+                  <FormError
+                    :attribute_name="'apertura.dinero de apertura'"
+                    :errors_form="errors"
+                  ></FormError>
+                </v-col>
+                <v-col cols="12" md="8">
+                  <v-btn
+                    color="green darken-1"
+                    block
+                    dark
+                    x-large
+                    @click="registro_apertura('apertura')"
+                  >
+                    Aperturar Caja
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+
+          <v-card-text v-if="existe_caja">
+            <v-container>
+              <v-row>
+                <v-col cols="12" md="4">
+                  <v-row>
+                    <v-col cols="12" md="12">
+                      <v-text-field
+                        v-model="form_caja.monto_total"
+                        label="dinero de movimiento"
+                        prefix="Q"
+                        filled
+                        shaped
+                        dense
+                        ligth
+                        data-vv-scope="movimiento"
+                        data-vv-name="dinero de movimiento"
+                        v-validate="'required|integer|min_value:100'"
+                      ></v-text-field>
+                      <FormError
+                        :attribute_name="'movimiento.dinero de movimiento'"
+                        :errors_form="errors"
+                      ></FormError>
+                    </v-col>
+                    <v-col cols="12" md="12">
+                      <v-textarea
+                        rows="2"
+                        prepend-icon="fiber_new"
+                        counter
+                        outlined
+                        ligth
+                        v-model="form_caja.descripcion"
+                        type="text"
+                        label="descripción"
+                        data-vv-scope="movimiento"
+                        data-vv-name="descripción"
+                        v-validate="'required|min:10|max:100'"
+                      ></v-textarea>
+                      <FormError
+                        :attribute_name="'movimiento.descripción'"
+                        :errors_form="errors"
+                      ></FormError>
+                    </v-col>
+                    <v-col cols="12" md="12">
+                      <v-select
+                        filled-inverted
+                        suffix
+                        dense
+                        ligth
+                        prepend-inner-icon="view_carousel"
+                        v-model="form_caja.tipo_pago"
+                        :items="catalogo_tipo_pago"
+                        label="seleccione uno por favor"
+                        :clearable="true"
+                        :deletable-chips="true"
+                        item-text="valor"
+                        item-value="valor"
+                        return-object
+                        v-validate="'required'"
+                        data-vv-scope="movimiento"
+                        data-vv-name="tipo de pago"
+                        @input="verificar_comprobante"
+                      ></v-select>
+                      <FormError
+                        :attribute_name="'movimiento.tipo de pago'"
+                        :errors_form="errors"
+                      ></FormError>
+                    </v-col>
+                    <v-col cols="12" md="12" v-if="mostrar_comprobante">
+                      <v-text-field
+                        filled-inverted
+                        suffix
+                        dense
+                        prepend-inner-icon="fiber_new"
+                        counter
+                        ligth
+                        v-model="form_caja.comprobante"
+                        type="text"
+                        label="comprobante"
+                        data-vv-scope="movimiento"
+                        data-vv-name="`comprobante`"
+                        v-validate="'required|max:15'"
+                        hint="Número del comprobante"
+                        persistent-hint
+                      ></v-text-field>
+                      <FormError
+                        :attribute_name="`movimiento.comprobante`"
+                        :errors_form="errors"
+                      ></FormError>
+                    </v-col>
+                    <v-col cols="12" md="12" class="text-right">
+                      <v-btn
+                        color="primary darken-1"
+                        dark
+                        small
+                        @click="registrar_movimiento('movimiento')"
+                      >
+                        Registrar movimiento
+                      </v-btn>
+                    </v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12" md="8" v-if="registros.movimientos.length > 0">
+                  <v-row>
+                    <v-col cols="12 text-center">
+                      <span class="text-h5">
+                        Movimientos de Caja
+                      </span>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-simple-table light dense>
+                        <thead>
+                          <tr>
+                            <th class="text-center">Descripción</th>
+                            <th class="text-center">Monto</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(mov,
+                            index_detalle) in registros.movimientos"
+                            v-bind:key="index_detalle"
+                          >
+                            <td class="text-center">{{ mov.descripcion }}</td>
+                            <td class="text-center">
+                              {{ formato_moneda(1, mov.monto_total, 0) }}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </v-simple-table>
+                    </v-col>
+                  </v-row>
+                </v-col>
+                <v-col cols="12">
+                  <v-btn
+                    color="warning darken-1"
+                    dark
+                    block
+                    x-large
+                    @click="cerrar_caja()"
+                    v-if="mostrar.cerrar"
+                  >
+                    CERRAR CAJA
+                  </v-btn>
+                </v-col>
               </v-row>
             </v-container>
           </v-card-text>
@@ -252,6 +431,7 @@ export default {
       },
 
       form_caja: {
+        id: 0,
         inicia_caja: 0,
 
         descripcion: null,
@@ -261,6 +441,19 @@ export default {
       },
 
       registros: [],
+      mostrar_comprobante: false,
+      existe_caja: false,
+
+      catalogo_tipo_pago: [
+        { valor: 'EFECTIVO' },
+        { valor: 'TARJETA' },
+        { valor: 'CHEQUE' },
+      ],
+
+      mostrar: {
+        apertura: false,
+        cierre: false,
+      },
     }
   },
   created() {
@@ -269,7 +462,9 @@ export default {
 
   methods: {
     initialize() {
-      this.loading = false
+      var permissions = this.$store.state.permissions
+      this.mostrar.apertura = _.includes(permissions, 'apertura_caja_hotel')
+      this.mostrar.cierre = _.includes(permissions, 'cierre_caja_hotel')
     },
 
     logout() {
@@ -311,16 +506,21 @@ export default {
     aperturar_caja() {
       this.loading = true
       this.registros = []
-      this.form.inicia_caja = 0
+      this.form_caja.id = 0
+      this.form_caja.inicia_caja = 0
 
-      this.form.descripcion = null
+      this.form_caja.descripcion = null
       this.form_caja.monto_total = 0
       this.form_caja.tipo_pago = null
       this.form_caja.comprobante = null
 
+      this.mostrar_comprobante = false
+      this.existe_caja = false
       this.$store.state.services.CajaService.getCreate()
         .then((r) => {
-          this.registros = r.data.data
+          this.registros = r.data
+          this.existe_caja = true
+          this.form_caja.id = r.data.id
         })
         .catch((e) => {
           this.errorResponse(e)
@@ -329,6 +529,91 @@ export default {
           this.dialog_caja = true
           this.loading = false
         })
+    },
+
+    registro_apertura(scope) {
+      this.$validator.validateAll(scope).then((result) => {
+        if (result) {
+          this.$swal({
+            title: 'Aperturar Caja',
+            text: '¿Está seguro de realizar esta acción?',
+            type: 'question',
+            showCancelButton: true,
+          }).then((result) => {
+            if (result.value) {
+              this.loading = true
+              this.$store.state.services.CajaService.store(this.form_caja)
+                .then((r) => {
+                  this.$toastr.success(r.data, 'Mensaje')
+                })
+                .catch((e) => {
+                  this.errorResponse(e)
+                })
+                .finally(() => {
+                  this.aperturar_caja()
+                })
+            }
+          })
+        }
+      })
+    },
+
+    cerrar_caja() {
+      this.$swal({
+        title: 'Cerrar Caja',
+        text: '¿Está seguro de realizar esta acción?',
+        type: 'warning',
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.value) {
+          this.loading = true
+          this.$store.state.services.CajaService.get(this.form_caja.id)
+            .then((r) => {
+              this.$toastr.success(r.data, 'Mensaje')
+            })
+            .catch((e) => {
+              this.errorResponse(e)
+            })
+            .finally(() => {
+              this.aperturar_caja()
+            })
+        }
+      })
+    },
+
+    registrar_movimiento(scope) {
+      this.$validator.validateAll(scope).then((result) => {
+        if (result) {
+          this.$swal({
+            title: 'Registrar Movimiento',
+            text: '¿Está seguro de realizar esta acción?',
+            type: 'info',
+            showCancelButton: true,
+          }).then((result) => {
+            if (result.value) {
+              this.loading = true
+              this.$store.state.services.CajaMovimientoService.update(
+                this.form_caja,
+              )
+                .then((r) => {
+                  this.$toastr.success(r.data, 'Mensaje')
+                })
+                .catch((e) => {
+                  this.errorResponse(e)
+                })
+                .finally(() => {
+                  this.aperturar_caja()
+                })
+            }
+          })
+        }
+      })
+    },
+
+    verificar_comprobante(item) {
+      if (item) {
+        this.mostrar_comprobante = item.valor !== 'EFECTIVO'
+      }
     },
   },
 

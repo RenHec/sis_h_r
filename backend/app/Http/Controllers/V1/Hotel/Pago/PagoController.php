@@ -65,7 +65,8 @@ class PagoController extends ApiController
                 ]
             );
 
-            $reservacion = HReservacion::where('id', $pago->h_reservaciones_id)->update(['pagado' => true]);
+            HReservacion::where('id', $pago->h_reservaciones_id)->update(['pagado' => true]);
+            $reservacion = HReservacion::find($pago->h_reservaciones_id);
 
             $this->bitacora_general($reservacion->getTable(), $this->acciones(3), $reservacion, "{$this->controlador_principal}@store");
 
@@ -126,11 +127,15 @@ class PagoController extends ApiController
 
             DB::beginTransaction();
 
-            $reservacion = HReservacion::where('id', $pago->h_reservaciones_id)->update(['pagado' => false]);
+            HReservacion::where('id', $pago->h_reservaciones_id)->update(['pagado' => false]);
+            $reservacion = HReservacion::find($pago->h_reservaciones_id);
             $this->bitacora_general($reservacion->getTable(), $this->acciones(3), $reservacion, "{$this->controlador_principal}@destroy");
 
-            $detalle = HReservacionDetalle::where('h_reservaciones_id', $pago->h_reservaciones_id)->update(['disponible' => false]);
-            $this->bitacora_general($detalle->getTable(), $this->acciones(3), $detalle, "{$this->controlador_principal}@destroy");
+            HReservacionDetalle::where('h_reservaciones_id', $pago->h_reservaciones_id)->update(['disponible' => false]);
+            $detalle = HReservacionDetalle::where('h_reservaciones_id', $pago->h_reservaciones_id)->get();
+            foreach ($detalle as $item) {
+                $this->bitacora_general($item->getTable(), $this->acciones(3), $item, "{$this->controlador_principal}@destroy");
+            }
 
             Storage::disk('ticket')->exists($pago->path) ? Storage::disk('ticket')->delete($pago->path) : null;
             $pago->anulado = true;
