@@ -51,5 +51,6 @@ Route::post('/ordenes-delete-all','Orden\OrdenDetailController@deleteAllOrderDet
 Route::post('/ordenes-modify-state','Orden\OrdenDetailController@modifyStateAllOrderDetail');
 
 Route::post('/reporte-restaurante-caja','Reporte\CajaController@getSalesAmountReportByDate');
+Route::get('/reporte-restaurante-venta','Reporte\VentaController@getListOfSales');
 
 Route::get('/ticket-restaurante-pago/{id}','ticket\TicketController@getTicketPayment');

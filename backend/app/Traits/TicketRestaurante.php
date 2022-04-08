@@ -57,7 +57,7 @@ final class TicketRestaurante extends Fpdf
         $this->setX($this->getInitialPositionX());
         $this->Cell(5,$this->getHeightCell(),'NIT: '.$customer->nit);
         $this->setX($this->getInitialPositionX());
-        $this->Cell(5,$this->getHeightCell(),'DIRECCION: '.utf8_decode($customer->direccion));
+        $this->Cell(5,$this->getHeightCell(),'DIRECCION: '.utf8_decode(substr($customer->direccion,0,32)));
     }
 
     public function setBody($products)
@@ -65,13 +65,13 @@ final class TicketRestaurante extends Fpdf
         $this->ln(2);
         $this->SetFont('Courier','I',8);
         $this->setX($this->getCenterPositionX());
-        $this->Cell(5,$this->getHeightCell(),'-----------------------------------------------',0,0,'C');
+        $this->Cell(5,$this->getHeightCell(),'-------------------------------------------------',0,0,'C');
         $this->SetFont('Courier','B',8);
         $this->setX($this->getInitialPositionX()-1);
         $this->Cell(5,$this->getHeightCell(),'CANT.    PRODUCTO         PRECIO    SUBTOTAL');
         $this->SetFont('Courier','I',8);
         $this->setX($this->getCenterPositionX());
-        $this->Cell(5,$this->getHeightCell(),'-----------------------------------------------',0,0,'C');
+        $this->Cell(5,$this->getHeightCell(),'-------------------------------------------------',0,0,'C');
 
         foreach ($products as $product)
         {
@@ -119,11 +119,11 @@ final class TicketRestaurante extends Fpdf
 
     private function getCenterPositionX()
     {
-        return 40;
+        return 35;
     }
 
     private function getInitialPositionX()
     {
-        return 5;
+        return 3;
     }
 }

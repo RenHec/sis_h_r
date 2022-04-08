@@ -23,7 +23,7 @@ class TicketController extends ApiController
                             ->where('id',$saleRecord->cliente_id)
                             ->first();
 
-        $pdf = new TicketRestaurante('P','mm',array(90,200));
+        $pdf = new TicketRestaurante('P','mm',array(80,200));
 
         $pdf->setHeader('Ticket','0000000',$saleRecord->id, $saleRecord->created_at);
         $pdf->setCustomer($customerRecord);
