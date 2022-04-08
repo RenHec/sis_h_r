@@ -15,34 +15,9 @@
           >
             <v-row>
               <template v-for="item in items">
-                <v-col v-bind:key="item.id" md="4" lg="3" sm="6">
-                  <v-card class="mt-3 mx-2" @click="checkTable(item)">
-                    <div class="d-flex flex-no-wrap justify-space-between">
-                      <div>
-                        <v-card-subtitle
-                          :v-text="item.nombre"
-                        ></v-card-subtitle>
-
-                        <v-card-actions>
-                          <v-card-title
-                            class="text-h6"
-                            v-text="item.nombre"
-                          ></v-card-title>
-                        </v-card-actions>
-                      </div>
-
-                      <v-avatar class="ma-3" size="125" tile>
-                        <v-btn
-                          class="ma-2"
-                          outlined
-                          large
-                          fab
-                          color="red darken-1"
-                        >
-                          <v-icon>{{ item.icono }}</v-icon>
-                        </v-btn>
-                      </v-avatar>
-                    </div>
+                <v-col v-bind:key="item.id" lg="3" md="4" sm="6" xs="12">
+                  <v-card class="mt-3 mx-2 eicon-table eicon-2x d-flex justify-center card-table-restaurant" @click="checkTable(item)">
+                    <span class="text-table-restaurant">{{ item.nombre }}</span>
                   </v-card>
                 </v-col>
               </template>

@@ -4,11 +4,9 @@ namespace App\Http\Controllers\V1\Restaurante\Ticket;
 
 use App\Traits\TicketRestaurante;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use App\Models\V1\Restaurante\Venta;
-use App\Models\V1\Restaurante\OrdenProducto;
-
-class TicketController extends Controller
+use App\Http\Controllers\ApiController;
+class TicketController extends ApiController
 {
     public function getTicketPayment($id)
     {
@@ -28,12 +26,11 @@ class TicketController extends Controller
         $pdf = new TicketRestaurante('P','mm',array(90,200));
 
         $pdf->setHeader('Ticket','0000000',$saleRecord->id, $saleRecord->created_at);
-
         $pdf->setCustomer($customerRecord);
-
         $pdf->setBody($productsRecord);
         $pdf->setTotal();
         $pdf->setFooter();
+
         return $pdf->Output('D');
     }
 }
