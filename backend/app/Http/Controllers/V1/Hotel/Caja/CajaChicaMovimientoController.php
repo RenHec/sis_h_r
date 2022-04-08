@@ -35,7 +35,8 @@ class CajaChicaMovimientoController extends ApiController
             $this->registrar_historia_caja($request->descripcion, $request->monto_total, $request->tipo_pago["valor"], $request->comprobante, "{$this->controlador_principal}@update");
 
             DB::commit();
-            return $this->successResponse("Movimiento caja: Movimiento de caja chica fue registrada con Q{$request->monto_total}.");
+            $formato = number_format($request->monto_total, 2);
+            return $this->successResponse("Movimiento caja: Movimiento de caja chica fue registrada con Q {$formato}.");
         } catch (\Exception $e) {
             DB::rollBack();
             $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@update");
@@ -67,7 +68,8 @@ class CajaChicaMovimientoController extends ApiController
             $this->registrar_historia_caja("Anulación de movimiento de compra", $hotel_caja_movimiento->monto_total, $hotel_caja_movimiento->tipo_pago, $hotel_caja_movimiento->comprobante, "{$this->controlador_principal}@destroy");
 
             DB::commit();
-            return $this->successResponse("Movimiento caja: Movimiento de caja chica fue registrada con Q{$hotel_caja_movimiento->monto_total}.");
+            $formato = number_format($hotel_caja_movimiento->monto_total, 2);
+            return $this->successResponse("Movimiento caja: Movimiento de caja chica fue registrada con Q {$formato}.");
         } catch (\Exception $e) {
             DB::rollBack();
             $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@destroy");

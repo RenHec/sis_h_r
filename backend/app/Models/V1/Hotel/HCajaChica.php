@@ -2,6 +2,7 @@
 
 namespace App\Models\V1\Hotel;
 
+use App\Models\V1\Catalogo\Mes;
 use App\Models\V1\Seguridad\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\V1\Hotel\HCajaChicaMovimiento;
@@ -38,6 +39,16 @@ class HCajaChica extends Model
         'dia' => 'integer',
         'abierta' => 'boolean'
     ];
+
+    /**
+     * Get the mes associated.
+     *
+     * @return object
+     */
+    public function mes()
+    {
+        return $this->hasOne(Mes::class, 'id', 'meses_id');
+    }
 
     /**
      * Get the usuario associated.
