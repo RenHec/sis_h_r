@@ -11,14 +11,15 @@ use Database\Seeders\HotelSeeder;
 use Illuminate\Support\Facades\DB;
 use App\Imports\DepartamentoImport;
 use App\Models\V1\Catalogo\TipoPago;
+use App\Models\V1\Principal\Cliente;
 use App\Models\V1\Seguridad\Usuario;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\V1\Principal\Proveedor;
 use App\Models\V1\Seguridad\UsuarioRol;
 use Database\Seeders\RestauranteSeeder;
 use Illuminate\Support\Facades\Artisan;
 use App\Models\V1\Catalogo\Presentacion;
-use App\Models\V1\Principal\Cliente;
-use App\Models\V1\Principal\Proveedor;
+use App\Imports\ProductoRestauranteImport;
 
 class DatabaseSeeder extends Seeder
 {
@@ -153,7 +154,8 @@ class DatabaseSeeder extends Seeder
         Proveedor::factory(100)->create();
         Cliente::factory(100)->create();
 
-        $this->call([RestauranteSeeder::class]);
         $this->call([HotelSeeder::class]);
+        $this->call([RestauranteSeeder::class]);
+        Excel::import(new ProductoRestauranteImport, 'database/seeders/Catalogos/Productos.xlsx');
     }
 }

@@ -42,6 +42,10 @@ class ProductoService {
   deleteProducts (data) {
     return this.axios.delete(`${this.baseUrl}/${data.id}`)
   }
+
+  deleteOneProductInventory (data) {
+    return this.axios.post(`${this.baseUrl}-delete-inventory`, data)
+  }
 }
 
 export default ProductoService

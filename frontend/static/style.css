@@ -220,3 +220,36 @@ textarea:valid {
 .text-ellipsis {
   text-overflow: ellipsis;
 }
+
+.text-table-restaurant{
+  font-size:1.5rem;
+  color:#fff;
+  font-weight:bold;
+}
+.card-table-restaurant{
+  align-items:center;
+  cursor:pointer;
+}
+
+[class*="eicon-"]{
+  content:'';
+  display: block;
+  width: 1em;
+  height: 1em;
+  background-repeat: no-repeat;
+  background-size: contain;
+  -webkit-background-size: contain;
+}
+
+.eicon-table {
+  background-color: #fff;
+  border-radius: 15px;
+  background-image: url('./img/mesa.svg');
+}
+.eicon-2x {
+  font-size: 15em;
+}
+
+.eicon-1x {
+  font-size: 10em;
+}

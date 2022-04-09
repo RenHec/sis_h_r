@@ -22,6 +22,7 @@ class CreateRestauranteOrdenProducto extends Migration
             $table->bigInteger('producto_id')->unsigned();
             $table->string('reservacion_id')->nullable();
             $table->smallInteger('pagado')->default(0);
+            $table->uuid('venta_id')->nullable();
             $table->smallInteger('activo')->default(1);
             $table->foreign('producto_id')->references('id')->on('r_producto');
             $table->foreign('orden_id')->references('id')->on('r_orden');

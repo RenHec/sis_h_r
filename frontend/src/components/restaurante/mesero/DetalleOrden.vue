@@ -51,7 +51,7 @@
             <form-error :attribute_name="'reservacion'" :errors_form="errors"> </form-error>
           </v-form>
 
-          <h2>Total: Q. {{ formatPrice(totalAmountOrdersRestaurant) }}</h2>
+          <h2 class="text-center">Total: Q. {{ formatPrice(totalAmountOrdersRestaurant) }}</h2>
         </div>
       </v-card-title>
       <v-card-actions v-if="ordersRestaurant.length > 0">
@@ -182,6 +182,9 @@ export default{
     },
 
     getAbsoluteImagePath(item){
+      if(!item){
+        return '../../../../static/img/no-photo.png'
+      }
       return this.$store.state.services.productService.domainUrl+item
     },
 

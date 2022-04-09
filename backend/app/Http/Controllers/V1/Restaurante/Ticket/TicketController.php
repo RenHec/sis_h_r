@@ -4,11 +4,9 @@ namespace App\Http\Controllers\V1\Restaurante\Ticket;
 
 use App\Traits\TicketRestaurante;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 use App\Models\V1\Restaurante\Venta;
-use App\Models\V1\Restaurante\OrdenProducto;
-
-class TicketController extends Controller
+use App\Http\Controllers\ApiController;
+class TicketController extends ApiController
 {
     public function getTicketPayment($id)
     {
@@ -18,6 +16,7 @@ class TicketController extends Controller
                             ->join('r_producto as p','op.producto_id','p.id')
                             ->select('op.id','p.nombre','op.precio','op.cantidad')
                             ->where('op.orden_id',$saleRecord->orden_id)
+                            ->where('op.venta_id',$saleRecord->id)
                             ->get();
 
         $customerRecord = DB::table('clientes')
@@ -25,15 +24,14 @@ class TicketController extends Controller
                             ->where('id',$saleRecord->cliente_id)
                             ->first();
 
-        $pdf = new TicketRestaurante('P','mm',array(90,200));
+        $pdf = new TicketRestaurante('P','mm',array(80,200));
 
         $pdf->setHeader('Ticket','0000000',$saleRecord->id, $saleRecord->created_at);
-
         $pdf->setCustomer($customerRecord);
-
         $pdf->setBody($productsRecord);
         $pdf->setTotal();
         $pdf->setFooter();
+
         return $pdf->Output('D');
     }
 }

@@ -28,19 +28,30 @@
     <template v-slot:item.id="{ item }">
       <span>{{ item.id }}</span>
     </template>
-    <template v-slot:item.stock="{ item }">
-      <v-chip color="cyan" dark>{{ item.stock }}</v-chip>
+    <template v-slot:item.monto="{ item }">
+      <span>Q. {{ item.monto }}</span>
     </template>
+    <template v-slot:item.id="{ item }">
+        <v-btn
+          primary
+          small
+          dark
+          color="green"
+          @click="printerInvoice(item.id)"
+        >
+          <v-icon>print</v-icon>
+          Imprimir
+        </v-btn>
+      </template>
     <!--  -->
     <template v-slot:top>
         <v-toolbar flat color="white">
-        <v-toolbar-title>Inventario de productos</v-toolbar-title>
+        <v-toolbar-title>Listado de ventas realizadas</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-text-field class="text-xs-center" outlined dense v-model="search" :label="'Buscar'" single-line hide-details v-on:keyup.enter="searching">
             <v-icon slot="append">search</v-icon>
         </v-text-field>
         <v-spacer></v-spacer>
-
         </v-toolbar>
         <!--  -->
             <v-card
@@ -70,6 +81,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 
 export default{
   components:{
@@ -88,44 +100,72 @@ export default{
       recordList:[],
 
       headers:[
-        { text: 'Nombre', value: 'nombre' },
-        { text: 'Stock', value: 'stock', sortable:false },
-        { text: 'Suministrado', value: 'suministrado', sortable:false },
-        { text: 'Consumido', value: 'consumido', sortable:false },
+        { text: 'Cliente', value: 'nombre' },
+        { text: 'Monto', value: 'monto', sortable:false },
+        { text: 'Tipo orden', value: 'tipo_orden', sortable:false },
+        { text: 'Fecha', value: 'fecha', sortable:false },
+        { text: 'Comprobante', value: 'id', sortable: false },
       ],
       singleSelect: true,
       selected:[],
     }
   },
   mounted(){
-    this.getAllInventory()
+    this.getAllFoodCategory()
   },
   created(){
+
   },
   watch: {
     options: {
       handler() {
         if(this.recordList.length > 0 && this.syncronize)
         {
-          this.getAllInventory();
+          this.getAllFoodCategory();
         }
       },
     },
     deep: true,
   },
   methods:{
+    initializeView(){
+
+    },
     searching (){
       this.syncronize = false
-      this.getAllInventory()
+      this.getAllFoodCategory()
     },
 
     recharge() {
       this.syncronize = false
-      this.getAllInventory()
+      this.getAllFoodCategory()
       this.selected = []
     },
+    printerInvoice(saleId){
+      this.loading = true
 
-    getAllInventory() {
+      this.$parent.$store.state.services.invoiceRestaurantService
+        .getInvoice(saleId)
+        .then((r) =>{
+          const blob = new Blob([r.data], {type: r.data.type});
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          let fileName = moment().format('MMDDYYYY_h:mm:ss')+'.pdf';
+          link.setAttribute('download', fileName);
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((e)=>{
+          this.$toastr.error(e,'Error')
+        })
+        .finally(()=>{
+          this.loading = false
+        })
+    },
+    getAllFoodCategory() {
       this.loading = true
 
       const { sortBy, sortDesc, page, itemsPerPage } = this.options;
@@ -140,8 +180,8 @@ export default{
           'search':this.search
       }
 
-      this.$store.state.services.inventoryRestaurantService
-        .getAllInventory(data)
+      this.$store.state.services.salesRestaurantService
+        .getListOfSales(data)
         .then((r) => {
           this.recordList = r.data.data
           this.syncronize = true
@@ -154,6 +194,11 @@ export default{
           this.loading = false
         })
     },
+    getTextTitle (item){
+      if (item === 1) return 'Si'
+        else return 'No'
+    },
+
   },
   computed:{
     option(){
@@ -161,7 +206,7 @@ export default{
     },
     unitary(){
        return (this.selected.length > 0  && this.selected.length < 2) ? true : false
-    },
+    }
   }
 }
 </script>

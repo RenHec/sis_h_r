@@ -36,6 +36,8 @@ Route::get('/categoria-comida-list','CategoriaComida\CategoriaComidaController@l
 
 Route::resource('/productos','Producto\ProductoController',['except' => ['create','edit']]);
 Route::get('/productos-list','Producto\ProductoController@productsList');
+Route::post('/productos-delete-inventory','Producto\ProductoController@deleteInventoryOfProduct');
+
 Route::resource('/inventario','Inventario\InventarioController',['except' => ['create','edit']]);
 
 Route::resource('/ordenes','Orden\OrdenController',['except' => ['create','edit']]);
@@ -51,5 +53,6 @@ Route::post('/ordenes-delete-all','Orden\OrdenDetailController@deleteAllOrderDet
 Route::post('/ordenes-modify-state','Orden\OrdenDetailController@modifyStateAllOrderDetail');
 
 Route::post('/reporte-restaurante-caja','Reporte\CajaController@getSalesAmountReportByDate');
+Route::get('/reporte-restaurante-venta','Reporte\VentaController@getListOfSales');
 
 Route::get('/ticket-restaurante-pago/{id}','ticket\TicketController@getTicketPayment');
