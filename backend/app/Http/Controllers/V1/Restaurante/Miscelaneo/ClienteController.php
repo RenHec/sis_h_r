@@ -54,7 +54,7 @@ class ClienteController extends ApiController
     {
         $clientes = DB::table('clientes')
             ->select('id','nombre','nit','direcciones')
-            ->where('nombre', 'LIKE', '%' . $id . '%')
+            ->where('nit', 'LIKE', '%' . $id . '%')
             ->get();
 
         return response()->json(['data' => $clientes],200);

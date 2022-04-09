@@ -167,6 +167,7 @@ export default {
       formInventoryProduct: false,
 
       headers: [
+        { text: 'Id', value: 'id' },
         { text: 'Nombre', value: 'nombre' },
         { text: 'Precio', value: 'precio', sortable: false },
         { text: 'Costo', value: 'costo', sortable: false },
@@ -254,6 +255,7 @@ export default {
     },
 
     recharge() {
+      this.options.page = 0
       this.syncronize = false
       this.getAllProducts()
       this.selected = []
@@ -268,7 +270,7 @@ export default {
 
       let data = {
         perPage: itemsPerPage,
-        page: pageNumber === 0 ? 0 : pageNumber + itemsPerPage - 1,
+        page: pageNumber + itemsPerPage,
         sortBy: sortBy,
         sortDesc: sortDesc,
         search: this.search,

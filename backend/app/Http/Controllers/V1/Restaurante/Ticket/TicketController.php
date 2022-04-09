@@ -16,6 +16,7 @@ class TicketController extends ApiController
                             ->join('r_producto as p','op.producto_id','p.id')
                             ->select('op.id','p.nombre','op.precio','op.cantidad')
                             ->where('op.orden_id',$saleRecord->orden_id)
+                            ->where('op.venta_id',$saleRecord->id)
                             ->get();
 
         $customerRecord = DB::table('clientes')

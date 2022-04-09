@@ -74,20 +74,22 @@
                       <div class="d-flex flex-row">
                         <v-autocomplete
                           outlined
+                          clearable
                           dense
                           v-validate="'required'"
                           name="cliente"
                           v-model="cliente"
                           :items="items"
                           :search-input.sync="search"
-                          item-text="nombre"
-                          placeholder="Buscar cliente"
+                          item-text="nit"
+                          placeholder="Buscar NIT del cliente"
                           @change="setPaymentCustomer"
                           return-object>
                         </v-autocomplete>
                       <v-btn class="info" @click="newCustomer"><v-icon>add</v-icon></v-btn>
                       </div>
                       <form-error :attribute_name="'cliente'" :errors_form="errors"> </form-error>
+                      <v-card-text class="text-h6">Cliente: {{ nombreCliente }}</v-card-text>
                       <v-card-text class="text-h6">NIT: {{ nit }}</v-card-text>
                       <v-card-text class="text-h6">Dirección: {{ direccion }}</v-card-text>
                       <div class="d-flex flex-column">
@@ -147,6 +149,7 @@ export default{
       cliente:'',
       items:[],
       nit:'',
+      nombreCliente:'',
       direccion:'',
       paymentMethodToPay:'',
       paymentMethodList:[],
@@ -171,8 +174,6 @@ export default{
   watch:{
     search(query){
       if(!query || query.length < 3) return
-
-      if(this.items.length > 0) return
 
       this.$parent.$store.state.services.customerService
           .searchCustomer(query)
@@ -231,6 +232,7 @@ export default{
         'cliente_id':this.cliente.id,
         'monto':this.totalOrder,
         'voucher':this.voucher,
+        'ticket':this.showInputVoucher ? 1 : 0,
         'detalle':detail
       }
 
@@ -244,7 +246,7 @@ export default{
           this.closeForm()
         })
         .catch((e)=>{
-          this.$toastr.error(e,'Error')
+          this.$toastr.error(e.response.data.error,'Error')
         })
         .finally(()=>{
           this.loading = false
@@ -255,11 +257,13 @@ export default{
       if(!data){
         this.items = []
         this.nit = ''
+        this.nombreCliente = ''
         this.direccion = ''
         return
       }
 
       this.nit = data.nit
+      this.nombreCliente = data.nombre
       this.direccion = data.direcciones
     },
     eventCloseCustomerForm(){

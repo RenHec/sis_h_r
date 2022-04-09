@@ -83,9 +83,9 @@ final class TicketRestaurante extends Fpdf
             $this->Cell(5,$celda+ 6,$product->cantidad);
             $this->setX($this->getInitialPositionX()+7);
             $this->Cell(5,$celda+ 6,substr($product->nombre, 0,20));
-            $this->setX($this->getInitialPositionX()+45);
+            $this->setX($this->getInitialPositionX()+48);
             $this->Cell(5,$celda+ 6,number_format($product->precio,2),'0','0','R');
-            $this->setX($this->getInitialPositionX()+65);
+            $this->setX($this->getInitialPositionX()+68);
             $this->Cell(5,$celda+ 6,number_format($subtotal,2),'0','0','R');
         }
 

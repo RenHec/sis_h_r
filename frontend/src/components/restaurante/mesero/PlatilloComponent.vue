@@ -1,13 +1,20 @@
 <template>
   <v-col md='4' sm='6'>
     <v-card style="padding:15px; ">
-      <v-img
-        :src="getAbsoluteImagePath(platillo.img)"
-        style="border-radius:50%; height:150px; width:150px; margin:auto"
-        gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-      >
-      </v-img>
-      <v-card-title style="padding:2px;justify-content:center!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" v-text="platillo.nombre"></v-card-title>
+      <v-tooltip top open-delay="5">
+        <template v-slot:activator="{ on, attrs }">
+          <v-img
+            :src="getAbsoluteImagePath(platillo.img)"
+            style="border-radius:50%; height:150px; width:150px; margin:auto"
+            gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+            v-bind="attrs"
+            v-on="on"
+          >
+          </v-img>
+        </template>
+        <span>{{ platillo.descripcion }}</span>
+      </v-tooltip>
+      <v-card-title style="padding:2px;justify-content:center!important;" v-text="platillo.nombre"></v-card-title>
       <v-card-title style="padding:2px;justify-content:center!important;">Q. {{ platillo.precio }}</v-card-title>
       <v-card-actions>
         <v-btn rounded block color='error' dark large @click="addOrder(platillo)">

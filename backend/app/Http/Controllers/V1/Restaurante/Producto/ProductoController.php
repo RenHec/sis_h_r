@@ -21,14 +21,14 @@ class ProductoController extends ApiController
      */
     public function index(Request $request)
     {
-        $columna    = $request['sortBy'] ? $request['sortBy'] : "nombre";
+        $columna    = $request['sortBy'] ? $request['sortBy'] : "id";
         $criterio   = $request['search'];
         $orden      = $request['sortDesc'] ? 'desc' : 'asc';
         $filas      = $request['perPage'];
         $pagina     = $request['page'];
 
         $productos  = DB::table('r_producto')
-            ->select('id', 'nombre', 'precio', 'img', 'quien_prepara', 'usa_inventario as inventario', 'costo')
+            ->select('id', 'nombre', 'precio', 'img', 'quien_prepara', 'usa_inventario as inventario', 'costo','descripcion')
             ->where($columna, 'LIKE', '%' . $criterio . '%')
             ->orderBy($columna, $orden)
             ->skip($pagina)
@@ -156,7 +156,8 @@ class ProductoController extends ApiController
             'categorias' => 'nullable|array',
             'costo'     => 'required|numeric',
             'preparacion' => 'required|numeric|min:1|max:2',
-            'consumo_reservacion' => 'required'
+            'consumo_reservacion' => 'required',
+            'descripcion' => 'nullable'
         ];
 
         $this->validate($request, $rules);
@@ -177,6 +178,7 @@ class ProductoController extends ApiController
             $registro->nombre   = $request->get('nombre');
             $registro->precio   = $request->get('precio');
             $registro->costo    = $request->get('costo');
+            $registro->descripcion    = $request->get('descripcion');
             $registro->quien_prepara    = $request->get('preparacion');
             $registro->consumo_reservacion   = $request->get('consumo_reservacion');
 
@@ -228,7 +230,7 @@ class ProductoController extends ApiController
 
     public function productsList()
     {
-        $registros =  Producto::select('id', 'nombre', 'precio', 'img', 'quien_prepara as preparacion','consumo_reservacion as reservacion')
+        $registros =  Producto::select('id', 'nombre', 'precio', 'img', 'quien_prepara as preparacion','consumo_reservacion as reservacion','descripcion')
             ->with('producto_categoria_comida')
             ->where('r_producto.activo', 1)
             ->get();

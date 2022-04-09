@@ -69,6 +69,7 @@
                 :attribute_name="'imagen'"
                 :errors_form="errors"
               ></form-error>
+              <v-text-field v-model="descripcion" outlined dense label="Descripción"></v-text-field>
 
               <v-select
                 outlined
@@ -147,6 +148,7 @@ export default {
       precio: '',
       costo: '',
       imagen: null,
+      descripcion: '',
       preparacion: '',
       consumo_reservacion: false,
       categories: [],
@@ -232,6 +234,7 @@ export default {
       this.preparacion = item.quien_prepara
       this.consumo_reservacion = item.consumo_reservacion
       this.categories = item.producto_categoria_comida
+      this.descripcion = item.descripcion
     },
     closeForm() {
       events.$emit('close_form_update_product', true)
@@ -253,6 +256,7 @@ export default {
       data.append('precio', this.precio)
       data.append('costo', this.costo)
       data.append('preparacion', this.preparacion)
+      data.append('descripcion', this.descripcion)
       data.append('consumo_reservacion', this.consumo_reservacion ? 1 : 0)
       this.imagen ? data.append('imagen', this.imagen, this.imagen.name) : ''
       this.opc.forEach((item) => {

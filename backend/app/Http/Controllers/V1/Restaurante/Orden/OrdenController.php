@@ -314,13 +314,18 @@ class OrdenController extends ApiController
             'cliente_id'    => 'required',
             'monto'         => 'required',
             'voucher'       => 'nullable',
-            'detalle'       => 'required|array'
+            'detalle'       => 'required|array',
+            'ticket'        => 'required|numeric|min:0|max:1'
         ];
 
         $this->validate($request, $rules);
 
         if (!$this->ensureHasNotOrderInKitchen($request->get('orden_id'))) {
-            return $this->errorResponse('La orden tiene productos pendientes de despacharse',);
+            return $this->errorResponse('La orden tiene productos pendientes de despacharse');
+        }
+
+        if($request->get('ticket') == 1 && empty($request->get('voucher'))){
+            return $this->errorResponse('Debe ingresar un número de voucher válido');
         }
 
         return DB::transaction(function () use ($request) {
@@ -352,7 +357,7 @@ class OrdenController extends ApiController
             }
             $orden->save();
 
-            $this->updateItemsOrderProducts($request->get('detalle'));
+            $this->updateItemsOrderProducts($request->get('detalle'), $registro->id);
 
             return $this->showMessage('', 201);
         });
@@ -368,11 +373,11 @@ class OrdenController extends ApiController
         return $registro->monto;
     }
 
-    public function updateItemsOrderProducts($detalle)
+    public function updateItemsOrderProducts($detalle,$venta)
     {
         $detalle =  DB::table('r_orden_producto')
             ->whereIn('id', $detalle)
-            ->update(['pagado' => 1]);
+            ->update(['pagado' => 1, 'venta_id' => $venta]);
         return;
     }
 

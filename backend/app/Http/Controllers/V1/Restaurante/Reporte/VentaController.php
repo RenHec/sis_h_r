@@ -26,7 +26,7 @@ class VentaController extends ApiController
                 ->join('r_orden as o','v.orden_id','o.id')
                 ->join('r_tipo_orden as to','o.tipo_orden_id','to.id')
                 ->join('clientes as c','v.cliente_id','c.id')
-                ->select('v.id','c.nombre','o.monto','to.nombre as tipo_orden',DB::raw('DATE_FORMAT(v.created_at,"%d-%m-%Y") as fecha'))
+                ->select('v.id','c.nombre','v.monto','to.nombre as tipo_orden',DB::raw('DATE_FORMAT(v.created_at,"%d-%m-%Y") as fecha'))
                 ->where('c.'.$columna, 'LIKE', '%' . $criterio . '%')
                 ->orderBy($columna, $orden)
                 ->skip($pagina)

@@ -30,14 +30,14 @@ class RestauranteSeeder extends Seeder
             ['nombre' => 'Reservación', 'orden' => 3, 'reservacion' => 1] //le agregue esto: 'reservacion' => 0 para que funcionara el seeder
         ]);
 
-        CategoriaComida::insert([
+        /* CategoriaComida::insert([
             ['nombre' => 'Desayuno', 'orden' => 1, 'icono' => 'mdi-food-variant'],
             ['nombre' => 'Almuerzo', 'orden' => 2, 'icono' => 'mdi mdi-pasta'],
             ['nombre' => 'Cena', 'orden' => 3, 'icono' => 'mdi-noodles'],
             ['nombre' => 'Refacciones', 'orden' => 4, 'icono' => 'mdi-food'],
             ['nombre' => 'Bebidas', 'orden' => 5, 'icono' => 'mdi-bottle-soda'],
             ['nombre' => 'Reservaciones', 'orden' => 6, 'icono' => 'home'],
-        ]);
+        ]); */
 
         Mesa::insert([
             ['nombre' => 'Mesa 1', 'icono' => 'restaurant', 'orden' => 1],
