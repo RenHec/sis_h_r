@@ -134,7 +134,7 @@ export default{
 
       let data = {
           'perPage':itemsPerPage,
-          'page':pageNumber === 0 ? 0 : (pageNumber + itemsPerPage - 1),
+          'page':pageNumber * itemsPerPage,
           'sortBy':sortBy,
           'sortDesc':sortDesc,
           'search':this.search

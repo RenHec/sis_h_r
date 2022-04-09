@@ -90,6 +90,9 @@ export default{
       return moment(data).format('D-MM-YYYY')
     },
     getAbsoluteImagePath(item){
+      if(!item){
+        return '../../../../static/img/no-photo.png'
+      }
       return this.$store.state.services.productService.domainUrl+item
     },
   },

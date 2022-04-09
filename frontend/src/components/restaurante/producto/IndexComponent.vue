@@ -31,7 +31,9 @@
         No se encontraron registros.
       </template>
       <template v-slot:item.id="{ item }">
-        <span>{{ item.id }}</span>
+        <div class="subtitle-1">
+          {{ item.id }}
+        </div>
       </template>
       <template v-slot:item.img="{ item }">
         <v-avatar>
@@ -48,7 +50,6 @@
           @click="addInventory(item)"
         >
           <v-icon>add</v-icon>
-          Inventario
         </v-btn>
       </template>
       <template v-slot:item.precio="{ item }">
@@ -59,6 +60,20 @@
       <template v-slot:item.costo="{ item }">
         <div class="subtitle-1">
           {{ formato_moneda(1, item.costo, 0) }}
+        </div>
+      </template>
+      <template v-slot:item.id="{ item }">
+        <div class="subtitle-1">
+          <v-btn
+            v-if="item.inventario == 1"
+            small
+            color="red"
+            text-color="white"
+            dark
+            @click="deleteFromInventory(item.id)"
+          >
+            <v-icon>highlight_off</v-icon>
+          </v-btn>
         </div>
       </template>
       <!--  -->
@@ -167,7 +182,6 @@ export default {
       formInventoryProduct: false,
 
       headers: [
-        { text: 'Id', value: 'id' },
         { text: 'Nombre', value: 'nombre' },
         { text: 'Precio', value: 'precio', sortable: false },
         { text: 'Costo', value: 'costo', sortable: false },
@@ -177,6 +191,16 @@ export default {
           value: 'inventario',
           sortable: false,
         },
+        {
+          text: 'Quitar del inventario',
+          value: 'id',
+          sortable: false,
+        },
+        /* {
+          text: 'Quitar del inventario',
+          value: 'id',
+          sortable: false,
+        }, */
       ],
       singleSelect: true,
       selected: [],
@@ -217,6 +241,9 @@ export default {
       this.mainTable = false
     },
     getAbsoluteImagePath(item) {
+      if(!item){
+        return '../../../../static/img/no-photo.png'
+      }
       return this.$store.state.services.productService.domainUrl + item
     },
     initializeView() {
@@ -260,17 +287,45 @@ export default {
       this.getAllProducts()
       this.selected = []
     },
-
+    deleteFromInventory(productId){
+      let data = {
+        'productId':productId
+      }
+      this.$swal({
+        title: 'Remover del inventario',
+        text: '¿Está seguro de remover el producto del inventario?',
+        type: 'question',
+        showCancelButton: true,
+      }).then((r) => {
+        if(!r.value){
+          this.close
+          return
+        }
+        this.loading = true
+        this.$store.state.services.productService
+        .deleteOneProductInventory(data)
+        .then((r) =>{
+          this.$toastr.success('Inventario removido con éxito');
+          this.getAllProducts()
+        })
+        .catch((e) =>{
+          this.$toastr.error(e,'Error')
+        })
+        .finally(()=>{
+          this.loading = false
+        })
+      })
+    },
     getAllProducts() {
       this.loading = true
 
       const { sortBy, sortDesc, page, itemsPerPage } = this.options
 
-      let pageNumber = page - 1
+      let pageNumber = page - 1;
 
       let data = {
         perPage: itemsPerPage,
-        page: pageNumber + itemsPerPage,
+        page: pageNumber * itemsPerPage,
         sortBy: sortBy,
         sortDesc: sortDesc,
         search: this.search,

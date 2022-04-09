@@ -36,6 +36,8 @@ Route::get('/categoria-comida-list','CategoriaComida\CategoriaComidaController@l
 
 Route::resource('/productos','Producto\ProductoController',['except' => ['create','edit']]);
 Route::get('/productos-list','Producto\ProductoController@productsList');
+Route::post('/productos-delete-inventory','Producto\ProductoController@deleteInventoryOfProduct');
+
 Route::resource('/inventario','Inventario\InventarioController',['except' => ['create','edit']]);
 
 Route::resource('/ordenes','Orden\OrdenController',['except' => ['create','edit']]);

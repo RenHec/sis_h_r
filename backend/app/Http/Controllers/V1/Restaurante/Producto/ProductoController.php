@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ApiController;
+use App\Models\V1\Restaurante\Inventario;
 use App\Models\V1\Restaurante\Producto;
 use App\Models\V1\Restaurante\ProductoCategoriaComida;
 
@@ -30,6 +31,7 @@ class ProductoController extends ApiController
         $productos  = DB::table('r_producto')
             ->select('id', 'nombre', 'precio', 'img', 'quien_prepara', 'usa_inventario as inventario', 'costo','descripcion')
             ->where($columna, 'LIKE', '%' . $criterio . '%')
+            ->whereNull('deleted_at')
             ->orderBy($columna, $orden)
             ->skip($pagina)
             ->take($filas)
@@ -236,5 +238,26 @@ class ProductoController extends ApiController
             ->get();
 
         return response()->json(['data' => $registros]);
+    }
+
+    public function deleteInventoryOfProduct(Request $request)
+    {
+        $rules = [
+            'productId' => 'required'
+        ];
+
+        $this->validate($request, $rules);
+
+        return DB::transaction(function()use($request){
+
+            $registro = Producto::findOrFail($request->get('productId'));
+            $registro->usa_inventario = 0;
+            $registro->save();
+
+            $inventario = Inventario::where('producto_id',$registro->id)->first();
+            $inventario->delete();
+
+            return $this->showMessage('',204);
+        });
     }
 }

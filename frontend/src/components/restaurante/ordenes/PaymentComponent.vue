@@ -279,6 +279,9 @@ export default{
       return 'Q. '+parseFloat(item.precio * item.cantidad).toFixed(2)
     },
     getAbsoluteImagePath(item){
+      if(!item){
+        return '../../../../static/img/no-photo.png'
+      }
       return this.$parent.$store.state.services.productService.domainUrl+item
     },
     getSubtotalOrder(price, quantity)
