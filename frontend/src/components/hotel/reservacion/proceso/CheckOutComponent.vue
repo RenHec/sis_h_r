@@ -29,224 +29,223 @@
         >
           <v-card tile :loading="loading">
             <v-card-text>
-              <v-container fluid>
-                <div class="invoice-box">
-                  <table cellpadding="0" cellspacing="0">
-                    <tr class="top">
-                      <td colspan="2" class="text-center">
-                        <img
-                          :src="logotipo"
-                          style="width: 100%; max-width: 300px;"
-                        />
-                      </td>
-                    </tr>
-                    <tr class="top">
-                      <td colspan="2" class="text-center">
-                        {{ `Reservación ${reservacion.codigo}` }}
-                        <br />
-                        NIT
-                        <br />
-                        Dirección de la Empresa
-                      </td>
-                    </tr>
-                    <tr class="top">
-                      <td colspan="2" class="text-center"><br /></td>
-                    </tr>
+              <br />
+              <div class="invoice-box">
+                <table cellpadding="0" cellspacing="0">
+                  <tr class="top">
+                    <td colspan="2" class="text-center">
+                      <img
+                        :src="logotipo"
+                        style="width: 100%; max-width: 300px;"
+                      />
+                    </td>
+                  </tr>
+                  <tr class="top">
+                    <td colspan="2" class="text-center">
+                      {{ `Reservación ${reservacion.codigo}` }}
+                      <br />
+                      NIT
+                      <br />
+                      Dirección de la Empresa
+                    </td>
+                  </tr>
+                  <tr class="top">
+                    <td colspan="2" class="text-center"><br /></td>
+                  </tr>
 
-                    <tr class="information">
-                      <td colspan="2">
-                        <table>
-                          <tr>
-                            <td>
-                              <v-text-field
-                                filled-inverted
-                                suffix
-                                dense
-                                prepend-inner-icon="fiber_new"
-                                counter
-                                v-model="reservacion.nit"
-                                type="text"
-                                label="NIT"
-                                :data-vv-scope="reservacion.codigo"
-                                :data-vv-name="`nit del cliente para la reservación ${reservacion.codigo}`"
-                                v-validate="'required|max:15'"
-                                hint="El número de nit de la persona"
-                                persistent-hint
-                              ></v-text-field>
-                              <FormError
-                                :attribute_name="`${reservacion.codigo}.nit del cliente para la reservación ${reservacion.codigo}`"
-                                :errors_form="errors"
-                              ></FormError>
-                            </td>
+                  <tr class="information">
+                    <td colspan="2">
+                      <table>
+                        <tr>
+                          <td>
+                            <v-text-field
+                              filled-inverted
+                              suffix
+                              dense
+                              prepend-inner-icon="fiber_new"
+                              counter
+                              v-model="reservacion.nit"
+                              type="text"
+                              label="NIT"
+                              :data-vv-scope="reservacion.codigo"
+                              :data-vv-name="`nit del cliente para la reservación ${reservacion.codigo}`"
+                              v-validate="'required|max:15'"
+                              hint="El número de nit de la persona"
+                              persistent-hint
+                            ></v-text-field>
+                            <FormError
+                              :attribute_name="`${reservacion.codigo}.nit del cliente para la reservación ${reservacion.codigo}`"
+                              :errors_form="errors"
+                            ></FormError>
+                          </td>
 
-                            <td>
-                              <v-text-field
-                                filled-inverted
-                                suffix
-                                dense
-                                prepend-inner-icon="fiber_new"
-                                counter
-                                v-model="reservacion.nombre"
-                                type="text"
-                                label="nombre"
-                                :data-vv-scope="reservacion.codigo"
-                                :data-vv-name="`nombre del cliente para la reservación ${reservacion.codigo}`"
-                                v-validate="'required|max:100'"
-                                hint="El nombre de la persona"
-                                persistent-hint
-                              ></v-text-field>
-                              <FormError
-                                :attribute_name="`${reservacion.codigo}.nombre del cliente para la reservación ${reservacion.codigo}`"
-                                :errors_form="errors"
-                              ></FormError>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td colspan="2">
-                              <v-text-field
-                                filled-inverted
-                                suffix
-                                dense
-                                prepend-inner-icon="fiber_new"
-                                counter
-                                v-model="reservacion.direccion"
-                                type="text"
-                                label="dirección"
-                                :data-vv-scope="reservacion.codigo"
-                                :data-vv-name="`dirección del cliente para la reservación ${reservacion.codigo}`"
-                                v-validate="'required|max:150'"
-                                hint="La dirección de la persona"
-                                persistent-hint
-                              ></v-text-field>
-                              <FormError
-                                :attribute_name="`${reservacion.codigo}.dirección del cliente para la reservación ${reservacion.codigo}`"
-                                :errors_form="errors"
-                              ></FormError>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
+                          <td>
+                            <v-text-field
+                              filled-inverted
+                              suffix
+                              dense
+                              prepend-inner-icon="fiber_new"
+                              counter
+                              v-model="reservacion.nombre"
+                              type="text"
+                              label="nombre"
+                              :data-vv-scope="reservacion.codigo"
+                              :data-vv-name="`nombre del cliente para la reservación ${reservacion.codigo}`"
+                              v-validate="'required|max:100'"
+                              hint="El nombre de la persona"
+                              persistent-hint
+                            ></v-text-field>
+                            <FormError
+                              :attribute_name="`${reservacion.codigo}.nombre del cliente para la reservación ${reservacion.codigo}`"
+                              :errors_form="errors"
+                            ></FormError>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="2">
+                            <v-text-field
+                              filled-inverted
+                              suffix
+                              dense
+                              prepend-inner-icon="fiber_new"
+                              counter
+                              v-model="reservacion.direccion"
+                              type="text"
+                              label="dirección"
+                              :data-vv-scope="reservacion.codigo"
+                              :data-vv-name="`dirección del cliente para la reservación ${reservacion.codigo}`"
+                              v-validate="'required|max:150'"
+                              hint="La dirección de la persona"
+                              persistent-hint
+                            ></v-text-field>
+                            <FormError
+                              :attribute_name="`${reservacion.codigo}.dirección del cliente para la reservación ${reservacion.codigo}`"
+                              :errors_form="errors"
+                            ></FormError>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
 
-                    <tr class="heading">
-                      <td>Método de Pago</td>
-                      <td>Comprobante</td>
-                    </tr>
+                  <tr class="heading">
+                    <td>Método de Pago</td>
+                    <td>Comprobante</td>
+                  </tr>
 
-                    <tr class="details">
-                      <td>
-                        <v-radio-group
-                          name="metodo-pago"
-                          v-model="reservacion.tipos_pagos_id"
-                          row
-                          :data-vv-scope="reservacion.codigo"
-                          :data-vv-name="`método de pago para la reservación ${reservacion.codigo}`"
-                          v-validate="'required'"
-                          hint="Método de pago que utilizará"
-                          persistent-hint
-                        >
-                          <v-radio
-                            v-for="item in tipos_pago"
-                            :key="item.id"
-                            :label="item.nombre"
-                            :value="item.id"
-                          ></v-radio>
-                        </v-radio-group>
-                        <FormError
-                          :attribute_name="`${reservacion.codigo}.método de pago para la reservación ${reservacion.codigo}`"
-                          :errors_form="errors"
-                        ></FormError>
-                      </td>
-                      <td v-if="reservacion.tipos_pagos_id === 2">
-                        <v-text-field
-                          filled-inverted
-                          suffix
-                          dense
-                          prepend-inner-icon="fiber_new"
-                          counter
-                          v-model="reservacion.vaucher_pago"
-                          type="text"
-                          label="vaucher de pago"
-                          :data-vv-scope="reservacion.codigo"
-                          :data-vv-name="`vaucher de pago para la reservación ${reservacion.codigo}`"
-                          v-validate="'required|integer|max:12'"
-                          hint="Número del vaucher de pago generado"
-                          persistent-hint
-                        ></v-text-field>
-                        <FormError
-                          :attribute_name="`${reservacion.codigo}.vaucher de pago para la reservación ${reservacion.codigo}`"
-                          :errors_form="errors"
-                        ></FormError>
-                      </td>
-                    </tr>
+                  <tr class="details">
+                    <td>
+                      <v-radio-group
+                        name="metodo-pago"
+                        v-model="reservacion.tipos_pagos_id"
+                        row
+                        :data-vv-scope="reservacion.codigo"
+                        :data-vv-name="`método de pago para la reservación ${reservacion.codigo}`"
+                        v-validate="'required'"
+                        hint="Método de pago que utilizará"
+                        persistent-hint
+                      >
+                        <v-radio
+                          v-for="item in tipos_pago"
+                          :key="item.id"
+                          :label="item.nombre"
+                          :value="item.id"
+                        ></v-radio>
+                      </v-radio-group>
+                      <FormError
+                        :attribute_name="`${reservacion.codigo}.método de pago para la reservación ${reservacion.codigo}`"
+                        :errors_form="errors"
+                      ></FormError>
+                    </td>
+                    <td v-if="reservacion.tipos_pagos_id === 2">
+                      <v-text-field
+                        filled-inverted
+                        suffix
+                        dense
+                        prepend-inner-icon="fiber_new"
+                        counter
+                        v-model="reservacion.vaucher_pago"
+                        type="text"
+                        label="vaucher de pago"
+                        :data-vv-scope="reservacion.codigo"
+                        :data-vv-name="`vaucher de pago para la reservación ${reservacion.codigo}`"
+                        v-validate="'required|integer|max:12'"
+                        hint="Número del vaucher de pago generado"
+                        persistent-hint
+                      ></v-text-field>
+                      <FormError
+                        :attribute_name="`${reservacion.codigo}.vaucher de pago para la reservación ${reservacion.codigo}`"
+                        :errors_form="errors"
+                      ></FormError>
+                    </td>
+                  </tr>
 
-                    <tr class="heading">
-                      <td>Descripción</td>
-                      <td>Precio</td>
-                    </tr>
+                  <tr class="heading">
+                    <td>Descripción</td>
+                    <td>Precio</td>
+                  </tr>
 
-                    <tr
-                      class="item"
-                      v-for="(habitacion, index) in reservacion.detalle"
-                      v-bind:key="index"
-                    >
-                      <td>{{ habitacion.descripcion }}</td>
-                      <td>
-                        {{ formato_moneda(1, habitacion.sub_total, 0) }}
-                      </td>
-                    </tr>
+                  <tr
+                    class="item"
+                    v-for="(habitacion, index) in reservacion.detalle"
+                    v-bind:key="index"
+                  >
+                    <td>{{ habitacion.descripcion }}</td>
+                    <td>
+                      {{ formato_moneda(1, habitacion.sub_total, 0) }}
+                    </td>
+                  </tr>
 
-                    <tr class="total text-right">
-                      <td colspan="2">
-                        {{
-                          `Sub Total: ${formato_moneda(
-                            1,
-                            reservacion.sub_total,
-                            0,
-                          )}`
-                        }}
-                      </td>
-                    </tr>
+                  <tr class="total text-right">
+                    <td colspan="2">
+                      {{
+                        `Sub Total: ${formato_moneda(
+                          1,
+                          reservacion.sub_total,
+                          0,
+                        )}`
+                      }}
+                    </td>
+                  </tr>
 
-                    <tr class="total text-right">
-                      <td></td>
-                      <td>
-                        <br />
-                        <v-text-field
-                          filled-inverted
-                          prefix="Q"
-                          dense
-                          counter
-                          v-model="reservacion.descuento"
-                          type="text"
-                          label="descuento"
-                          :data-vv-scope="reservacion.codigo"
-                          :data-vv-name="`descuento para la reservación ${reservacion.codigo}`"
-                          v-validate="'integer'"
-                          hint="Descuento aplicado a la reservación"
-                          persistent-hint
-                        ></v-text-field>
-                        <FormError
-                          :attribute_name="`${reservacion.codigo}.descuento para la reservación ${reservacion.codigo}`"
-                          :errors_form="errors"
-                        ></FormError>
-                      </td>
-                    </tr>
+                  <tr class="total text-right">
+                    <td></td>
+                    <td>
+                      <br />
+                      <v-text-field
+                        filled-inverted
+                        prefix="Q"
+                        dense
+                        counter
+                        v-model="reservacion.descuento"
+                        type="text"
+                        label="descuento"
+                        :data-vv-scope="reservacion.codigo"
+                        :data-vv-name="`descuento para la reservación ${reservacion.codigo}`"
+                        v-validate="'integer'"
+                        hint="Descuento aplicado a la reservación"
+                        persistent-hint
+                      ></v-text-field>
+                      <FormError
+                        :attribute_name="`${reservacion.codigo}.descuento para la reservación ${reservacion.codigo}`"
+                        :errors_form="errors"
+                      ></FormError>
+                    </td>
+                  </tr>
 
-                    <tr class="total text-right">
-                      <td colspan="2">
-                        {{
-                          `Total: ${formato_moneda(
-                            1,
-                            reservacion.sub_total,
-                            reservacion.descuento,
-                          )}`
-                        }}
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </v-container>
+                  <tr class="total text-right">
+                    <td colspan="2">
+                      {{
+                        `Total: ${formato_moneda(
+                          1,
+                          reservacion.sub_total,
+                          reservacion.descuento,
+                        )}`
+                      }}
+                    </td>
+                  </tr>
+                </table>
+              </div>
             </v-card-text>
             <v-card-actions>
               <v-row justify="center" align="center">

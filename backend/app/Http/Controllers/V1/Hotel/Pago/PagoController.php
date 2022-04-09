@@ -110,6 +110,38 @@ class PagoController extends ApiController
     }
 
     /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\V1\Hotel\HPago  $pago
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, HPago $pago)
+    {
+        try {
+            DB::beginTransaction();
+
+            //Inicia el proceso de anulación
+            $pago->anulado = true;
+            $pago->save();
+
+            $this->bitacora_general($pago->getTable(), $this->acciones(3), $pago, "{$this->controlador_principal}@update");
+            $monto = number_format($request->total, 2);
+            $this->registrar_historia_caja("Anulación de movimiento de reservación pagada comprobante {$pago->correlativo}, reembolso de Q {$monto}", $request->total, "EFECTIVO", "ND", "{$this->controlador_principal}@destroy", $request->consumo_restaurante);
+
+            DB::commit();
+            return $this->successResponse("Pago: El pago con número de comprobante {$pago->correlativo} fue anulado y se procedio a realizar el reembolso de Q {$monto}");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@update");
+            if ($e instanceof QueryException) {
+                return $this->errorResponse('Ocurrio un problema al grabar la información del reembolso');
+            }
+            return $e->getCode() === 1 ? $this->errorResponse($e->getMessage()) : $this->errorResponse('Error en el controlador');
+        }
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\V1\Hotel\HPago  $pago

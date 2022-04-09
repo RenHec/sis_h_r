@@ -58,397 +58,396 @@
 
               <v-card color="green darken-4" dark>
                 <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <!-- DATOS PERSONALES -->
-                      <v-col cols="12" md="3">
-                        <v-row>
-                          <v-col cols="12" md="12"></v-col>
-                          <v-col cols="12" md="4">
-                            <p class="text-h4">
-                              {{ formTitle }}
-                            </p>
-                          </v-col>
-                          <v-col cols="12" md="8">
-                            <v-text-field
-                              filled-inverted
-                              suffix
-                              dense
-                              dark
-                              prepend-inner-icon="fiber_new"
-                              counter
-                              v-model="form.documento"
-                              type="text"
-                              label="documento"
-                              data-vv-scope="crear"
-                              data-vv-name="documento"
-                              v-validate="'required'"
-                              hint="El número de documento de compra, en su defecto escribir 0"
-                              persistent-hint
-                            ></v-text-field>
-                            <FormError
-                              :attribute_name="'crear.documento'"
-                              :errors_form="errors"
-                            ></FormError>
-                          </v-col>
-                          <v-col cols="12" md="12">
-                            Datos personales del proveedor
-                          </v-col>
-                          <v-col cols="12" md="6">
-                            <v-text-field
-                              filled-inverted
-                              suffix
-                              dense
-                              dark
-                              prepend-inner-icon="fiber_new"
-                              counter
-                              v-model="form.nit"
-                              type="text"
-                              label="nit"
-                              data-vv-scope="crear"
-                              data-vv-name="nit"
-                              v-validate="'required'"
-                              hint="El número de nit del proveedor, caso contrario CF"
-                              persistent-hint
-                            ></v-text-field>
-                            <FormError
-                              :attribute_name="'crear.nit'"
-                              :errors_form="errors"
-                            ></FormError>
-                          </v-col>
-                          <v-col cols="12" md="6" v-show="mostrar_nit === true">
-                            <strong>Resultados de la busqueda</strong>
-                            <ul
-                              v-for="(item, index) in filteredList"
-                              v-bind:key="index"
-                            >
-                              <li>
-                                <v-chip
-                                  class="ma-2"
-                                  color="primary"
-                                  text-color="white"
-                                  small
-                                  @click="seleccionar_cliente(item)"
-                                >
-                                  <v-avatar left>
-                                    <v-icon dense color="cyan lighten-2">
-                                      contacts
-                                    </v-icon>
-                                  </v-avatar>
-                                  {{ item.nit }}
-                                </v-chip>
-                              </li>
-                            </ul>
-                          </v-col>
-                          <v-col cols="12" md="12">
-                            <v-text-field
-                              filled-inverted
-                              suffix
-                              dense
-                              dark
-                              prepend-inner-icon="fiber_new"
-                              counter
-                              v-model="form.nombre"
-                              type="text"
-                              label="nombre"
-                              data-vv-scope="crear"
-                              data-vv-name="nombre"
-                              v-validate="'required'"
-                              hint="El nombre del proveedor, caso contrario CF"
-                              persistent-hint
-                            ></v-text-field>
-                            <FormError
-                              :attribute_name="'crear.nombre'"
-                              :errors_form="errors"
-                            ></FormError>
-                          </v-col>
-                          <v-col cols="12" md="12">
-                            <v-select
-                              filled-inverted
-                              suffix
-                              dense
-                              dark
-                              prepend-inner-icon="view_carousel"
-                              v-model="form.municipios_id"
-                              :items="municipios"
-                              label="seleccione un municipio por favor"
-                              :clearable="true"
-                              :deletable-chips="true"
-                              item-text="nombre"
-                              item-value="id"
-                              return-object
-                              v-validate="'required'"
-                              data-vv-scope="crear"
-                              data-vv-name="municipio"
-                            ></v-select>
-                            <FormError
-                              :attribute_name="'crear.municipio'"
-                              :errors_form="errors"
-                            ></FormError>
-                          </v-col>
-                          <v-col cols="12" md="12">
-                            <v-text-field
-                              filled-inverted
-                              suffix
-                              dense
-                              dark
-                              prepend-inner-icon="fiber_new"
-                              counter
-                              v-model="form.direcciones"
-                              type="text"
-                              label="dirección"
-                              hint="dirección, caso contrario dejar en blanco"
-                              persistent-hint
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12" md="12">
-                            <v-row>
-                              <v-col cols="12" md="5">
-                                <v-text-field
-                                  filled-inverted
-                                  suffix
-                                  dense
-                                  dark
-                                  prepend-inner-icon="fiber_new"
-                                  counter
-                                  v-model="form.telefonos"
-                                  type="text"
-                                  label="teléfono"
-                                  hint="número de teléfono, caso contrario dejar en blanco"
-                                  persistent-hint
-                                ></v-text-field>
-                              </v-col>
-                            </v-row>
-                            <v-row>
-                              <v-col cols="12" md="8">
-                                <v-text-field
-                                  filled-inverted
-                                  suffix
-                                  dense
-                                  dark
-                                  prepend-inner-icon="fiber_new"
-                                  counter
-                                  v-model="form.emails"
-                                  type="text"
-                                  label="correo electrónico"
-                                  hint="correo electrónico, caso contrario dejar en blanco"
-                                  persistent-hint
-                                ></v-text-field>
-                              </v-col>
-                            </v-row>
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                      <!-- DATOS DEL INSUMO DETALLE -->
-                      <v-col cols="12" md="9">
-                        <v-card
-                          elevation="24"
-                          :loading="loading"
-                          class="mx-auto"
-                          color="light-blue darken-2"
-                        >
-                          <v-card-text>
-                            <p class="text-h5 text--white">
-                              <v-btn
+                  <br />
+                  <v-row>
+                    <!-- DATOS PERSONALES -->
+                    <v-col cols="12" md="3">
+                      <v-row>
+                        <v-col cols="12" md="12"></v-col>
+                        <v-col cols="12" md="4">
+                          <p class="text-h4">
+                            {{ formTitle }}
+                          </p>
+                        </v-col>
+                        <v-col cols="12" md="8">
+                          <v-text-field
+                            filled-inverted
+                            suffix
+                            dense
+                            dark
+                            prepend-inner-icon="fiber_new"
+                            counter
+                            v-model="form.documento"
+                            type="text"
+                            label="documento"
+                            data-vv-scope="crear"
+                            data-vv-name="documento"
+                            v-validate="'required'"
+                            hint="El número de documento de compra, en su defecto escribir 0"
+                            persistent-hint
+                          ></v-text-field>
+                          <FormError
+                            :attribute_name="'crear.documento'"
+                            :errors_form="errors"
+                          ></FormError>
+                        </v-col>
+                        <v-col cols="12" md="12">
+                          Datos personales del proveedor
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            filled-inverted
+                            suffix
+                            dense
+                            dark
+                            prepend-inner-icon="fiber_new"
+                            counter
+                            v-model="form.nit"
+                            type="text"
+                            label="nit"
+                            data-vv-scope="crear"
+                            data-vv-name="nit"
+                            v-validate="'required'"
+                            hint="El número de nit del proveedor, caso contrario CF"
+                            persistent-hint
+                          ></v-text-field>
+                          <FormError
+                            :attribute_name="'crear.nit'"
+                            :errors_form="errors"
+                          ></FormError>
+                        </v-col>
+                        <v-col cols="12" md="6" v-show="mostrar_nit === true">
+                          <strong>Resultados de la busqueda</strong>
+                          <ul
+                            v-for="(item, index) in filteredList"
+                            v-bind:key="index"
+                          >
+                            <li>
+                              <v-chip
                                 class="ma-2"
+                                color="primary"
+                                text-color="white"
                                 small
-                                color="success"
-                                @click="agregar_detalle"
-                                dark
+                                @click="seleccionar_cliente(item)"
                               >
-                                Agregar
-                              </v-btn>
-                              {{
-                                `al detalle de la compra número ${form.documento}`
-                              }}
-                            </p>
-                          </v-card-text>
-                          <v-divider dark></v-divider>
-                          <v-card-text>
-                            <v-simple-table dark dense>
-                              <template v-slot:default>
-                                <thead>
-                                  <tr>
-                                    <th class="text-center">
-                                      Cantidad
-                                    </th>
-                                    <th class="text-center">
-                                      Producto
-                                    </th>
-                                    <th class="text-center">
-                                      Precio
-                                    </th>
-                                    <th class="text-center">
-                                      Descuento
-                                    </th>
-                                    <th class="text-center">
-                                      Sub Total
-                                    </th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr
-                                    v-for="(item,
-                                    index) in form.h_insumos_detalles"
-                                    :key="index"
-                                  >
-                                    <td class="text-center">
-                                      <br />
-                                      <vue-number-input
-                                        v-model="item.cantidad"
-                                        size="small"
-                                        :min="1"
-                                        :max="1500"
-                                        inline
-                                        center
-                                        controls
-                                        placeholder="cantidad"
-                                        rounded
-                                      ></vue-number-input>
-                                      <br />
-                                    </td>
-                                    <td class="text-center">
-                                      <br />
-                                      <v-autocomplete
-                                        filled-inverted
-                                        suffix
-                                        dense
-                                        dark
-                                        prepend-inner-icon="view_carousel"
-                                        v-model="item.h_productos_id"
-                                        :items="producto_insumo"
-                                        label="Seleccionar producto"
-                                        :clearable="true"
-                                        :deletable-chips="true"
-                                        item-text="producto"
-                                        item-value="id"
-                                        return-object
-                                        v-validate="'required'"
-                                        data-vv-scope="crear"
-                                        :data-vv-name="`producto de la fila ${index}`"
-                                      >
-                                        <template v-slot:no-data>
-                                          <v-row
-                                            align="center"
-                                            justify="space-around"
-                                          >
-                                            <v-btn
-                                              text
-                                              block
-                                              shaped
-                                              @click="dialog_producto"
-                                            >
-                                              Agregar producto nuevo
-                                            </v-btn>
-                                          </v-row>
-                                        </template>
-                                      </v-autocomplete>
-                                      <FormError
-                                        :attribute_name="`crear.producto de la fila ${index}`"
-                                        :errors_form="errors"
-                                      ></FormError>
-                                      <br />
-                                    </td>
-                                    <td class="text-center">
-                                      <br />
-                                      <v-text-field
-                                        filled-inverted
-                                        suffix
-                                        dense
-                                        dark
-                                        prefix="Q"
-                                        counter
-                                        v-model="item.precio"
-                                        type="text"
-                                        label="precio"
-                                        data-vv-scope="crear"
-                                        :data-vv-name="`precio de la fila ${index}`"
-                                        v-validate="
-                                          'required|decimal:2|min_value:0'
-                                        "
-                                        hint="Precio costo"
-                                        persistent-hint
-                                      ></v-text-field>
-                                      <FormError
-                                        :attribute_name="`crear.precio de la fila ${index}`"
-                                        :errors_form="errors"
-                                      ></FormError>
-                                      <br />
-                                    </td>
-                                    <td class="text-center">
-                                      <br />
-                                      <v-text-field
-                                        filled-inverted
-                                        suffix
-                                        dense
-                                        dark
-                                        prefix="Q"
-                                        counter
-                                        v-model="item.descuento"
-                                        type="text"
-                                        label="descuento"
-                                        data-vv-scope="crear"
-                                        :data-vv-name="`descuento de la fila ${index}`"
-                                        v-validate="
-                                          'required|decimal:2|min_value:0'
-                                        "
-                                        hint="Descuento del producto"
-                                        persistent-hint
-                                      ></v-text-field>
-                                      <FormError
-                                        :attribute_name="`crear.descuento de la fila ${index}`"
-                                        :errors_form="errors"
-                                      ></FormError>
-                                      <br />
-                                    </td>
-                                    <td
-                                      class="text-right"
-                                      @click="quitar_detalle"
-                                    >
-                                      <p class="text-h5 text--white">
-                                        {{
-                                          formato_moneda(
-                                            item.cantidad,
-                                            item.precio,
-                                            item.descuento,
-                                          )
-                                        }}
-                                      </p>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                                <tfoot>
-                                  <tr>
-                                    <td class="text-right" colspan="3">
-                                      <p class="text-h4 text--white">Total</p>
-                                    </td>
-                                    <td class="text-right" colspan="2">
-                                      <p class="text-h3 text--white">
-                                        {{ total }}
-                                      </p>
-                                    </td>
-                                  </tr>
-                                </tfoot>
-                              </template>
-                            </v-simple-table>
-                          </v-card-text>
-
-                          <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="red darken-1" @click="close">
-                              Cancelar
-                            </v-btn>
+                                <v-avatar left>
+                                  <v-icon dense color="cyan lighten-2">
+                                    contacts
+                                  </v-icon>
+                                </v-avatar>
+                                {{ item.nit }}
+                              </v-chip>
+                            </li>
+                          </ul>
+                        </v-col>
+                        <v-col cols="12" md="12">
+                          <v-text-field
+                            filled-inverted
+                            suffix
+                            dense
+                            dark
+                            prepend-inner-icon="fiber_new"
+                            counter
+                            v-model="form.nombre"
+                            type="text"
+                            label="nombre"
+                            data-vv-scope="crear"
+                            data-vv-name="nombre"
+                            v-validate="'required'"
+                            hint="El nombre del proveedor, caso contrario CF"
+                            persistent-hint
+                          ></v-text-field>
+                          <FormError
+                            :attribute_name="'crear.nombre'"
+                            :errors_form="errors"
+                          ></FormError>
+                        </v-col>
+                        <v-col cols="12" md="12">
+                          <v-select
+                            filled-inverted
+                            suffix
+                            dense
+                            dark
+                            prepend-inner-icon="view_carousel"
+                            v-model="form.municipios_id"
+                            :items="municipios"
+                            label="seleccione un municipio por favor"
+                            :clearable="true"
+                            :deletable-chips="true"
+                            item-text="nombre"
+                            item-value="id"
+                            return-object
+                            v-validate="'required'"
+                            data-vv-scope="crear"
+                            data-vv-name="municipio"
+                          ></v-select>
+                          <FormError
+                            :attribute_name="'crear.municipio'"
+                            :errors_form="errors"
+                          ></FormError>
+                        </v-col>
+                        <v-col cols="12" md="12">
+                          <v-text-field
+                            filled-inverted
+                            suffix
+                            dense
+                            dark
+                            prepend-inner-icon="fiber_new"
+                            counter
+                            v-model="form.direcciones"
+                            type="text"
+                            label="dirección"
+                            hint="dirección, caso contrario dejar en blanco"
+                            persistent-hint
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="12">
+                          <v-row>
+                            <v-col cols="12" md="5">
+                              <v-text-field
+                                filled-inverted
+                                suffix
+                                dense
+                                dark
+                                prepend-inner-icon="fiber_new"
+                                counter
+                                v-model="form.telefonos"
+                                type="text"
+                                label="teléfono"
+                                hint="número de teléfono, caso contrario dejar en blanco"
+                                persistent-hint
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="12" md="8">
+                              <v-text-field
+                                filled-inverted
+                                suffix
+                                dense
+                                dark
+                                prepend-inner-icon="fiber_new"
+                                counter
+                                v-model="form.emails"
+                                type="text"
+                                label="correo electrónico"
+                                hint="correo electrónico, caso contrario dejar en blanco"
+                                persistent-hint
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                    <!-- DATOS DEL INSUMO DETALLE -->
+                    <v-col cols="12" md="9">
+                      <v-card
+                        elevation="24"
+                        :loading="loading"
+                        class="mx-auto"
+                        color="light-blue darken-2"
+                      >
+                        <v-card-text>
+                          <p class="text-h5 text--white">
                             <v-btn
-                              color="green darken-1"
-                              @click="validar_formulario('crear')"
+                              class="ma-2"
+                              small
+                              color="success"
+                              @click="agregar_detalle"
+                              dark
                             >
-                              Guardar
+                              Agregar
                             </v-btn>
-                          </v-card-actions>
-                        </v-card>
-                      </v-col>
-                    </v-row>
-                  </v-container>
+                            {{
+                              `al detalle de la compra número ${form.documento}`
+                            }}
+                          </p>
+                        </v-card-text>
+                        <v-divider dark></v-divider>
+                        <v-card-text>
+                          <v-simple-table dark dense>
+                            <template v-slot:default>
+                              <thead>
+                                <tr>
+                                  <th class="text-center">
+                                    Cantidad
+                                  </th>
+                                  <th class="text-center">
+                                    Producto
+                                  </th>
+                                  <th class="text-center">
+                                    Precio
+                                  </th>
+                                  <th class="text-center">
+                                    Descuento
+                                  </th>
+                                  <th class="text-center">
+                                    Sub Total
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr
+                                  v-for="(item,
+                                  index) in form.h_insumos_detalles"
+                                  :key="index"
+                                >
+                                  <td class="text-center">
+                                    <br />
+                                    <vue-number-input
+                                      v-model="item.cantidad"
+                                      size="small"
+                                      :min="1"
+                                      :max="1500"
+                                      inline
+                                      center
+                                      controls
+                                      placeholder="cantidad"
+                                      rounded
+                                    ></vue-number-input>
+                                    <br />
+                                  </td>
+                                  <td class="text-center">
+                                    <br />
+                                    <v-autocomplete
+                                      filled-inverted
+                                      suffix
+                                      dense
+                                      dark
+                                      prepend-inner-icon="view_carousel"
+                                      v-model="item.h_productos_id"
+                                      :items="producto_insumo"
+                                      label="Seleccionar producto"
+                                      :clearable="true"
+                                      :deletable-chips="true"
+                                      item-text="producto"
+                                      item-value="id"
+                                      return-object
+                                      v-validate="'required'"
+                                      data-vv-scope="crear"
+                                      :data-vv-name="`producto de la fila ${index}`"
+                                    >
+                                      <template v-slot:no-data>
+                                        <v-row
+                                          align="center"
+                                          justify="space-around"
+                                        >
+                                          <v-btn
+                                            text
+                                            block
+                                            shaped
+                                            @click="dialog_producto"
+                                          >
+                                            Agregar producto nuevo
+                                          </v-btn>
+                                        </v-row>
+                                      </template>
+                                    </v-autocomplete>
+                                    <FormError
+                                      :attribute_name="`crear.producto de la fila ${index}`"
+                                      :errors_form="errors"
+                                    ></FormError>
+                                    <br />
+                                  </td>
+                                  <td class="text-center">
+                                    <br />
+                                    <v-text-field
+                                      filled-inverted
+                                      suffix
+                                      dense
+                                      dark
+                                      prefix="Q"
+                                      counter
+                                      v-model="item.precio"
+                                      type="text"
+                                      label="precio"
+                                      data-vv-scope="crear"
+                                      :data-vv-name="`precio de la fila ${index}`"
+                                      v-validate="
+                                        'required|decimal:2|min_value:0'
+                                      "
+                                      hint="Precio costo"
+                                      persistent-hint
+                                    ></v-text-field>
+                                    <FormError
+                                      :attribute_name="`crear.precio de la fila ${index}`"
+                                      :errors_form="errors"
+                                    ></FormError>
+                                    <br />
+                                  </td>
+                                  <td class="text-center">
+                                    <br />
+                                    <v-text-field
+                                      filled-inverted
+                                      suffix
+                                      dense
+                                      dark
+                                      prefix="Q"
+                                      counter
+                                      v-model="item.descuento"
+                                      type="text"
+                                      label="descuento"
+                                      data-vv-scope="crear"
+                                      :data-vv-name="`descuento de la fila ${index}`"
+                                      v-validate="
+                                        'required|decimal:2|min_value:0'
+                                      "
+                                      hint="Descuento del producto"
+                                      persistent-hint
+                                    ></v-text-field>
+                                    <FormError
+                                      :attribute_name="`crear.descuento de la fila ${index}`"
+                                      :errors_form="errors"
+                                    ></FormError>
+                                    <br />
+                                  </td>
+                                  <td
+                                    class="text-right"
+                                    @click="quitar_detalle"
+                                  >
+                                    <p class="text-h5 text--white">
+                                      {{
+                                        formato_moneda(
+                                          item.cantidad,
+                                          item.precio,
+                                          item.descuento,
+                                        )
+                                      }}
+                                    </p>
+                                  </td>
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                <tr>
+                                  <td class="text-right" colspan="3">
+                                    <p class="text-h4 text--white">Total</p>
+                                  </td>
+                                  <td class="text-right" colspan="2">
+                                    <p class="text-h3 text--white">
+                                      {{ total }}
+                                    </p>
+                                  </td>
+                                </tr>
+                              </tfoot>
+                            </template>
+                          </v-simple-table>
+                        </v-card-text>
+
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn color="red darken-1" @click="close">
+                            Cancelar
+                          </v-btn>
+                          <v-btn
+                            color="green darken-1"
+                            @click="validar_formulario('crear')"
+                          >
+                            Guardar
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-col>
+                  </v-row>
                 </v-card-text>
 
                 <v-row justify="center">

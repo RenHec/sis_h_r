@@ -6,238 +6,232 @@
 
     <v-col cols="12" md="12">
       <v-card dark dense>
+        <v-toolbar dark :color="colorTolbar" class="mb-1">
+          <v-toolbar-title>Kardex</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          <v-text-field
+            v-model="search"
+            clearable
+            flat
+            solo-inverted
+            hide-details
+            prepend-inner-icon="mdi-magnify"
+            label="Busqueda"
+          ></v-text-field>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          <v-btn color="white" small @click="initialize">
+            <v-icon :color="colorTolbar">sync</v-icon>
+          </v-btn>
+        </v-toolbar>
         <v-card-text>
-          <v-container>
-            <v-data-iterator
-              :items="items"
-              :items-per-page.sync="itemsPerPage"
-              :page.sync="page"
-              :search="search"
-              hide-default-footer
-              :custom-filter="filteredItems"
-            >
-              <template v-slot:header>
-                <v-toolbar dark :color="colorTolbar" class="mb-1">
-                  <v-toolbar-title>Kardex</v-toolbar-title>
-                  <v-divider class="mx-4" inset vertical></v-divider>
-                  <v-text-field
-                    v-model="search"
-                    clearable
-                    flat
-                    solo-inverted
-                    hide-details
-                    prepend-inner-icon="mdi-magnify"
-                    label="Busqueda"
-                  ></v-text-field>
-                  <v-divider class="mx-4" inset vertical></v-divider>
-                  <v-btn color="white" small @click="initialize">
-                    <v-icon :color="colorTolbar">sync</v-icon>
-                  </v-btn>
-                </v-toolbar>
-              </template>
-
-              <template v-slot:default="props">
-                <v-row>
-                  <v-col
-                    v-for="item in props.items"
-                    :key="item.name"
-                    cols="12"
-                    sm="6"
-                    md="4"
-                    lg="3"
-                  >
-                    <v-card color="blue-grey">
-                      <v-list
-                        dense
-                        dark
-                        :color="
-                          item.producto.activo
-                            ? 'info lighten-1'
-                            : 'error lighten-1'
-                        "
-                      >
-                        <v-list-item class="title font-weight-bold">
-                          <v-list-item-content>
-                            {{ item.producto.nombre }}
-                          </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item>
-                          <v-list-item-content>
-                            <small>{{ item.producto.descripcion }}</small>
-                          </v-list-item-content>
-                        </v-list-item>
-                        <v-divider></v-divider>
-                        <v-list-item>
-                          <v-list-item-content>
-                            Stock inicial:
-                          </v-list-item-content>
-                          <v-list-item-content>
-                            <v-chip color="blue" text-color="white">
-                              {{ item.stock_inicial }}
-                            </v-chip>
-                          </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item>
-                          <v-list-item-content>
-                            Stock actual:
-                          </v-list-item-content>
-                          <v-list-item-content>
-                            <template v-if="item.activo">
-                              <v-tooltip bottom color="green lighten-2">
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-chip
-                                    color="green"
-                                    dark
-                                    text-color="white"
-                                    v-bind="attrs"
-                                    v-on="on"
-                                  >
-                                    {{ item.stock_actual }}
-                                  </v-chip>
-                                </template>
-                                <span
-                                  v-text="
-                                    `El producto ${item.producto.nombre} cuenta con stock`
-                                  "
-                                ></span>
-                              </v-tooltip>
-                            </template>
-                            <template v-else>
-                              <v-tooltip bottom color="red lighten-2">
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-chip
-                                    color="red"
-                                    dark
-                                    text-color="white"
-                                    v-bind="attrs"
-                                    v-on="on"
-                                  >
-                                    {{ item.stock_actual }}
-                                  </v-chip>
-                                </template>
-                                <span
-                                  v-text="
-                                    `El producto ${item.producto.nombre} no cuenta con stock`
-                                  "
-                                ></span>
-                              </v-tooltip>
-                            </template>
-                          </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item>
-                          <v-list-item-content>
-                            Stock consumido:
-                          </v-list-item-content>
-                          <v-list-item-content>
-                            <v-chip color="greey" text-color="white">
-                              {{ item.stock_consumido }}
-                            </v-chip>
-                          </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item>
-                          <v-list-item-content>
-                            Movimientos stock:
-                          </v-list-item-content>
-                          <v-list-item-content>
-                            <v-tooltip bottom color="brown lighten-2">
+          <br />
+          <v-data-iterator
+            :items="items"
+            :items-per-page.sync="itemsPerPage"
+            :page.sync="page"
+            :search="search"
+            hide-default-footer
+            :custom-filter="filteredItems"
+          >
+            <template v-slot:default="props">
+              <v-row>
+                <v-col
+                  v-for="item in props.items"
+                  :key="item.name"
+                  cols="12"
+                  sm="6"
+                  md="4"
+                  lg="3"
+                >
+                  <v-card color="blue-grey">
+                    <v-list
+                      dense
+                      dark
+                      :color="
+                        item.producto.activo
+                          ? 'info lighten-1'
+                          : 'error lighten-1'
+                      "
+                    >
+                      <v-list-item class="title font-weight-bold">
+                        <v-list-item-content>
+                          {{ item.producto.nombre }}
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          <small>{{ item.producto.descripcion }}</small>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-divider></v-divider>
+                      <v-list-item>
+                        <v-list-item-content>
+                          Stock inicial:
+                        </v-list-item-content>
+                        <v-list-item-content>
+                          <v-chip color="blue" text-color="white">
+                            {{ item.stock_inicial }}
+                          </v-chip>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          Stock actual:
+                        </v-list-item-content>
+                        <v-list-item-content>
+                          <template v-if="item.activo">
+                            <v-tooltip bottom color="green lighten-2">
                               <template v-slot:activator="{ on, attrs }">
                                 <v-chip
-                                  color="brown"
+                                  color="green"
+                                  dark
                                   text-color="white"
                                   v-bind="attrs"
                                   v-on="on"
-                                  @click="ver_historial(item)"
                                 >
-                                  {{ item.historial.length }}
+                                  {{ item.stock_actual }}
                                 </v-chip>
                               </template>
                               <span
                                 v-text="
-                                  `Ver los movimientos de stock para el producto ${item.producto.nombre}`
+                                  `El producto ${item.producto.nombre} cuenta con stock`
                                 "
                               ></span>
                             </v-tooltip>
-                          </v-list-item-content>
-                        </v-list-item>
-                      </v-list>
-
-                      <v-card-actions>
-                        <v-row>
-                          <v-col cols="12" class="text-center">
-                            <v-tooltip bottom color="orange lighten-2">
+                          </template>
+                          <template v-else>
+                            <v-tooltip bottom color="red lighten-2">
                               <template v-slot:activator="{ on, attrs }">
-                                <v-btn
-                                  text
-                                  icon
-                                  color="orange lighten-2"
-                                  @click="mapear(item)"
+                                <v-chip
+                                  color="red"
                                   dark
+                                  text-color="white"
                                   v-bind="attrs"
                                   v-on="on"
                                 >
-                                  <v-icon>mdi-pencil</v-icon>
-                                </v-btn>
+                                  {{ item.stock_actual }}
+                                </v-chip>
                               </template>
                               <span
                                 v-text="
-                                  `Editar producto ${item.producto.nombre}`
+                                  `El producto ${item.producto.nombre} no cuenta con stock`
                                 "
                               ></span>
                             </v-tooltip>
-                            <v-tooltip
-                              bottom
-                              :color="
-                                item.producto.activo
-                                  ? 'red lighten-2'
-                                  : 'blue lighten-2'
+                          </template>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          Stock consumido:
+                        </v-list-item-content>
+                        <v-list-item-content>
+                          <v-chip color="greey" text-color="white">
+                            {{ item.stock_consumido }}
+                          </v-chip>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-list-item>
+                        <v-list-item-content>
+                          Movimientos stock:
+                        </v-list-item-content>
+                        <v-list-item-content>
+                          <v-tooltip bottom color="brown lighten-2">
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-chip
+                                color="brown"
+                                text-color="white"
+                                v-bind="attrs"
+                                v-on="on"
+                                @click="ver_historial(item)"
+                              >
+                                {{ item.historial.length }}
+                              </v-chip>
+                            </template>
+                            <span
+                              v-text="
+                                `Ver los movimientos de stock para el producto ${item.producto.nombre}`
                               "
-                            >
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-btn
-                                  class="ma-2"
-                                  text
-                                  icon
-                                  :color="
-                                    item.producto.activo
-                                      ? 'red lighten-2'
-                                      : 'blue lighten-2'
-                                  "
-                                  @click="destroy(item)"
-                                  dark
-                                  v-bind="attrs"
-                                  v-on="on"
-                                >
-                                  <v-icon>
-                                    {{
-                                      item.producto.activo
-                                        ? 'thumb_down'
-                                        : 'thumb_up'
-                                    }}
-                                  </v-icon>
-                                </v-btn>
-                              </template>
-                              <span
-                                v-text="
-                                  item.producto.activo
-                                    ? `Dar de baja al producto ${item.producto.nombre}`
-                                    : `Dar de alta al producto ${item.producto.nombre}`
-                                "
-                              ></span>
-                            </v-tooltip>
-                          </v-col>
-                        </v-row>
-                      </v-card-actions>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </template>
+                            ></span>
+                          </v-tooltip>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list>
 
-              <template v-slot:no-data>
-                <br />
-                <v-alert type="error">No hay información para mostrar.</v-alert>
-              </template>
-            </v-data-iterator>
-          </v-container>
+                    <v-card-actions>
+                      <v-row>
+                        <v-col cols="12" class="text-center">
+                          <v-tooltip bottom color="orange lighten-2">
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                text
+                                icon
+                                color="orange lighten-2"
+                                @click="mapear(item)"
+                                dark
+                                v-bind="attrs"
+                                v-on="on"
+                              >
+                                <v-icon>mdi-pencil</v-icon>
+                              </v-btn>
+                            </template>
+                            <span
+                              v-text="`Editar producto ${item.producto.nombre}`"
+                            ></span>
+                          </v-tooltip>
+                          <v-tooltip
+                            bottom
+                            :color="
+                              item.producto.activo
+                                ? 'red lighten-2'
+                                : 'blue lighten-2'
+                            "
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                class="ma-2"
+                                text
+                                icon
+                                :color="
+                                  item.producto.activo
+                                    ? 'red lighten-2'
+                                    : 'blue lighten-2'
+                                "
+                                @click="destroy(item)"
+                                dark
+                                v-bind="attrs"
+                                v-on="on"
+                              >
+                                <v-icon>
+                                  {{
+                                    item.producto.activo
+                                      ? 'thumb_down'
+                                      : 'thumb_up'
+                                  }}
+                                </v-icon>
+                              </v-btn>
+                            </template>
+                            <span
+                              v-text="
+                                item.producto.activo
+                                  ? `Dar de baja al producto ${item.producto.nombre}`
+                                  : `Dar de alta al producto ${item.producto.nombre}`
+                              "
+                            ></span>
+                          </v-tooltip>
+                        </v-col>
+                      </v-row>
+                    </v-card-actions>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </template>
+
+            <template v-slot:no-data>
+              <br />
+              <v-alert type="error">No hay información para mostrar.</v-alert>
+            </template>
+          </v-data-iterator>
         </v-card-text>
 
         <v-card-actions>

@@ -144,7 +144,12 @@ class HabitacionController extends ApiController
                 return $this->errorResponse('La habitación no puede eliminarse.');
             }
 
-            $precios = HHabitacionPrecio::where('h_habitaciones_id', $habitacion->id)->delete();
+            $precios = HHabitacionPrecio::where('h_habitaciones_id', $habitacion->id)->get();
+            foreach ($precios as $item) {
+                $item->delete();
+                $this->bitacora_general($item->getTable(), $this->acciones(2), $item, "{$this->controlador_principal}@destroy");
+            }
+
             $fotografias = HHabitacionFoto::where('h_habitaciones_id', $habitacion->id)->get();
 
             foreach ($fotografias as $value) {
@@ -155,7 +160,6 @@ class HabitacionController extends ApiController
             $habitacion->delete();
 
             $this->bitacora_general($habitacion->getTable(), $this->acciones(2), $habitacion, "{$this->controlador_principal}@destroy");
-            $this->bitacora_general($precios->getTable(), $this->acciones(2), $precios, "{$this->controlador_principal}@destroy");
 
             DB::commit();
             return $this->successResponse("Habitación: {$habitacion->descripcion} fue eliminado.");

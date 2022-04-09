@@ -162,164 +162,161 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <v-container fluid>
-              <v-overlay :value="loading">
-                <v-progress-circular
-                  indeterminate
-                  size="64"
-                ></v-progress-circular>
-              </v-overlay>
-              <v-row class="pa-4" justify="space-between">
-                <v-col cols="8">
-                  <v-expansion-panels light flat>
-                    <v-expansion-panel>
-                      <v-expansion-panel-header disable-icon-rotate>
-                        Habitaciones
-                        <template v-slot:actions>
-                          <v-icon color="black">
-                            $expand
-                          </v-icon>
-                        </template>
-                      </v-expansion-panel-header>
-                      <v-expansion-panel-content>
-                        <template v-for="(item, index) in form.check_out">
-                          <br v-bind:key="`Salto1${item.habitacion}`" />
-                          <div
-                            class="text-h6 white--black text--lighten-1 font-weight-light"
-                            style="align-self: center;"
-                            v-bind:key="item.habitacion"
+            <br />
+            <v-overlay :value="loading">
+              <v-progress-circular
+                indeterminate
+                size="64"
+              ></v-progress-circular>
+            </v-overlay>
+            <v-row class="pa-4" justify="space-between">
+              <v-col cols="8">
+                <v-expansion-panels light flat>
+                  <v-expansion-panel>
+                    <v-expansion-panel-header disable-icon-rotate>
+                      Habitaciones
+                      <template v-slot:actions>
+                        <v-icon color="black">
+                          $expand
+                        </v-icon>
+                      </template>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <template v-for="(item, index) in form.check_out">
+                        <br v-bind:key="`Salto1${item.habitacion}`" />
+                        <div
+                          class="text-h6 white--black text--lighten-1 font-weight-light"
+                          style="align-self: center;"
+                          v-bind:key="item.habitacion"
+                        >
+                          {{ item.habitacion }}
+                        </div>
+                        <v-row v-bind:key="`Listas${index}`">
+                          <v-col
+                            cols="12"
+                            sm="3"
+                            md="3"
+                            v-for="(lista, il) in item.lista"
+                            v-bind:key="`Producto${il}`"
                           >
-                            {{ item.habitacion }}
-                          </div>
-                          <v-row v-bind:key="`Listas${index}`">
-                            <v-col
-                              cols="12"
-                              sm="3"
-                              md="3"
-                              v-for="(lista, il) in item.lista"
-                              v-bind:key="`Producto${il}`"
-                            >
-                              <v-checkbox
-                                v-model="lista.checkout"
-                                :label="lista.producto"
-                                color="indigo"
-                                hide-details
-                              ></v-checkbox>
-                            </v-col>
-                          </v-row>
-                          <br v-bind:key="`Salto2${item.habitacion}`" />
-                          <v-divider
-                            v-bind:key="`Division${index}`"
-                          ></v-divider>
-                        </template>
-                      </v-expansion-panel-content>
-                    </v-expansion-panel>
-                  </v-expansion-panels>
-                </v-col>
-                <v-divider vertical></v-divider>
-                <v-col cols="12" md="4" sm="4">
-                  <v-row>
-                    <v-col cols="12">
-                      <div
-                        class="text-h6 white--text text--lighten-1 font-weight-light"
-                        style="align-self: center;"
-                      >
-                        {{
-                          `Encargado del check in en la reservación con código ${form.codigo}`
-                        }}
-                      </div>
-                      <v-divider></v-divider>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field
-                        filled-inverted
-                        suffix
-                        dense
-                        dark
-                        prepend-inner-icon="fiber_new"
-                        counter
-                        v-model="form.nombre"
-                        type="text"
-                        label="nombre"
-                        data-vv-scope="crear"
-                        data-vv-name="nombre"
-                        v-validate="'required|max:100'"
-                        hint="El nombre del responsable"
-                        persistent-hint
-                      ></v-text-field>
-                      <FormError
-                        :attribute_name="'crear.nombre'"
-                        :errors_form="errors"
-                      ></FormError>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-textarea
-                        filled-inverted
-                        suffix
-                        dense
-                        dark
-                        prepend-inner-icon="fiber_new"
-                        counter
-                        v-model="form.descripcion"
-                        type="text"
-                        label="descripción"
-                        data-vv-scope="crear"
-                        data-vv-name="descripción"
-                        v-validate="'max:1500'"
-                        hint="Notas"
-                        persistent-hint
-                      ></v-textarea>
-                      <FormError
-                        :attribute_name="'crear.descripción'"
-                        :errors_form="errors"
-                      ></FormError>
-                    </v-col>
+                            <v-checkbox
+                              v-model="lista.checkout"
+                              :label="lista.producto"
+                              color="indigo"
+                              hide-details
+                            ></v-checkbox>
+                          </v-col>
+                        </v-row>
+                        <br v-bind:key="`Salto2${item.habitacion}`" />
+                        <v-divider v-bind:key="`Division${index}`"></v-divider>
+                      </template>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </v-col>
+              <v-divider vertical></v-divider>
+              <v-col cols="12" md="4" sm="4">
+                <v-row>
+                  <v-col cols="12">
+                    <div
+                      class="text-h6 white--text text--lighten-1 font-weight-light"
+                      style="align-self: center;"
+                    >
+                      {{
+                        `Encargado del check in en la reservación con código ${form.codigo}`
+                      }}
+                    </div>
+                    <v-divider></v-divider>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      filled-inverted
+                      suffix
+                      dense
+                      dark
+                      prepend-inner-icon="fiber_new"
+                      counter
+                      v-model="form.nombre"
+                      type="text"
+                      label="nombre"
+                      data-vv-scope="crear"
+                      data-vv-name="nombre"
+                      v-validate="'required|max:100'"
+                      hint="El nombre del responsable"
+                      persistent-hint
+                    ></v-text-field>
+                    <FormError
+                      :attribute_name="'crear.nombre'"
+                      :errors_form="errors"
+                    ></FormError>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-textarea
+                      filled-inverted
+                      suffix
+                      dense
+                      dark
+                      prepend-inner-icon="fiber_new"
+                      counter
+                      v-model="form.descripcion"
+                      type="text"
+                      label="descripción"
+                      data-vv-scope="crear"
+                      data-vv-name="descripción"
+                      v-validate="'max:1500'"
+                      hint="Notas"
+                      persistent-hint
+                    ></v-textarea>
+                    <FormError
+                      :attribute_name="'crear.descripción'"
+                      :errors_form="errors"
+                    ></FormError>
+                  </v-col>
 
-                    <v-col cols="12">
-                      <div
-                        class="text-h6 white--text text--lighten-1 font-weight-light text-center"
-                        style="align-self: center;"
-                      >
-                        Firma del encargado
-                      </div>
-                    </v-col>
-                    <v-col class="text-center" cols="12">
-                      <v-btn small color="red" text @click="limpiar_firma">
-                        Volver a firmar
-                      </v-btn>
-                    </v-col>
-                    <v-col cols="12" class="text-center">
-                      <canvas
-                        id="draw-canvas"
-                        ref="canvas_img"
-                        @mousedown="startPainting"
-                        @mouseup="finishedPainting"
-                        @mousemove="draw"
-                        @touchstart="startTouch"
-                        @touchend="finishedTouch"
-                        @touchleave="leaveTouch"
-                        @touchmove="moveTouch"
-                      >
-                        No tienes un buen navegador.
-                      </canvas>
-                    </v-col>
+                  <v-col cols="12">
+                    <div
+                      class="text-h6 white--text text--lighten-1 font-weight-light text-center"
+                      style="align-self: center;"
+                    >
+                      Firma del encargado
+                    </div>
+                  </v-col>
+                  <v-col class="text-center" cols="12">
+                    <v-btn small color="red" text @click="limpiar_firma">
+                      Volver a firmar
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="12" class="text-center">
+                    <canvas
+                      id="draw-canvas"
+                      ref="canvas_img"
+                      @mousedown="startPainting"
+                      @mouseup="finishedPainting"
+                      @mousemove="draw"
+                      @touchstart="startTouch"
+                      @touchend="finishedTouch"
+                      @touchleave="leaveTouch"
+                      @touchmove="moveTouch"
+                    >
+                      No tienes un buen navegador.
+                    </canvas>
+                  </v-col>
 
-                    <v-col cols="12">
-                      <v-btn
-                        color="success"
-                        x-large
-                        :loading="loading"
-                        :disabled="loading"
-                        block
-                        @click="store('crear')"
-                      >
-                        REGISTRAR
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
-            </v-container>
+                  <v-col cols="12">
+                    <v-btn
+                      color="success"
+                      x-large
+                      :loading="loading"
+                      :disabled="loading"
+                      block
+                      @click="store('crear')"
+                    >
+                      REGISTRAR
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-divider></v-divider>
           <v-card-actions>

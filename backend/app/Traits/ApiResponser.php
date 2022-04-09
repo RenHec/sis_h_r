@@ -309,6 +309,11 @@ trait ApiResponser
 							$caja->pagos += ($caja_movimiento->monto_total - $restaurante);
 							$caja->restaurante += $restaurante;
 							break;
+						case "PagoController@update":
+							$caja->pagos -= ($caja_movimiento->monto_total - $restaurante);
+							$caja->restaurante -= $restaurante;
+							$caja_movimiento->resta = true;
+							break;
 						case "PagoController@destroy":
 							$caja->pagos -= ($caja_movimiento->monto_total - $restaurante);
 							$caja->restaurante -= $restaurante;
