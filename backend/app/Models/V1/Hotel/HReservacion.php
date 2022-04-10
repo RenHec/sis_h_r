@@ -113,8 +113,6 @@ class HReservacion extends Model
     {
         return $query->with('check_in_list', 'check_out_list', 'detalle', 'cliente.municipio')
             ->where('reservacion', true)
-            ->where('check_in', true)
-            ->where('check_out', true)
             ->where('pagado', false)
             ->where('anulado', false)
             ->orderBy('id');

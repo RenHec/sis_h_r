@@ -116,7 +116,7 @@
                     CAMBIAR PASSWORD
                   </v-btn>
                 </div>
-                <div class="my-2" v-if="mostrar.apertura">
+                <div class="my-2" v-show="apertura_mostrar">
                   <v-btn small @click="aperturar_caja" outlined color="primary">
                     CAJA DEL HOTEL
                   </v-btn>
@@ -395,7 +395,7 @@
                     block
                     x-large
                     @click="cerrar_caja()"
-                    v-if="mostrar.cerrar"
+                    v-show="cierre_mostrar"
                   >
                     CERRAR CAJA
                   </v-btn>
@@ -453,24 +453,11 @@ export default {
         { valor: 'TARJETA' },
         { valor: 'CHEQUE' },
       ],
-
-      mostrar: {
-        apertura: false,
-        cierre: false,
-      },
     }
   },
-  created() {
-    this.initialize()
-  },
+  created() {},
 
   methods: {
-    initialize() {
-      var permissions = this.$store.state.permissions
-      this.mostrar.apertura = _.includes(permissions, 'apertura_caja_hotel')
-      this.mostrar.cierre = _.includes(permissions, 'cierre_caja_hotel')
-    },
-
     logout() {
       let self = this
       self.loading = true
@@ -701,6 +688,16 @@ export default {
           background-image: url('${this.$store.state.base_url}img/fondo.jpg');
           background-size: cover;
         `
+    },
+
+    apertura_mostrar() {
+      var permissions = this.$store.state.permissions
+      return _.includes(permissions, 'apertura_caja_hotel')
+    },
+
+    cierre_mostrar() {
+      var permissions = this.$store.state.permissions
+      return _.includes(permissions, 'cierre_caja_hotel')
     },
   },
 }

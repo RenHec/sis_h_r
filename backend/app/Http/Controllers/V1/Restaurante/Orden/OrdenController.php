@@ -156,7 +156,7 @@ class OrdenController extends ApiController
                     $desayunos_servidos += $value['cantidad'];
                 }
 
-                if (!($desayunos_servidos < ($huespedes + 1)) && !is_null($existe_reservacion)) {
+                if (!(($desayunos_servidos + $value['cantidad']) < ($huespedes + 1)) && !is_null($existe_reservacion)) {
                     return $this->errorResponse("La reservación con código {$existe_reservacion->codigo} execede la cantidad de platillos disponibles {$desayunos_servidos}/{$huespedes}.");
                 }
 

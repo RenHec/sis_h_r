@@ -45,6 +45,7 @@
                 v-on="on"
                 @click="destroy(item)"
                 small
+                v-if="!item.pagado"
               >
                 <v-icon>report_problem</v-icon>
               </v-btn>
@@ -107,245 +108,240 @@
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <v-container>
-              <v-overlay :value="loading">
-                <v-progress-circular
-                  indeterminate
-                  size="64"
-                ></v-progress-circular>
-              </v-overlay>
-              <v-row class="pa-4" justify="space-between">
-                <v-col cols="12" md="2">
-                  <div
-                    class="text-h6 white--text text--lighten-1 font-weight-light"
-                    style="align-self: center;"
-                  >
-                    {{
-                      `Habitaciones de la reservación con código ${form.codigo}`
-                    }}
-                  </div>
-                  <v-divider></v-divider>
-                  <v-list flat>
-                    <v-list-item-group :no-action="true" color="indigo">
-                      <v-list-item
-                        v-for="(item, i) in form.check_in"
-                        :key="i"
-                        @click="seleecionar_habitacion(i)"
-                      >
-                        <v-list-item-content>
-                          <v-list-item-title
-                            v-text="item.habitacion"
-                          ></v-list-item-title>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list-item-group>
-                  </v-list>
-                </v-col>
-                <v-divider vertical></v-divider>
-                <v-col cols="12" md="6" class="d-flex text-center">
-                  <v-expansion-panels tile dark flat>
-                    <v-expansion-panel>
-                      <v-expansion-panel-header
-                        disable-icon-rotate
-                        color="primary"
-                      >
-                        Productos
-                        <template v-slot:actions>
-                          <v-icon color="white">
-                            $expand
-                          </v-icon>
-                        </template>
-                      </v-expansion-panel-header>
-                      <v-expansion-panel-content v-if="selected > -1">
-                        <v-scroll-y-transition mode="out-in">
-                          <div
-                            v-if="selected < 0"
-                            class="text-h6 white--text text--lighten-1 font-weight-light"
-                            style="align-self: center;"
-                          >
-                            Seleccionar una habitación por favor...
-                          </div>
-                          <v-card
-                            v-else
-                            class="pt-6 mx-auto animate__fadeIn"
-                            flat
-                            max-width="80%"
-                            v-bind:key="selected"
-                          >
-                            <v-card-text>
-                              <h3 class="text-h4 mb-2">
-                                {{ form.check_in[selected]['habitacion'] }}
-                              </h3>
-                              <div class="blue--text mb-2">
-                                Check In
-                              </div>
-                            </v-card-text>
-                            <v-divider></v-divider>
-                            <v-card-text>
-                              <v-row
-                                align="center"
-                                v-for="(producto, index_pro) in form.check_in[
-                                  selected
-                                ]['lista']"
-                                v-bind:key="`${selected}-${index_pro}`"
-                              >
-                                <v-col cols="12" md="2">
-                                  <v-checkbox
-                                    v-model="producto.incluir"
-                                    hide-details
-                                    class="shrink mr-2 mt-0"
-                                  ></v-checkbox>
-                                </v-col>
-                                <v-col cols="12" :md="'7'">
-                                  <v-chip
-                                    class="ma-2"
-                                    color="primary"
-                                    :disabled="!producto.incluir"
-                                    label
-                                    small
-                                  >
-                                    {{ producto.producto }}
-                                  </v-chip>
-                                </v-col>
-                                <v-col cols="12" md="3">
-                                  <vue-number-input
-                                    v-model="producto.cantidad"
-                                    size="small"
-                                    :min="0"
-                                    :max="producto.disponible"
-                                    inline
-                                    center
-                                    controls
-                                    placeholder="stock"
-                                    rounded
-                                    @change="
-                                      stock_producto(
-                                        $event,
-                                        index_pro,
-                                        selected,
-                                      )
-                                    "
-                                    :disabled="!producto.incluir"
-                                  ></vue-number-input>
-                                  <br />
-                                  <small>
-                                    {{
-                                      `Disponible ${productos[index_pro]['stock_actual']}`
-                                    }}
-                                  </small>
-                                </v-col>
-                              </v-row>
-                            </v-card-text>
-                          </v-card>
-                        </v-scroll-y-transition>
-                      </v-expansion-panel-content>
-                    </v-expansion-panel>
-                  </v-expansion-panels>
-                </v-col>
-                <v-divider vertical></v-divider>
-                <v-col cols="12" md="4">
-                  <v-row>
-                    <v-col cols="12">
-                      <div
-                        class="text-h6 white--text text--lighten-1 font-weight-light"
-                        style="align-self: center;"
-                      >
-                        {{
-                          `Encargado del check in en la reservación con código ${form.codigo}`
-                        }}
-                      </div>
-                      <v-divider></v-divider>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field
-                        filled-inverted
-                        suffix
-                        dense
-                        dark
-                        prepend-inner-icon="fiber_new"
-                        counter
-                        v-model="form.nombre"
-                        type="text"
-                        label="nombre"
-                        data-vv-scope="crear"
-                        data-vv-name="nombre"
-                        v-validate="'required|max:100'"
-                        hint="El nombre del responsable"
-                        persistent-hint
-                      ></v-text-field>
-                      <FormError
-                        :attribute_name="'crear.nombre'"
-                        :errors_form="errors"
-                      ></FormError>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-textarea
-                        filled-inverted
-                        suffix
-                        dense
-                        dark
-                        prepend-inner-icon="fiber_new"
-                        counter
-                        v-model="form.descripcion"
-                        type="text"
-                        label="descripción"
-                        data-vv-scope="crear"
-                        data-vv-name="descripción"
-                        v-validate="'max:1500'"
-                        hint="Notas"
-                        persistent-hint
-                      ></v-textarea>
-                      <FormError
-                        :attribute_name="'crear.descripción'"
-                        :errors_form="errors"
-                      ></FormError>
-                    </v-col>
+            <br />
+            <v-overlay :value="loading">
+              <v-progress-circular
+                indeterminate
+                size="64"
+              ></v-progress-circular>
+            </v-overlay>
+            <v-row class="pa-4" justify="space-between">
+              <v-col cols="12" md="2">
+                <div
+                  class="text-h6 white--text text--lighten-1 font-weight-light"
+                  style="align-self: center;"
+                >
+                  {{
+                    `Habitaciones de la reservación con código ${form.codigo}`
+                  }}
+                </div>
+                <v-divider></v-divider>
+                <v-list flat>
+                  <v-list-item-group :no-action="true" color="indigo">
+                    <v-list-item
+                      v-for="(item, i) in form.check_in"
+                      :key="i"
+                      @click="seleecionar_habitacion(i)"
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title
+                          v-text="item.habitacion"
+                        ></v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </v-col>
+              <v-divider vertical></v-divider>
+              <v-col cols="12" md="6" class="d-flex text-center">
+                <v-expansion-panels tile dark flat>
+                  <v-expansion-panel>
+                    <v-expansion-panel-header
+                      disable-icon-rotate
+                      color="primary"
+                    >
+                      Productos
+                      <template v-slot:actions>
+                        <v-icon color="white">
+                          $expand
+                        </v-icon>
+                      </template>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content v-if="selected > -1">
+                      <v-scroll-y-transition mode="out-in">
+                        <div
+                          v-if="selected < 0"
+                          class="text-h6 white--text text--lighten-1 font-weight-light"
+                          style="align-self: center;"
+                        >
+                          Seleccionar una habitación por favor...
+                        </div>
+                        <v-card
+                          v-else
+                          class="pt-6 mx-auto animate__fadeIn"
+                          flat
+                          max-width="80%"
+                          v-bind:key="selected"
+                        >
+                          <v-card-text>
+                            <h3 class="text-h4 mb-2">
+                              {{ form.check_in[selected]['habitacion'] }}
+                            </h3>
+                            <div class="blue--text mb-2">
+                              Check In
+                            </div>
+                          </v-card-text>
+                          <v-divider></v-divider>
+                          <v-card-text>
+                            <v-row
+                              align="center"
+                              v-for="(producto, index_pro) in form.check_in[
+                                selected
+                              ]['lista']"
+                              v-bind:key="`${selected}-${index_pro}`"
+                            >
+                              <v-col cols="12" md="2">
+                                <v-checkbox
+                                  v-model="producto.incluir"
+                                  hide-details
+                                  class="shrink mr-2 mt-0"
+                                ></v-checkbox>
+                              </v-col>
+                              <v-col cols="12" :md="'7'">
+                                <v-chip
+                                  class="ma-2"
+                                  color="primary"
+                                  :disabled="!producto.incluir"
+                                  label
+                                  small
+                                >
+                                  {{ producto.producto }}
+                                </v-chip>
+                              </v-col>
+                              <v-col cols="12" md="3">
+                                <vue-number-input
+                                  v-model="producto.cantidad"
+                                  size="small"
+                                  :min="0"
+                                  :max="producto.disponible"
+                                  inline
+                                  center
+                                  controls
+                                  placeholder="stock"
+                                  rounded
+                                  @change="
+                                    stock_producto($event, index_pro, selected)
+                                  "
+                                  :disabled="!producto.incluir"
+                                ></vue-number-input>
+                                <br />
+                                <small>
+                                  {{
+                                    `Disponible ${productos[index_pro]['stock_actual']}`
+                                  }}
+                                </small>
+                              </v-col>
+                            </v-row>
+                          </v-card-text>
+                        </v-card>
+                      </v-scroll-y-transition>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </v-col>
+              <v-divider vertical></v-divider>
+              <v-col cols="12" md="4">
+                <v-row>
+                  <v-col cols="12">
+                    <div
+                      class="text-h6 white--text text--lighten-1 font-weight-light"
+                      style="align-self: center;"
+                    >
+                      {{
+                        `Encargado del check in en la reservación con código ${form.codigo}`
+                      }}
+                    </div>
+                    <v-divider></v-divider>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      filled-inverted
+                      suffix
+                      dense
+                      dark
+                      prepend-inner-icon="fiber_new"
+                      counter
+                      v-model="form.nombre"
+                      type="text"
+                      label="nombre"
+                      data-vv-scope="crear"
+                      data-vv-name="nombre"
+                      v-validate="'required|max:100'"
+                      hint="El nombre del responsable"
+                      persistent-hint
+                    ></v-text-field>
+                    <FormError
+                      :attribute_name="'crear.nombre'"
+                      :errors_form="errors"
+                    ></FormError>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-textarea
+                      filled-inverted
+                      suffix
+                      dense
+                      dark
+                      prepend-inner-icon="fiber_new"
+                      counter
+                      v-model="form.descripcion"
+                      type="text"
+                      label="descripción"
+                      data-vv-scope="crear"
+                      data-vv-name="descripción"
+                      v-validate="'max:1500'"
+                      hint="Notas"
+                      persistent-hint
+                    ></v-textarea>
+                    <FormError
+                      :attribute_name="'crear.descripción'"
+                      :errors_form="errors"
+                    ></FormError>
+                  </v-col>
 
-                    <v-col cols="12">
-                      <div
-                        class="text-h6 white--text text--lighten-1 font-weight-light text-center"
-                        style="align-self: center;"
-                      >
-                        Firma del encargado
-                      </div>
-                    </v-col>
-                    <v-col class="text-center" cols="12">
-                      <v-btn small color="red" text @click="limpiar_firma">
-                        Volver a firmar
-                      </v-btn>
-                    </v-col>
-                    <v-col cols="12" class="text-center">
-                      <canvas
-                        id="draw-canvas"
-                        ref="canvas_img"
-                        @mousedown="startPainting"
-                        @mouseup="finishedPainting"
-                        @mousemove="draw"
-                        @touchstart="startTouch"
-                        @touchend="finishedTouch"
-                        @touchleave="leaveTouch"
-                        @touchmove="moveTouch"
-                      >
-                        No tienes un buen navegador.
-                      </canvas>
-                    </v-col>
+                  <v-col cols="12">
+                    <div
+                      class="text-h6 white--text text--lighten-1 font-weight-light text-center"
+                      style="align-self: center;"
+                    >
+                      Firma del encargado
+                    </div>
+                  </v-col>
+                  <v-col class="text-center" cols="12">
+                    <v-btn small color="red" text @click="limpiar_firma">
+                      Volver a firmar
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="12" class="text-center">
+                    <canvas
+                      id="draw-canvas"
+                      ref="canvas_img"
+                      @mousedown="startPainting"
+                      @mouseup="finishedPainting"
+                      @mousemove="draw"
+                      @touchstart="startTouch"
+                      @touchend="finishedTouch"
+                      @touchleave="leaveTouch"
+                      @touchmove="moveTouch"
+                    >
+                      No tienes un buen navegador.
+                    </canvas>
+                  </v-col>
 
-                    <v-col cols="12">
-                      <v-btn
-                        color="success"
-                        x-large
-                        :loading="loading"
-                        :disabled="loading"
-                        block
-                        @click="store('crear')"
-                      >
-                        REGISTRAR
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
-            </v-container>
+                  <v-col cols="12">
+                    <v-btn
+                      color="success"
+                      x-large
+                      :loading="loading"
+                      :disabled="loading"
+                      block
+                      @click="store('crear')"
+                    >
+                      REGISTRAR
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-divider></v-divider>
           <v-card-actions>
