@@ -539,9 +539,12 @@ trait ApiResponser
 		$desayunos = HReservacionDetalle::where('h_reservaciones_id', $reservacion->id)->where('incluye_desayuno', true)->get();
 
 		$cantidad = 0;
+		$dias = 0;
 		foreach ($desayunos as $value) {
 			$cantidad += $value->huespedes;
+			$dias = $value->dias;
 		}
+		$cantidad = $cantidad * $dias;
 
 		$largo = 120;
 
