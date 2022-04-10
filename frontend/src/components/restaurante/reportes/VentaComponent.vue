@@ -5,6 +5,7 @@
     </v-overlay>
     <v-data-table
       :page="page"
+      :sortDesc='true'
       :options.sync="options"
       :server-items-length="totalRecords"
       :footer-props="{

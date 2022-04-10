@@ -16,9 +16,9 @@ class CreateRestauranteInventarioTable extends Migration
         Schema::create('r_inventario', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('producto_id')->unsigned();
-            $table->integer('stock')->default(0)->unsigned();
-            $table->integer('consumido')->default(0)->unsigned();
-            $table->integer('suministrado')->default(0)->unsigned();
+            $table->bigInteger('stock')->default(0);
+            $table->bigInteger('consumido')->default(0)->unsigned();
+            $table->bigInteger('suministrado')->default(0)->unsigned();
             $table->foreign('producto_id')->references('id')->on('r_producto');
             $table->timestamps();
         });

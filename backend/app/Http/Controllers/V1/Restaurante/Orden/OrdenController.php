@@ -162,6 +162,7 @@ class OrdenController extends ApiController
 
                 OrdenProducto::create([
                     'cantidad'      => $value['cantidad'],
+                    'autoreferencia'=> $value['autoreferencia'],
                     'orden_id'      => $registro->id,
                     'producto_id'   => $value['id'],
                     'precio'        => $request->get('reservacion') == 1 ? 0 : $value['precio'],

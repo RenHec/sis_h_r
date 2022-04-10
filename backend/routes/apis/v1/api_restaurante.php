@@ -38,6 +38,8 @@ Route::resource('/productos','Producto\ProductoController',['except' => ['create
 Route::get('/productos-list','Producto\ProductoController@productsList');
 Route::post('/productos-delete-inventory','Producto\ProductoController@deleteInventoryOfProduct');
 
+Route::post('/productos-promotion','Producto\DetalleProductoController@storePromotionProducts');
+
 Route::resource('/inventario','Inventario\InventarioController',['except' => ['create','edit']]);
 
 Route::resource('/ordenes','Orden\OrdenController',['except' => ['create','edit']]);
