@@ -1,6 +1,12 @@
 <template>
   <v-col md='4' sm='6'>
     <v-card style="padding:15px; ">
+      <v-badge
+          v-if="platillo.promocion == 1"
+          color="green darken-1"
+          icon="local_offer"
+          style="float:right"
+        ></v-badge>
       <v-tooltip top open-delay="5">
         <template v-slot:activator="{ on, attrs }">
           <v-img

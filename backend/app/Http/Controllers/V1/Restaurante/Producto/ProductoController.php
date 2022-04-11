@@ -237,7 +237,7 @@ class ProductoController extends ApiController
 
     public function productsList()
     {
-        $registros =  Producto::select('id', 'nombre', 'precio', 'img', 'quien_prepara as preparacion','consumo_reservacion as reservacion','descripcion','autoreferencia')
+        $registros =  Producto::select('id', 'nombre', 'precio', 'img', 'quien_prepara as preparacion','consumo_reservacion as reservacion','descripcion','autoreferencia','promocion')
             ->with('producto_categoria_comida')
             ->whereNull('r_producto.deleted_at')
             ->where('r_producto.activo', 1)
