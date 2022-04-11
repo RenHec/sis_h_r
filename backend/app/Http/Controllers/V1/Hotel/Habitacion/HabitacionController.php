@@ -59,7 +59,7 @@ class HabitacionController extends ApiController
             $habitacion = new HHabitacion();
             $habitacion->foto = $path;
             $habitacion->numero = $request->numero;
-            $habitacion->huespedes = HTipoCama::find($request->h_tipos_camas_id['id'])->cantidad;
+            $habitacion->huespedes = 0;
             $habitacion->descripcion = $request->descripcion;
             $habitacion->h_estados_id = HEstado::DISPONIBLE;
             $habitacion->created_at = date('Y-m-d H:i:s');
@@ -67,6 +67,7 @@ class HabitacionController extends ApiController
 
             $habitacion_precio = HHabitacionPrecio::create(
                 [
+                    'cantidad_camas' => $request->cantidad_camas,
                     'nombre' => $request->nombre,
                     'precio_desayuno' => $request->incluye_desayuno ? $request->precio_desayuno : 0,
                     'precio_habitacion' => $request->precio_habitacion,
@@ -80,6 +81,9 @@ class HabitacionController extends ApiController
             );
 
             HHabitacionFoto::create(['foto' => $habitacion->foto, 'h_habitaciones_id' => $habitacion->id]);
+
+            $habitacion->huespedes = HTipoCama::find($request->h_tipos_camas_id['id'])->cantidad * $habitacion_precio->cantidad_camas;
+            $habitacion->save();
 
             $this->bitacora_general($habitacion->getTable(), $this->acciones(0), $habitacion, "{$this->controlador_principal}@store");
             $this->bitacora_general($habitacion_precio->getTable(), $this->acciones(0), $habitacion_precio, "{$this->controlador_principal}@store");
@@ -109,6 +113,7 @@ class HabitacionController extends ApiController
     {
         try {
             DB::beginTransaction();
+            $habitacion->numero = $request->numero;
             $habitacion->descripcion = $request->descripcion;
             $habitacion->h_estados_id = $request->h_estados_id['id'];
             $habitacion->updated_at = date('Y-m-d H:i:s');

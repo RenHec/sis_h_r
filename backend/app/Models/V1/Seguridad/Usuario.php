@@ -95,7 +95,7 @@ class Usuario extends Authenticatable
      */
     public function scopeTodos($query)
     {
-        return $query->with('roles.rol', 'empleado.municipio')->withTrashed()->where('id', '<>', 1)->orderByDesc('id');
+        return $query->with('roles.rol', 'empleado.municipio')->withTrashed()->where('cui', '<>', '0000000000001')->orderByDesc('id');
     }
 
     /**

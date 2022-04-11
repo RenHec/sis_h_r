@@ -14,7 +14,8 @@ class HHabitacionPrecio extends Model
 
     protected $fillable = [
         'nombre', 'precio_desayuno', 'precio_habitacion', 'precio',
-        'activo', 'h_tipos_camas_id', 'h_habitaciones_id', 'incluye_desayuno'
+        'activo', 'h_tipos_camas_id', 'h_habitaciones_id', 'incluye_desayuno',
+        'cantidad_camas'
     ];
 
     /**
@@ -28,7 +29,8 @@ class HHabitacionPrecio extends Model
         'precio_desayuno' => 'float',
         'precio_habitacion' => 'float',
         'precio' => 'float',
-        'incluye_desayuno' => 'boolean'
+        'incluye_desayuno' => 'boolean',
+        'cantidad_camas' => 'integer'
     ];
 
     /**

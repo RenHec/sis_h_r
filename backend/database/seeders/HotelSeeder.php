@@ -2,12 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Models\V1\Hotel\HEstado;
-use App\Models\V1\Hotel\HHabitacion;
-use App\Models\V1\Hotel\HHabitacionPrecio;
-use App\Models\V1\Hotel\HKardexHistorial;
-use App\Models\V1\Hotel\HTipoCama;
+use App\Imports\HabitacionesHotelImport;
 use Illuminate\Database\Seeder;
+use App\Models\V1\Hotel\HEstado;
+use App\Models\V1\Hotel\HTipoCama;
+use App\Models\V1\Hotel\HHabitacion;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\V1\Hotel\HKardexHistorial;
+use App\Models\V1\Hotel\HHabitacionPrecio;
 
 class HotelSeeder extends Seeder
 {
@@ -24,15 +26,6 @@ class HotelSeeder extends Seeder
             ['nombre' => 'INACTIVO']
         ]);
 
-        HTipoCama::insert([
-            ['nombre' => 'Individual', 'cantidad' => 1],
-            ['nombre' => 'Matrimonial', 'cantidad' => 2],
-            ['nombre' => 'Queen', 'cantidad' => 2],
-            ['nombre' => 'King', 'cantidad' => 2]
-        ]);
-
-        HHabitacion::factory(10)->create();
-        HHabitacionPrecio::factory(30)->create();
-        HKardexHistorial::factory(250)->create();
+        Excel::import(new HabitacionesHotelImport, 'database/seeders/Catalogos/Habitaciones.xlsx');
     }
 }

@@ -114,7 +114,7 @@
                           :errors_form="errors"
                         ></FormError>
                       </v-col>
-                      <v-col cols="12" md="3">
+                      <v-col cols="12" md="4">
                         <v-checkbox
                           class="mx-2"
                           prepend-icon="fiber_new"
@@ -132,7 +132,7 @@
                           :errors_form="errors"
                         ></FormError>
                       </v-col>
-                      <v-col cols="12" md="3" v-if="form.incluye_desayuno">
+                      <v-col cols="12" md="4" v-if="form.incluye_desayuno">
                         <v-text-field
                           class="mx-2"
                           prepend-icon="fiber_new"
@@ -150,7 +150,7 @@
                           :errors_form="errors"
                         ></FormError>
                       </v-col>
-                      <v-col cols="12" md="3">
+                      <v-col cols="12" :md="form.incluye_desayuno ? '4' : '8'">
                         <v-text-field
                           class="mx-2"
                           prepend-icon="fiber_new"
@@ -168,7 +168,27 @@
                           :errors_form="errors"
                         ></FormError>
                       </v-col>
-                      <v-col cols="12" :md="form.incluye_desayuno ? '3' : '6'">
+                      <v-col cols="12" md="3">
+                        <v-text-field
+                          class="mx-2"
+                          prepend-icon="fiber_new"
+                          counter
+                          outlined
+                          v-model="form.cantidad_camas"
+                          type="text"
+                          label="cantidad de camas"
+                          data-vv-scope="crear"
+                          data-vv-name="cantidad de camas"
+                          v-validate="
+                            'required|integer|min_value:1|max_value:10'
+                          "
+                        ></v-text-field>
+                        <FormError
+                          :attribute_name="'crear.cantidad de camas'"
+                          :errors_form="errors"
+                        ></FormError>
+                      </v-col>
+                      <v-col cols="12" md="9">
                         <v-select
                           prepend-icon="view_carousel"
                           v-model="form.h_tipos_camas_id"
@@ -333,7 +353,7 @@
                     ></v-list-item-subtitle>
                     <v-list-item-subtitle
                       v-text="
-                        `${habitacion_precio.tipo_cama.nombre} | Persona: ${habitacion_precio.tipo_cama.cantidad}`
+                        `${habitacion_precio.cantidad_camas} ${habitacion_precio.tipo_cama.nombre} | Persona: ${habitacion_precio.tipo_cama.cantidad}`
                       "
                     ></v-list-item-subtitle>
                     <v-list-item-subtitle
@@ -544,7 +564,7 @@
                     :errors_form="errors"
                   ></FormError>
                 </v-col>
-                <v-col cols="12" md="12">
+                <v-col cols="12" md="4">
                   <v-checkbox
                     class="mx-2"
                     prepend-icon="fiber_new"
@@ -562,7 +582,7 @@
                     :errors_form="errors"
                   ></FormError>
                 </v-col>
-                <v-col cols="12" md="12" v-if="form.incluye_desayuno">
+                <v-col cols="12" md="4" v-if="form.incluye_desayuno">
                   <v-text-field
                     class="mx-2"
                     prepend-icon="fiber_new"
@@ -580,7 +600,7 @@
                     :errors_form="errors"
                   ></FormError>
                 </v-col>
-                <v-col cols="12" md="3">
+                <v-col cols="12" :md="form_precio.incluye_desayuno ? '4' : '8'">
                   <v-text-field
                     class="mx-2"
                     prepend-icon="fiber_new"
@@ -598,7 +618,25 @@
                     :errors_form="errors"
                   ></FormError>
                 </v-col>
-                <v-col cols="12" md="12">
+                <v-col cols="12" md="3">
+                  <v-text-field
+                    class="mx-2"
+                    prepend-icon="fiber_new"
+                    counter
+                    outlined
+                    v-model="form_precio.cantidad_camas"
+                    type="text"
+                    label="cantidad de camas"
+                    data-vv-scope="crear_precio"
+                    data-vv-name="cantidad de camas"
+                    v-validate="'required|integer|min_value:1|max_value:10'"
+                  ></v-text-field>
+                  <FormError
+                    :attribute_name="'crear_precio.cantidad de camas'"
+                    :errors_form="errors"
+                  ></FormError>
+                </v-col>
+                <v-col cols="12" md="9">
                   <v-select
                     prepend-icon="view_carousel"
                     v-model="form_precio.h_tipos_camas_id"
@@ -734,6 +772,11 @@ export default {
       search: '',
       headers: [
         {
+          text: 'Habitación',
+          align: 'start',
+          value: 'numero',
+        },
+        {
           text: '',
           align: 'start',
           value: 'fotografia',
@@ -768,6 +811,7 @@ export default {
         descripcion: null,
         numero: null,
 
+        cantidad_camas: 0,
         nombre: null,
         precio_desayuno: 0,
         precio_habitacion: 0,
@@ -780,6 +824,7 @@ export default {
 
       form_precio: {
         id: null,
+        cantidad_camas: 0,
         nombre: null,
         precio_desayuno: 0,
         precio_habitacion: 0,
@@ -886,6 +931,7 @@ export default {
 
     limpiar() {
       this.form.id = 0
+      this.form.numero = 0
       this.form.descripcion = null
       this.form.foto = null
       this.form.h_tipos_camas_id = null
@@ -895,6 +941,7 @@ export default {
 
       //PRECIO
       this.form_precio.id = null
+      this.form_precio.cantidad_camas = 0
       this.form_precio.nombre = null
       this.form_precio.precio_desayuno = 0
       this.form_precio.precio_habitacion = 0
@@ -1050,6 +1097,7 @@ export default {
     modal_precio(item) {
       this.loading = true
       this.form_precio.id = item.id
+      this.form_precio.cantidad_camas = 0
       this.form_precio.nombre = null
       this.form_precio.precio_desayuno = 0
       this.form_precio.precio_habitacion = 0

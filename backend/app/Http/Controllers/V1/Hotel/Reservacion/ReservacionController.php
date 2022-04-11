@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\V1\Hotel\Reservacion;
 
 use Illuminate\Http\Request;
+use App\Models\V1\Hotel\HTipoCama;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\V1\Hotel\HReservacion;
 use App\Http\Controllers\ApiController;
-use App\Models\V1\Hotel\HHabitacionPrecio;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Storage;
+use App\Models\V1\Hotel\HHabitacionPrecio;
 use App\Models\V1\Hotel\HReservacionDetalle;
 
 class ReservacionController extends ApiController
@@ -111,13 +112,21 @@ class ReservacionController extends ApiController
 
             $cantidad_personas = 0;
             $nuevo_array = array();
-            foreach ($request->h_reservaciones_detalles as $key => $value) {
+            foreach ($request->h_reservaciones_detalles as $value) {
                 // h_reservaciones_detalles, en este valor viene el ID del precio de la habitación
-                $reservado = HReservacionDetalle::where('h_habitaciones_precios_id', $value['h_reservaciones_detalles']['id'])
-                    ->where('disponible', false)
-                    ->whereBetween(DB::RAW("'$inicio'"), [DB::RAW('inicio'), DB::RAW('fin')])
-                    ->whereBetween(DB::RAW("'$fin'"), [DB::RAW('inicio'), DB::RAW('fin')])
-                    ->first();
+                if (is_null($horas) && $value['h_reservaciones_detalles']['seleccionado'] == 1) {
+                    $reservado = HReservacionDetalle::where('h_habitaciones_precios_id', $value['h_reservaciones_detalles']['id'])
+                        ->where('disponible', false)
+                        ->whereBetween(DB::RAW('inicio'), [DB::RAW("'$inicio'"), DB::RAW("'$fin'")])
+                        ->whereBetween(DB::RAW('fin'), [DB::RAW("'$inicio'"), DB::RAW("'$fin'")])
+                        ->first();
+                } else if (!is_null($horas) && $value['h_reservaciones_detalles']['seleccionado'] == 1) {
+                    $reservado = HReservacionDetalle::where('h_habitaciones_precios_id', $value['h_reservaciones_detalles']['id'])
+                        ->where('disponible', false)
+                        ->whereBetween(DB::RAW("'$inicio'"), [DB::RAW('inicio'), DB::RAW('fin')])
+                        ->whereBetween(DB::RAW("'$fin'"), [DB::RAW('inicio'), DB::RAW('fin')])
+                        ->first();
+                }
 
                 if (!is_null($reservado)) {
                     throw new \Exception("La habitación {$value['h_reservaciones_detalles']['habitacion']} ya se encuentra reservada.", 1);
@@ -133,7 +142,8 @@ class ReservacionController extends ApiController
                     $mensaje_dia = $dias > 1 ? "{$dias} días" : "{$dias} día";
                 }
 
-                $incluye_desayuno = boolval($value['h_reservaciones_detalles']['incluye_desayuno']) ? " e incluye desayuno." : ".";
+                $tol = $huespedes * $dias;
+                $incluye_desayuno = boolval($value['h_reservaciones_detalles']['incluye_desayuno']) ? " e incluye {$tol} desayunos." : ".";
 
                 $detalle = HReservacionDetalle::create(
                     [
@@ -156,8 +166,13 @@ class ReservacionController extends ApiController
 
                 $this->bitacora_general($detalle->getTable(), $this->acciones(0), $detalle, "{$this->controlador_principal}@store");
 
-                $buscar_desayuno = HHabitacionPrecio::find($value['h_reservaciones_detalles']['id']);
-                $extra = $buscar_desayuno->incluye_desayuno ? ($detalle->huespedes * $detalle->dias) * $buscar_desayuno->precio_desayuno : 0;
+                $extra = 0;
+
+                if ($detalle->incluye_desayuno) {
+                    $buscar_desayuno = HHabitacionPrecio::find($value['h_reservaciones_detalles']['id']);
+                    $extra = $buscar_desayuno->incluye_desayuno ? ($huespedes * $detalle->dias) * $buscar_desayuno->precio_desayuno : 0;
+                }
+
                 $reservacion->extra += $extra;
                 $reservacion->sub_total += $detalle->sub_total;
                 $reservacion->total = $reservacion->sub_total;

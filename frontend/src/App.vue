@@ -16,7 +16,7 @@
       fixed
       height="100%"
     >
-      <v-img :aspect-ratio="16 / 10" :src="logo"></v-img>
+      <v-img :aspect-ratio="16 / 12" sizes="100" :src="logo"></v-img>
       <v-list dense>
         <v-list-item @click="redirect('/')" link>
           <v-list-item-icon>

@@ -8,13 +8,13 @@
         <v-img
           :aspect-ratio="14 / 10"
           class="img img-fluid img-thumbnail rounded"
-          :src="empresa.logo"
+          :src="logo"
         ></v-img>
         <v-card-subtitle class="display-2 text-bold">
           Inicio de Sesión
         </v-card-subtitle>
         <v-card-subtitle class="display-1">
-          {{ empresa.nombre }}
+          {{ sistema }}
         </v-card-subtitle>
         <v-card-text>
           <v-form>
@@ -77,15 +77,19 @@ export default {
         cui: '',
         password: '',
       },
-      empresa: {
-        nombre: null,
-        logo: null,
-      },
     }
   },
 
-  created() {
-    this.configracion()
+  created() {},
+
+  computed: {
+    logo() {
+      return `${this.$store.state.base_url}img/logo.png`
+    },
+
+    sistema() {
+      return 'Sistema'
+    },
   },
 
   methods: {
@@ -105,9 +109,11 @@ export default {
           self.$router.push('/')
         })
         .catch((e) => {
-            this.$toastr.error(e, 'Error')
+          this.errorResponse(e)
         })
-        .finally(()=>{self.loading = false})
+        .finally(() => {
+          this.loading = false
+        })
     },
 
     beforeLogin() {
@@ -117,11 +123,6 @@ export default {
           self.login()
         }
       })
-    },
-
-    configracion() {
-      this.empresa.nombre = 'Sistema POS'
-      this.empresa.logo = `${this.$store.state.base_url}img/logo.png`
     },
   },
 }

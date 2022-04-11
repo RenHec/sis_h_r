@@ -235,12 +235,13 @@ class SelectController extends ApiController
                     ->select(
                         'h_habitaciones_precios.id AS id',
                         'h_habitaciones_precios.precio AS precio',
+                        'h_habitaciones_precios.cantidad_camas AS cantidad_camas',
                         'h_tipos_camas.nombre AS nombre',
                         'h_tipos_camas.cantidad AS cantidad',
                         'h_habitaciones.numero AS habitacion',
                         'h_habitaciones.id AS habitacion_id',
                         'h_habitaciones_precios.incluye_desayuno AS incluye_desayuno',
-                        DB::RAW("CONCAT(h_habitaciones_precios.nombre,' | Cama: ',h_tipos_camas.nombre,' | Cantidad: ',h_tipos_camas.cantidad) AS nombre_completo"),
+                        DB::RAW("CONCAT(h_habitaciones_precios.nombre,' | Cama ',h_habitaciones_precios.cantidad_camas,': ',h_tipos_camas.nombre,' | Cantidad: ',h_tipos_camas.cantidad) AS nombre_completo"),
                         DB::RAW("IF(h_tipos_camas.id=1, true, false) AS mostrar"),
                         DB::RAW("false AS seleccionado")
                     )

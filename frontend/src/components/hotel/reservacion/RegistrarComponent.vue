@@ -466,7 +466,9 @@
                                               precio.precio
                                             } ${
                                               precio.incluye_desayuno == 1
-                                                ? ' | Incluye desayuno'
+                                                ? ' | Incluye ' +
+                                                  precio.cantidad_camas +
+                                                  ' desayunos'
                                                 : ''
                                             }`
                                           }}
@@ -524,8 +526,14 @@
                             <vue-number-input
                               v-model="detalle.huespedes"
                               size="small"
-                              :min="1"
-                              :max="detalle.h_reservaciones_detalles.cantidad"
+                              :min="
+                                detalle.h_reservaciones_detalles.cantidad *
+                                detalle.h_reservaciones_detalles.cantidad_camas
+                              "
+                              :max="
+                                detalle.h_reservaciones_detalles.cantidad *
+                                detalle.h_reservaciones_detalles.cantidad_camas
+                              "
                               inline
                               center
                               controls
@@ -571,7 +579,10 @@
                             ></FormError>
                             <br />
                           </td>
-                          <td class="text-right" @click="quitar_detalle">
+                          <td
+                            class="text-right"
+                            @click="quitar_detalle($event, detalle)"
+                          >
                             <p class="text-h5 text--white">
                               {{
                                 form.consulta_por_hora
@@ -960,18 +971,22 @@ export default {
       this.loading = true
       let object = new Object()
       object.h_reservaciones_detalles = precio
-      object.huespedes = 1
+      object.huespedes = precio.cantidad_camas * precio.cantidad
       object.precio = 0
       this.form.h_reservaciones_detalles.push(object)
       precio.seleccionado = precio.mostrar === 1 ? 0 : 1
       this.$toastr.info(
-        `Se agrego la habitación #${item.numero} a la reservación, con la descripción ${precio.cantidad} | ${precio.nombre_completo} - Q${precio.precio}`,
+        `Se agrego la habitación #${
+          item.numero
+        } a la reservación, con la descripción ${
+          precio.cantidad_camas * precio.cantidad
+        } | ${precio.nombre_completo} - Q${precio.precio}`,
         'Reservado',
       )
       this.loading = false
     },
 
-    quitar_detalle(index) {
+    quitar_detalle(index, precio) {
       this.$swal({
         title: 'Eliminar',
         text: '¿Está seguro de realizar esta acción?',
@@ -984,6 +999,7 @@ export default {
             this.form.h_reservaciones_detalles.indexOf(index),
             1,
           )
+          precio.h_reservaciones_detalles.seleccionado = 0
           this.loading = false
         }
       })
