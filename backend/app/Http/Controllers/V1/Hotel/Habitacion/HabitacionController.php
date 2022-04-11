@@ -56,11 +56,9 @@ class HabitacionController extends ApiController
 
             DB::beginTransaction();
 
-            $cantidad = HHabitacion::count();
-
             $habitacion = new HHabitacion();
             $habitacion->foto = $path;
-            $habitacion->numero = $cantidad + 1;
+            $habitacion->numero = $request->numero;
             $habitacion->huespedes = HTipoCama::find($request->h_tipos_camas_id['id'])->cantidad;
             $habitacion->descripcion = $request->descripcion;
             $habitacion->h_estados_id = HEstado::DISPONIBLE;

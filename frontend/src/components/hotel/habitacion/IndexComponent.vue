@@ -54,6 +54,47 @@
 
                 <v-card-text>
                   <v-container>
+                    <v-row>
+                      <v-col cols="12" md="3">
+                        <v-text-field
+                          class="mx-2"
+                          prepend-icon="fiber_new"
+                          counter
+                          outlined
+                          v-model="form.numero"
+                          type="text"
+                          label="número de habitación"
+                          data-vv-scope="crear"
+                          data-vv-name="número de habitación"
+                          v-validate="
+                            'required|integer|min_value:1|max_value:30'
+                          "
+                        ></v-text-field>
+                        <FormError
+                          :attribute_name="'crear.número de habitación'"
+                          :errors_form="errors"
+                        ></FormError>
+                      </v-col>
+                      <v-col cols="12" md="12">
+                        <v-textarea
+                          class="mx-2"
+                          rows="2"
+                          prepend-icon="fiber_new"
+                          counter
+                          outlined
+                          v-model="form.descripcion"
+                          type="text"
+                          label="descripción"
+                          data-vv-scope="crear"
+                          data-vv-name="descripción"
+                          v-validate="'max:500'"
+                        ></v-textarea>
+                        <FormError
+                          :attribute_name="'crear.descripción'"
+                          :errors_form="errors"
+                        ></FormError>
+                      </v-col>
+                    </v-row>
                     <v-row v-if="!editedIndex">
                       <v-col cols="12" md="12">
                         <v-text-field
@@ -146,27 +187,6 @@
                         ></v-select>
                         <FormError
                           :attribute_name="'crear.tipo de cama'"
-                          :errors_form="errors"
-                        ></FormError>
-                      </v-col>
-                    </v-row>
-                    <v-row>
-                      <v-col cols="12" md="12">
-                        <v-textarea
-                          class="mx-2"
-                          rows="2"
-                          prepend-icon="fiber_new"
-                          counter
-                          outlined
-                          v-model="form.descripcion"
-                          type="text"
-                          label="descripción"
-                          data-vv-scope="crear"
-                          data-vv-name="descripción"
-                          v-validate="'required|max:500'"
-                        ></v-textarea>
-                        <FormError
-                          :attribute_name="'crear.descripción'"
                           :errors_form="errors"
                         ></FormError>
                       </v-col>
@@ -746,6 +766,7 @@ export default {
         id: 0,
         foto: null,
         descripcion: null,
+        numero: null,
 
         nombre: null,
         precio_desayuno: 0,
@@ -929,6 +950,7 @@ export default {
       this.form.id = item.id
       this.form.descripcion = item.descripcion
       this.form.h_estados_id = item.estado
+      this.form.numero = item.numero
 
       this.editedIndex = true
       this.dialog = true
