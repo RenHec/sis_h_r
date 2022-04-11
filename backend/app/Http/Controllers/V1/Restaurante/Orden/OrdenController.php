@@ -109,7 +109,6 @@ class OrdenController extends ApiController
                     $dias = $item->dias;
                     $huespedes += $item->huespedes;
                 }
-                $cantidad_desayunos = $dias * $huespedes;
 
                 //Verificar si tiene items gratis todavia
                 $ordenes_reservacion = OrdenProducto::join('r_producto', 'r_producto.id', '.r_orden_producto.producto_id')
@@ -325,7 +324,7 @@ class OrdenController extends ApiController
             return $this->errorResponse('La orden tiene productos pendientes de despacharse');
         }
 
-        if($request->get('ticket') == 1 && empty($request->get('voucher'))){
+        if ($request->get('ticket') == 1 && empty($request->get('voucher'))) {
             return $this->errorResponse('Debe ingresar un número de voucher válido');
         }
 
@@ -374,7 +373,7 @@ class OrdenController extends ApiController
         return $registro->monto;
     }
 
-    public function updateItemsOrderProducts($detalle,$venta)
+    public function updateItemsOrderProducts($detalle, $venta)
     {
         $detalle =  DB::table('r_orden_producto')
             ->whereIn('id', $detalle)

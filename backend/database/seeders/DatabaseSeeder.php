@@ -37,38 +37,13 @@ class DatabaseSeeder extends Seeder
         Excel::import(new DepartamentoImport, 'database/seeders/Catalogos/Departamentos.xlsx');
         Excel::import(new MunicipioImport, 'database/seeders/Catalogos/Municipios.xlsx');
 
-        Usuario::factory(1)->create();
-        //Usuario::factory(6)->create();
+        Usuario::factory(7)->create();
 
+        $usuario = Usuario::where('cui', '0000000000001')->first();
         UsuarioRol::create([
-            'usuario_id' => 1,
+            'usuario_id' => $usuario->id,
             'rol_id' => 1
         ]);
-
-        /*UsuarioRol::create([
-            'usuario_id' => 3,
-            'rol_id' => 2
-        ]);
-
-        UsuarioRol::create([
-            'usuario_id' => 4,
-            'rol_id' => 3
-        ]);
-
-        UsuarioRol::create([
-            'usuario_id' => 5,
-            'rol_id' => 1
-        ]);
-
-        UsuarioRol::create([
-            'usuario_id' => 6,
-            'rol_id' => 2
-        ]);
-
-        UsuarioRol::create([
-            'usuario_id' => 7,
-            'rol_id' => 3
-        ]);*/
 
         Artisan::call('passport:install');
 

@@ -387,7 +387,7 @@ trait ApiResponser
 		$fecha = date('d/m/Y H:i:s');
 
 		$this->fpdf->Image($logo, 27, 0, 25, 0, 'PNG');
-		$this->fpdf->Ln(4);
+		$this->fpdf->Ln(14);
 		$this->fpdf->Cell(60, 4, utf8_decode($empresa_nombre), 0, 1, 'C');
 		$this->fpdf->SetFont('Helvetica', '', 10);
 		$this->fpdf->Cell(
@@ -566,7 +566,7 @@ trait ApiResponser
 		$fecha = date('d/m/Y H:i:s');
 
 		$this->fpdf->Image($logo, 27, 0, 25, 0, 'PNG');
-		$this->fpdf->Ln(4);
+		$this->fpdf->Ln(14);
 		$this->fpdf->Cell(60, 4, utf8_decode($empresa_nombre), 0, 1, 'C');
 		$this->fpdf->SetFont('Helvetica', '', 10);
 		$this->fpdf->Cell(

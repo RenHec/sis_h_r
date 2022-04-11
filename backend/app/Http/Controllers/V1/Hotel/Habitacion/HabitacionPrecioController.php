@@ -28,6 +28,7 @@ class HabitacionPrecioController extends ApiController
 
             $precio_nuevo = HHabitacionPrecio::create(
                 [
+                    'cantidad_camas' => $request->cantidad_camas,
                     'nombre' => $request->nombre,
                     'precio_desayuno' => $request->incluye_desayuno ? $request->precio_desayuno : 0,
                     'precio_habitacion' => $request->precio_habitacion,
@@ -40,7 +41,7 @@ class HabitacionPrecioController extends ApiController
                 ]
             );
 
-            $habitacion_precio->huespedes += HTipoCama::find($request->h_tipos_camas_id['id'])->cantidad;
+            $habitacion_precio->huespedes += (HTipoCama::find($request->h_tipos_camas_id['id'])->cantidad * $precio_nuevo->cantidad_camas);
             $habitacion_precio->save();
 
             $this->bitacora_general($precio_nuevo->getTable(), $this->acciones(0), $precio_nuevo, "{$this->controlador_principal}@update");
@@ -69,7 +70,7 @@ class HabitacionPrecioController extends ApiController
         try {
             DB::beginTransaction();
             $habitacion = HHabitacion::find($habitacion_precio->h_habitaciones_id);
-            $habitacion->huespedes = $habitacion->huespedes - HTipoCama::find($habitacion_precio->h_tipos_camas_id)->cantidad;
+            $habitacion->huespedes = $habitacion->huespedes - (HTipoCama::find($habitacion_precio->h_tipos_camas_id)->cantidad * $habitacion_precio->cantidad_camas);
             $habitacion->updated_at = date('Y-m-d H:i:s');
             $habitacion->save();
 

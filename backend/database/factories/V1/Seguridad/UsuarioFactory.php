@@ -26,11 +26,11 @@ class UsuarioFactory extends Factory
     {
         $empleado = Empleado::create(
             [
-                'cui' => '0000000000001', //$this->faker->unique()->randomElement(['0000000000001', '0000000000002', '0000000000003', '0000000000004', '0000000000005', '0000000000006', '0000000000007']),
+                'cui' => $this->faker->unique()->randomElement(['0000000000001', '0000000000002', '0000000000003', '0000000000004', '0000000000005', '0000000000006', '0000000000007']),
                 'primer_nombre' => $this->faker->randomElement([$this->faker->firstNameMale, $this->faker->firstNameFemale]),
                 'segundo_nombre' => $this->faker->randomElement([$this->faker->firstNameMale, $this->faker->firstNameFemale, null]),
                 'primer_apellido' => $this->faker->lastName,
-                'segundo_apellido' => $guardo = $this->faker->randomElement([$this->faker->lastName, null]),
+                'segundo_apellido' => $this->faker->randomElement([$this->faker->lastName, null]),
                 'email' => $this->faker->unique()->freeEmail,
                 'ubicacion' => $this->faker->randomElement([$this->faker->address, null]),
                 'telefono' => $this->faker->unique()->numerify('########'),
@@ -40,11 +40,12 @@ class UsuarioFactory extends Factory
         );
 
         $admin = Usuario::where('admin', Usuario::USUARIO_ADMINISTRADOR)->first();
+        $password = $empleado->cui === '0000000000001' ? 'admin' : 'admin123';
 
         return [
             'cui' => $empleado->cui,
             'admin' => is_null($admin) ? Usuario::USUARIO_ADMINISTRADOR : Usuario::USUARIO_REGULAR,
-            'password' => 'admin',
+            'password' => $password,
             'empleado_id' => $empleado->id
         ];
     }
