@@ -26,6 +26,6 @@ class HotelSeeder extends Seeder
             ['nombre' => 'INACTIVO']
         ]);
 
-        Excel::import(new HabitacionesHotelImport, 'database/seeders/Catalogos/Habitaciones.xlsx');
+        Excel::import(new HabitacionesHotelImport, 'database/seeders/Catalogos/HabitacionesHotel.xlsx');
     }
 }
