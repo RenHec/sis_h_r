@@ -19,7 +19,7 @@
             outlined
             @click="categoryFilter(category.id)"
           >
-            <v-icon>{{ category.icono }}</v-icon>&nbsp;{{ category.nombre }}
+            {{ category.nombre }}
           </v-btn>
         </v-slide-item>
       </v-slide-group>

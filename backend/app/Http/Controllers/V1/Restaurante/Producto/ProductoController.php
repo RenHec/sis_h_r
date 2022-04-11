@@ -22,14 +22,14 @@ class ProductoController extends ApiController
      */
     public function index(Request $request)
     {
-        $columna    = $request['sortBy'] ? $request['sortBy'] : "id";
+        $columna    = $request['sortBy'] ? $request['sortBy'] : "nombre";
         $criterio   = $request['search'];
         $orden      = $request['sortDesc'] ? 'desc' : 'asc';
         $filas      = $request['perPage'];
         $pagina     = $request['page'];
 
         $productos  = DB::table('r_producto')
-            ->select('id', 'nombre', 'precio', 'img', 'quien_prepara', 'usa_inventario as inventario', 'costo','descripcion')
+            ->select('id', 'nombre', 'precio', 'img', 'quien_prepara', 'usa_inventario as inventario', 'costo','descripcion','promocion')
             ->where($columna, 'LIKE', '%' . $criterio . '%')
             ->whereNull('deleted_at')
             ->orderBy($columna, $orden)
@@ -85,6 +85,7 @@ class ProductoController extends ApiController
             'costo' => 'required|numeric',
             'preparacion' => 'required|numeric|min:1|max:2',
             'inventario' => 'required|numeric|min:0|max:1',
+            'descripcion' => 'nullable',
             'consumo_reservacion' => 'required',
         ];
 
@@ -96,14 +97,18 @@ class ProductoController extends ApiController
         $file->move(getcwd() . $this->pathImage, $name);
 
         return DB::transaction(function () use ($request, $name) {
-            $registro           = new Producto();
-            $registro->nombre   = $request->get('nombre');
-            $registro->precio   = $request->get('precio');
-            $registro->img      = $this->pathImage . $name;
-            $registro->costo    = $request->get('costo');
-            $registro->quien_prepara    = $request->get('preparacion');
-            $registro->usa_inventario   = $request->get('inventario');
-            $registro->consumo_reservacion   = $request->get('consumo_reservacion');
+            $registro                       = new Producto();
+            $registro->nombre               = $request->get('nombre');
+            $registro->precio               = $request->get('precio');
+            $registro->img                  = $this->pathImage . $name;
+            $registro->costo                = $request->get('costo');
+            $registro->descripcion          = $request->get('descripcion');
+            $registro->quien_prepara        = $request->get('preparacion');
+            $registro->usa_inventario       = $request->get('inventario');
+            $registro->consumo_reservacion  = $request->get('consumo_reservacion');
+            $registro->save();
+
+            $registro->autoreferencia = $registro->id;
             $registro->save();
 
             foreach ($request->get('categorias') as $key => $value) {
@@ -177,12 +182,12 @@ class ProductoController extends ApiController
                 ]);
             }
 
-            $registro->nombre   = $request->get('nombre');
-            $registro->precio   = $request->get('precio');
-            $registro->costo    = $request->get('costo');
-            $registro->descripcion    = $request->get('descripcion');
-            $registro->quien_prepara    = $request->get('preparacion');
-            $registro->consumo_reservacion   = $request->get('consumo_reservacion');
+            $registro->nombre               = $request->get('nombre');
+            $registro->precio               = $request->get('precio');
+            $registro->costo                = $request->get('costo');
+            $registro->descripcion          = $request->get('descripcion');
+            $registro->quien_prepara        = $request->get('preparacion');
+            $registro->consumo_reservacion  = $request->get('consumo_reservacion');
 
             if ($request->hasFile('imagen')) {
                 $file    = $request->file('imagen');
@@ -232,8 +237,9 @@ class ProductoController extends ApiController
 
     public function productsList()
     {
-        $registros =  Producto::select('id', 'nombre', 'precio', 'img', 'quien_prepara as preparacion','consumo_reservacion as reservacion','descripcion')
+        $registros =  Producto::select('id', 'nombre', 'precio', 'img', 'quien_prepara as preparacion','consumo_reservacion as reservacion','descripcion','autoreferencia')
             ->with('producto_categoria_comida')
+            ->whereNull('r_producto.deleted_at')
             ->where('r_producto.activo', 1)
             ->get();
 

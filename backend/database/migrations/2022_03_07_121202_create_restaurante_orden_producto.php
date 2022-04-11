@@ -20,6 +20,7 @@ class CreateRestauranteOrdenProducto extends Migration
             $table->uuid('orden_id')->nullable(false);
             $table->decimal('precio', 9, 2);
             $table->bigInteger('producto_id')->unsigned();
+            $table->bigInteger('autoreferencia');
             $table->string('reservacion_id')->nullable();
             $table->smallInteger('pagado')->default(0);
             $table->uuid('venta_id')->nullable();

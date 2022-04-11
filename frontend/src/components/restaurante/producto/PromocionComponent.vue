@@ -6,7 +6,7 @@
           <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
         <v-toolbar>
-          <v-toolbar-title>Nuevo registro</v-toolbar-title>
+          <v-toolbar-title>Crear promocion para producto <strong>{{ item.nombre }}</strong></v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="closeForm()">
             <v-icon dark>close</v-icon>
@@ -55,6 +55,19 @@
                 :errors_form="errors"
               ></form-error>
 
+              <v-text-field
+                outlined
+                dense
+                name="cantidad"
+                v-model="cantidad"
+                v-validate="'required|decimal'"
+                label="Cantidad"
+              ></v-text-field>
+              <form-error
+                :attribute_name="'cantidad'"
+                :errors_form="errors"
+              ></form-error>
+
               <v-file-input
                 @change="loadImage"
                 accept="image/*"
@@ -86,22 +99,6 @@
               ></v-select>
               <form-error
                 :attribute_name="'preparacion'"
-                :errors_form="errors"
-              ></form-error>
-
-              <v-select
-                outlined
-                dense
-                v-validate="'required'"
-                v-model="inventario"
-                item-value="id"
-                name="inventario"
-                item-text="nombre"
-                :items="useInventory"
-                label="Usa inventario?"
-              ></v-select>
-              <form-error
-                :attribute_name="'inventario'"
                 :errors_form="errors"
               ></form-error>
 
@@ -166,8 +163,9 @@ export default {
       imagen: null,
       costo: '',
       preparacion: '',
-      descripcion: '',
       inventario: '',
+      cantidad: '',
+      descripcion: '',
       consumo_reservacion: false,
       opc: [],
 
@@ -183,6 +181,9 @@ export default {
         { id: 0, nombre: 'No' },
       ],
     }
+  },
+  props:{
+    item:{}
   },
   mounted() {
     this.getListFoodCategories()
@@ -222,8 +223,9 @@ export default {
         (this.opc = []),
         (this.preparacion = ''),
         (this.inventario = ''),
-        (this.consumo_reservacion = false)
-        this.descripcion = ''
+        (this.consumo_reservacion = false),
+        this.cantidad = '',
+        this.descripcion = '',
       this.$validator.reset()
     },
 
@@ -233,21 +235,23 @@ export default {
       let data = new FormData()
       data.append('nombre', this.nombre)
       data.append('precio', this.precio)
+      data.append('cantidad', this.cantidad)
       data.append('costo', this.costo)
       data.append('preparacion', this.preparacion)
-      data.append('inventario', this.inventario)
+      data.append('productoId', this.item.id)
+      data.append('descripcion', this.descripcion)
       data.append('consumo_reservacion', this.consumo_reservacion ? 1 : 0)
       data.append('imagen', this.imagen, this.imagen.name)
-      data.append('descripcion', this.descripcion)
       this.opc.forEach((item) => {
         data.append('categorias[]', item)
       })
 
       this.$parent.$store.state.services.productService
-        .storeProducts(data)
+        .storePromotionProducts(data)
         .then((r) => {
           this.$toastr.success('Registro guardado con éxito', 'Mensaje')
           this.intializeFields()
+          this.closeForm()
         })
         .catch((e) => {
           if (e.response) {

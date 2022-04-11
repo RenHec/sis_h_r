@@ -62,7 +62,7 @@ export default{
 
       for(let menu of this.ordersRestaurant){
         if(menu.id === item.id){
-          this.$toastr.info('El item ya está incluido en el detalle','Mensaje')
+          this.$toastr.info('El producto ya está incluido en el detalle','Mensaje')
           menuAlreadyExists = true
           break;
         }

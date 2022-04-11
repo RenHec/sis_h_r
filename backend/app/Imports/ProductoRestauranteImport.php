@@ -32,14 +32,16 @@ final class ProductoRestauranteImport implements ToCollection
                         'nombre' => $value[1],
                         'precio' => $value[8],
                         'costo' => 0.00,
-                        'autoreferencia' => $value[4],
                         'promocion' => $value[3],
                         'img' => $this->img,
-                        'consumo_reservacion' => 2,
+                        'consumo_reservacion' => 0,
                         'quien_prepara' => $value[6],
                         'usa_inventario' => $value[5],
                         'descripcion' => $value[9],
                     ]);
+
+                    $producto->autoreferencia = $producto->id;
+                    $producto->save();
 
                     ProductoCategoriaComida::create([
                         'categoria_comida_id' => $this->categoria->id,

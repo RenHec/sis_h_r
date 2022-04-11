@@ -6,6 +6,7 @@
     <NuevoComponent v-if="showFormNewRecord" />
     <EditarComponent :item="itemUpdate" v-if="showFormUpdateRecord" />
     <InventarioComponent :item="itemUpdate" v-if="showFormInventoryProduct" />
+    <PromocionComponent :item="itemUpdate" v-if="showFormPromotion" />
     <v-data-table
       :page="page"
       :options.sync="options"
@@ -115,8 +116,22 @@
               </template>
               <span>Recargar</span>
             </v-tooltip>
-            <v-icon>more_vert</v-icon>
-            <v-tooltip top v-if="unitary">
+            <v-icon v-if="unitary && !selected[0].promocion == 1">more_vert</v-icon>
+            <v-tooltip top v-if="option && !selected[0].promocion == 1">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="createPromotion(selected[0])"
+                >
+                  <v-icon color="grey darken-2">celebration</v-icon>
+                </v-btn>
+              </template>
+              <span>Crear promoción</span>
+            </v-tooltip>
+            <v-icon v-if="unitary && !selected[0].promocion == 1">more_vert</v-icon>
+            <v-tooltip top v-if="unitary && !selected[0].promocion == 1">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   icon
@@ -156,12 +171,14 @@
 import NuevoComponent from './NuevoComponent.vue'
 import EditarComponent from './EditarComponent.vue'
 import InventarioComponent from './InventarioComponent.vue'
+import PromocionComponent from './PromocionComponent.vue'
 
 export default {
   components: {
     NuevoComponent,
     EditarComponent,
     InventarioComponent,
+    PromocionComponent
   },
   data() {
     return {
@@ -180,6 +197,7 @@ export default {
       formNewRecord: false,
       formUpdateRecord: false,
       formInventoryProduct: false,
+      formCreatePromotion: false,
 
       headers: [
         { text: 'Nombre', value: 'nombre' },
@@ -216,11 +234,13 @@ export default {
       'close_form_inventory_product',
       this.eventCloseFormInventoryProducts,
     )
+    events.$on('close_form_promotion_product', this.eventCloseFormPromotionProducts)
   },
   beforeDestroy() {
     events.$off('close_form_new_product')
     events.$off('close_form_update_product')
     events.$off('close_form_inventory_product')
+    events.$off('close_form_promotion_product')
   },
   watch: {
     options: {
@@ -250,9 +270,14 @@ export default {
       this.formNewRecord = false
       this.formUpdateRecord = false
       this.formInventoryProduct = false
+      this.formCreatePromotion = false
       this.mainTable = true
     },
     eventCloseFormNewProducts() {
+      this.initializeView()
+      this.recharge()
+    },
+    eventCloseFormPromotionProducts(){
       this.initializeView()
       this.recharge()
     },
@@ -263,6 +288,13 @@ export default {
     eventCloseFormInventoryProducts() {
       this.initializeView()
       this.recharge()
+    },
+    createPromotion(item) {
+      this.itemUpdate = item
+      this.formUpdateRecord = false
+      this.formInventoryProduct = false
+      this.formCreatePromotion = true
+      this.mainTable = false
     },
     updateRecord(item) {
       this.itemUpdate = item
@@ -403,22 +435,26 @@ export default {
       return (
         !this.formNewRecord &&
         !this.formUpdateRecord &&
-        !this.formInventoryProduct
+        !this.formInventoryProduct &&
+        !this.formCreatePromotion
       )
     },
     showFormNewRecord() {
       return (
-        !this.mainTable && !this.formUpdateRecord && !this.formInventoryProduct
+        !this.mainTable && !this.formUpdateRecord && !this.formInventoryProduct && !this.formCreatePromotion
       )
     },
     showFormUpdateRecord() {
       return (
-        !this.mainTable && !this.formNewRecord && !this.formInventoryProduct
+        !this.mainTable && !this.formNewRecord && !this.formInventoryProduct && !this.formCreatePromotion
       )
     },
     showFormInventoryProduct() {
-      return !this.mainTable && !this.formNewRecord && !this.formUpdateRecord
+      return !this.mainTable && !this.formNewRecord && !this.formUpdateRecord && !this.formCreatePromotion
     },
+    showFormPromotion() {
+      return !this.mainTable && !this.formNewRecord && !this.formUpdateRecord && !this.formInventoryProduct
+    }
   },
 }
 </script>

@@ -16,10 +16,11 @@ class CreateRestauranteProducto extends Migration
         Schema::create('r_producto', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nombre');
-            $table->bigInteger('autoreferencia');
+            $table->bigInteger('autoreferencia')->nullable();
             $table->smallInteger('promocion')->default(0);
             $table->decimal('precio', 9, 2);
             $table->decimal('costo', 9, 2)->default(0.00);
+            $table->integer('cantidad')->default(1);
             $table->text('descripcion')->nullable();
             $table->string('img')->nullable();
             $table->boolean('consumo_reservacion')->default(false);

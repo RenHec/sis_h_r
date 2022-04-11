@@ -46,6 +46,15 @@ class ProductoService {
   deleteOneProductInventory (data) {
     return this.axios.post(`${this.baseUrl}-delete-inventory`, data)
   }
+
+  storePromotionProducts (datos) {
+    return this.axios({
+      url: `${this.baseUrl}-promotion`,
+      data: datos,
+      method: 'POST',
+      'content-type': `multipart/form-data, charset=utf-8; boundary=${Math.random().toString().substr(2)}`
+    })
+  }
 }
 
 export default ProductoService
