@@ -20,6 +20,7 @@ class CreateRestauranteVentaTable extends Migration
             $table->string('voucher')->nullable();
             $table->bigInteger('cliente_id')->unsigned();
             $table->bigInteger('usuario_id')->unsigned();
+            $table->bigInteger('caja_id')->nullable();
             $table->decimal('monto',9,2);
             $table->foreign('orden_id')->references('id')->on('r_orden');
             $table->timestamps();

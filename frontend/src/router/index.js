@@ -38,6 +38,7 @@ import ReporteCaja from '@/components/restaurante/reportes/ReporteCajaComponent'
 import InventarioRestaurante from '@/components/restaurante/reportes/InventarioComponent'
 import VentaRestaurante from '@/components/restaurante/reportes/VentaComponent'
 import CajaRestaurante from '@/components/restaurante/caja/CajaComponent'
+import AperturarCajaRestaurante from '@/components/restaurante/caja/AperturarCajaComponent'
 /*
 |--------------------------------------------------------------------------
 | Hotel Components
@@ -80,7 +81,7 @@ const isLoggedIn = async (to, from, next) => {
       return store.state.is_login ? next(false) : next("/login")
     }
   } catch (error) {
-    alert(`Ocurrio un problema al intentar ingresar a ${to.path}`, 'Problema')
+    //console.log(`Ocurrio un problema al intentar ingresar a ${to.path}`, 'Problema')
   }
   /*const options = { from: from.fullPath, to: to.fullPath, route: to.fullPath };
   try {
@@ -256,25 +257,25 @@ const routes = [
     beforeEnter: multiguard([isLoggedIn])
   },
   {
-    path: '/restaurante-caja',
+    path: '/restaurante_caja',
     name: 'CajaRestaurante',
     component: CajaRestaurante,
     beforeEnter: multiguard([isLoggedIn])
   },
   {
-    path: '/reporte-restaurante-caja',
+    path: '/reporte_restaurante_caja',
     name: 'Caja',
     component: ReporteCaja,
     beforeEnter: multiguard([isLoggedIn])
   },
   {
-    path: '/reporte-restaurante-inventario',
+    path: '/reporte_restaurante_inventario',
     name: 'Inventario',
     component: InventarioRestaurante,
     beforeEnter: multiguard([isLoggedIn])
   },
   {
-    path: '/reporte-restaurante-venta',
+    path: '/reporte_restaurante_venta',
     name: 'VentaRestaurante',
     component: VentaRestaurante,
     beforeEnter: multiguard([isLoggedIn])

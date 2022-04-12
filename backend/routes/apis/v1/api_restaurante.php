@@ -56,6 +56,12 @@ Route::post('/ordenes-delete-all','Orden\OrdenDetailController@deleteAllOrderDet
 Route::post('/ordenes-modify-state','Orden\OrdenDetailController@modifyStateAllOrderDetail');
 Route::post('/ordenes-modify-state-by-waiter','Orden\OrdenDetailController@modifyStateWaiterOrderDetail');
 
+Route::get('/verificar-caja-restaurante','Reporte\CajaController@verifyIfExistsCashOpened');
+Route::post('/aperturar-restaurante-caja','Reporte\CajaController@openCash');
+Route::post('/egresos-restaurante-caja','Reporte\CajaController@storePurcharses');
+Route::post('/cierre-restaurante-caja','Reporte\CajaController@closeCash');
+Route::get('/ticket-restaurante-caja/{id}','Ticket\TicketController@getVoucherCash');
+
 Route::post('/reporte-restaurante-caja','Reporte\CajaController@getSalesAmountReportByDate');
 Route::get('/reporte-restaurante-venta','Reporte\VentaController@getListOfSales');
 

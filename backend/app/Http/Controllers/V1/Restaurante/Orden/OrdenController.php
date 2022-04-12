@@ -315,7 +315,8 @@ class OrdenController extends ApiController
             'monto'         => 'required',
             'voucher'       => 'nullable',
             'detalle'       => 'required|array',
-            'ticket'        => 'required|numeric|min:0|max:1'
+            'ticket'        => 'required|numeric|min:0|max:1',
+            'caja'          => 'required|numeric'
         ];
 
         $this->validate($request, $rules);
@@ -337,6 +338,7 @@ class OrdenController extends ApiController
             $registro->voucher      = $request->get('voucher');
             $registro->usuario_id   = $request->user()->id;
             $registro->monto        = $request->get('monto');
+            $registro->caja_id      = $request->get('caja');
             $registro->save();
 
             $orden = Orden::findOrFail($request->get('orden_id'));

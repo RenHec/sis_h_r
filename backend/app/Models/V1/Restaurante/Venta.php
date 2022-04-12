@@ -13,5 +13,5 @@ class Venta extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
 
-    protected $fillable = ['id','orden_id','tipo_pago_id','cliente_id','usuario_id','monto','voucher'];
+    protected $fillable = ['id','orden_id','tipo_pago_id','cliente_id','usuario_id','monto','voucher','venta_id'];
 }

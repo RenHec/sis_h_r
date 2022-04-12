@@ -4,10 +4,25 @@ namespace App\Http\Controllers\V1\Restaurante\Ticket;
 
 use App\Traits\TicketRestaurante;
 use Illuminate\Support\Facades\DB;
+use App\Models\V1\Restaurante\Caja;
 use App\Models\V1\Restaurante\Venta;
+use App\Traits\TicketCajaRestaurante;
 use App\Http\Controllers\ApiController;
+
 class TicketController extends ApiController
 {
+    public function getVoucherCash($cashId)
+    {
+        $cashRecord = Caja::findOrFail($cashId);
+
+        $pdf = new TicketCajaRestaurante('P','mm',array(80,200));
+
+        $pdf->setHeader();
+        $pdf->setBody($cashRecord);
+        $pdf->setFooter($cashRecord);
+
+        return $pdf->Output('D');
+    }
     public function getTicketPayment($id)
     {
         $saleRecord = Venta::findOrFail($id);

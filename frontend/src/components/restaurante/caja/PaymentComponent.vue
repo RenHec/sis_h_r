@@ -134,6 +134,12 @@ import FormError from '../../shared/FormError.vue'
 import CustomerForm from '../cliente/IndexComponent.vue'
 import moment from 'moment'
 
+import { createNamespacedHelpers } from 'vuex'
+
+const {
+  mapGetters: restaurantMapGetter
+} = createNamespacedHelpers('restaurant')
+
 import { v4 as uuidv4 } from 'uuid'
 
 export default{
@@ -197,7 +203,10 @@ export default{
     },
     showPaymentButton(){
       return this.tmp.length > 0
-    }
+    },
+    ...restaurantMapGetter([
+      'caja'
+    ]),
   },
   methods:{
     getNewAmountOrderTotal(){
@@ -239,7 +248,8 @@ export default{
         'monto':this.totalOrder,
         'voucher':this.voucher,
         'ticket':this.showInputVoucher ? 1 : 0,
-        'detalle':detail
+        'detalle':detail,
+        'caja':this.caja
       }
 
       this.loading = true

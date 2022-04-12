@@ -9,14 +9,23 @@ export default {
 
     selectedTable: 0,
     isTableSelected: false,
-    tableName: ''
+    tableName: '',
+
+    cashOpened: false,
+    caja: 0
   },
 
   actions: {
-    UPDATE_AMOUNT_ORDER({commit}, amount) {
+    UPDATE_CAJA_ID ({commit}, id) {
+      commit('SET_CAJA_ID', id)
+    },
+    UPDATE_CASH_OPENING ({commit}, flag) {
+      commit('SET_CASH_OPENING', flag)
+    },
+    UPDATE_AMOUNT_ORDER ({commit}, amount) {
       commit('SET_AMOUNT_ORDER', amount)
     },
-    UPDATE_SELECTED_TABLE({commit}, item) {
+    UPDATE_SELECTED_TABLE ({commit}, item) {
       commit('SET_SELECTED_TABLE', item.id)
       commit('SET_IS_TABLE_SELECTED', item.selected)
       commit('SET_TABLE_NAME', item.name)
@@ -41,6 +50,12 @@ export default {
     },
     SET_TABLE_NAME (state, tableName) {
       state.tableName = tableName
+    },
+    SET_CASH_OPENING (state, flag) {
+      state.cashOpened = flag
+    },
+    SET_CAJA_ID (state, id) {
+      state.caja = id
     }
   },
 
@@ -49,6 +64,9 @@ export default {
     totalAmountOrdersRestaurant: state => state.totalAmountOrdersRestaurant,
     selectedTable: state => state.selectedTable,
     isTableSelected: state => state.isTableSelected,
-    tableName: state => state.tableName
+    tableName: state => state.tableName,
+
+    cashOpened: state => state.cashOpened,
+    caja: state => state.caja
   }
 }

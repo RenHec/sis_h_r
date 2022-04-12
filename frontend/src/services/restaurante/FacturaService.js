@@ -7,6 +7,14 @@ class FacturaService {
     this.baseUrl = baseUrl + urlRestaurant + 'ticket-restaurante'
   }
 
+  getVoucherCash (cashId) {
+    return this.axios({
+      method: 'GET',
+      url: `${this.baseUrl}-caja/${cashId}`,
+      responseType: 'blob'
+    })
+  }
+
   getInvoice (saleId) {
     return this.axios({
       method: 'GET',
