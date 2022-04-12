@@ -8,6 +8,7 @@ use App\Models\V1\Restaurante\Caja;
 use App\Models\V1\Restaurante\Venta;
 use App\Traits\TicketCajaRestaurante;
 use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Storage;
 
 class TicketController extends ApiController
 {
@@ -15,7 +16,7 @@ class TicketController extends ApiController
     {
         $cashRecord = Caja::findOrFail($cashId);
 
-        $pdf = new TicketCajaRestaurante('P','mm',array(80,200));
+        $pdf = new TicketCajaRestaurante('P', 'mm', array(80, 200));
 
         $pdf->setHeader();
         $pdf->setBody($cashRecord);
@@ -25,28 +26,35 @@ class TicketController extends ApiController
     }
     public function getTicketPayment($id)
     {
-        $saleRecord = Venta::findOrFail($id);
+        try {
+            $saleRecord = Venta::findOrFail($id);
 
-        $productsRecord = DB::table('r_orden_producto as op')
-                            ->join('r_producto as p','op.producto_id','p.id')
-                            ->select('op.id','p.nombre','op.precio','op.cantidad')
-                            ->where('op.orden_id',$saleRecord->orden_id)
-                            ->where('op.venta_id',$saleRecord->id)
-                            ->get();
+            $productsRecord = DB::table('r_orden_producto as op')
+                ->join('r_producto as p', 'op.producto_id', 'p.id')
+                ->select('op.id', 'p.nombre', 'op.precio', 'op.cantidad')
+                ->where('op.orden_id', $saleRecord->orden_id)
+                ->where('op.venta_id', $saleRecord->id)
+                ->get();
 
-        $customerRecord = DB::table('clientes')
-                            ->select('nombre as cliente','nit','direcciones as direccion')
-                            ->where('id',$saleRecord->cliente_id)
-                            ->first();
+            $customerRecord = DB::table('clientes')
+                ->select('nombre as cliente', 'nit', 'direcciones as direccion')
+                ->where('id', $saleRecord->cliente_id)
+                ->first();
 
-        $pdf = new TicketRestaurante('P','mm',array(80,200));
+            $logo = Storage::disk('logo')->path("logo_ticket.png");
+            $pdf = new TicketRestaurante('P', 'mm', array(80, 200));
 
-        $pdf->setHeader('Ticket','0000000',$saleRecord->id, $saleRecord->created_at);
-        $pdf->setCustomer($customerRecord);
-        $pdf->setBody($productsRecord);
-        $pdf->setTotal();
-        $pdf->setFooter();
+            $pdf->AddPage();
+            $pdf->Image($logo, 27, 0, 25, 0, 'PNG');
+            $pdf->setHeader('Ticket', '0000000', $saleRecord->id, $saleRecord->created_at, $logo);
+            $pdf->setCustomer($customerRecord);
+            $pdf->setBody($productsRecord);
+            $pdf->setTotal();
+            $pdf->setFooter();
 
-        return $pdf->Output('D');
+            return $pdf->Output('S');
+        } catch (\Exception $th) {
+            return $this->errorResponse($th->getMessage());
+        }
     }
 }

@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\V1\Catalogo\Municipio;
 use App\Models\V1\Hotel\HCajaChica;
 use App\Models\V1\Hotel\HCajaChicaMovimiento;
-use App\Models\V1\Principal\CajaPago;
 use App\Models\V1\Seguridad\Bitacora;
 use App\Models\V1\Principal\Proveedor;
 use Illuminate\Database\Eloquent\Model;
