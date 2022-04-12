@@ -70,6 +70,7 @@
                       {{ recordDetail.estado_orden }}
                     </v-chip>
                   <v-card-text>
+                    <div style="font-size: 12px; font-weight:bold; background-color:#dbdada; padding:5px;margin-bottom:5px;">NIT del cliente</div>
                     <v-form autocomplete="off">
                       <div class="d-flex flex-row">
                         <v-autocomplete
@@ -89,11 +90,15 @@
                       <v-btn class="info" @click="newCustomer"><v-icon>add</v-icon></v-btn>
                       </div>
                       <form-error :attribute_name="'cliente'" :errors_form="errors"> </form-error>
-                      <v-card-text class="text-h6">Cliente: {{ nombreCliente }}</v-card-text>
-                      <v-card-text class="text-h6">NIT: {{ nit }}</v-card-text>
-                      <v-card-text class="text-h6">Dirección: {{ direccion }}</v-card-text>
+                      <div style="font-size: 12px; font-weight:bold; background-color:#dbdada; padding:5px;margin-bottom:5px;">Datos del cliente</div>
+                      <v-card-text><strong>Cliente: </strong>{{ nombreCliente }}</v-card-text>
+                      <v-card-text><strong>NIT: </strong> {{ nit }}</v-card-text>
+                      <v-card-text><strong>Dirección: </strong>{{ direccion }}</v-card-text>
+
+                      <div style="font-size: 12px; font-weight:bold; background-color:#dbdada; padding:5px;">Método de pago</div>
+
                       <div class="d-flex flex-column">
-                        <v-radio-group name="metodo-pago" v-model="paymentMethodToPay" row v-validate="'required'">
+                        <v-radio-group name="metodoPago" v-model="paymentMethodToPay" row v-validate="'required'">
                           <v-radio
                             v-for="item in paymentMethodList"
                             :key="item.id"
@@ -103,7 +108,7 @@
                           >
                           </v-radio>
                         </v-radio-group>
-                        <form-error :attribute_name="'metodo-pago'" :errors_form="errors"> </form-error>
+                        <form-error :attribute_name="'metodoPago'" :errors_form="errors"> </form-error>
                       </div>
                       <v-text-field outlined dense name="Número de voucher" v-model="voucher" label="Número de voucher" v-show="showInputVoucher"></v-text-field>
                       <form-error :attribute_name="'voucher'" :errors_form="errors"> </form-error>
@@ -162,6 +167,7 @@ export default{
     }
   },
   mounted(){
+    this.configError()
     this.getRecordDetail()
     this.paymentId = uuidv4()
   },
@@ -364,6 +370,20 @@ export default{
             reject(e)
           })
       })
+    },
+    configError(){
+      let dict = {
+          custom:{
+            metodoPago:{
+              required:'Debe seleccionar un método de pago'
+            },
+            cliente:{
+              required:'Debe seleccionar el NIT del cliente'
+            }
+          }
+      }
+
+      this.$validator.localize('es',dict);
     },
   },
 }

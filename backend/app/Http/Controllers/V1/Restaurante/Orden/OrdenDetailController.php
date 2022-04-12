@@ -9,9 +9,44 @@ use App\Models\V1\Restaurante\Orden;
 use App\Http\Controllers\ApiController;
 use App\Models\V1\Restaurante\EstadoOrden;
 use App\Models\V1\Restaurante\OrdenProducto;
+use App\Models\V1\Restaurante\Producto;
 
 class OrdenDetailController extends ApiController
 {
+    public function modifyStateWaiterOrderDetail(Request $request)
+    {
+        $rules = [
+            'orden'            => 'required'
+        ];
+
+        $this->validate($request, $rules);
+
+        return DB::transaction(function() use($request){
+
+            $detalle =  DB::table('r_orden_producto as op')
+                        ->join('r_producto as p','op.producto_id','p.id')
+                        ->where('op.orden_id', $request->get('orden'))
+                        ->where('p.quien_prepara','<>',Producto::COCINA)
+                        ->update(['op.activo' => 0]);
+
+            //Verificar si existen productos activos, sino actualizar el estado final
+            $activos = DB::table('r_orden_producto')
+                    ->select('id')
+                    ->where('orden_id',$request->get('orden'))
+                    ->where('activo',1)
+                    ->get();
+
+            if(count($activos) < 1){
+
+                $final = EstadoOrden::where('finaliza',1)->first();
+                $registro = Orden::findOrFail($request->get('orden'));
+                $registro->estado_orden_id = $final->id;
+                $registro->save();
+            }
+
+            return $this->showMessage('',204);
+        });
+    }
     public function modifyStateAllOrderDetail(Request $request)
     {
         $rules = [

@@ -133,9 +133,10 @@ export default{
         }
         this.loading = true
         this.$store.state.services.orderDetailService
-        .modifyStateOrderDetail(data)
+        .modifyStateWaiterOrderDetail(data)
         .then((r) =>{
           this.getAllFoodCategory()
+          this.$toastr.success('Los productos asociados fueron actualizados con éxito','Mensaje')
         })
         .catch((e) =>{
           this.$toastr.error(e,'Error')

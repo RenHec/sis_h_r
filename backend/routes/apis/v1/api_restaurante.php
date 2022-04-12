@@ -54,6 +54,7 @@ Route::post('/ordenes-plus','Orden\OrdenDetailController@setPlusQuantity');
 Route::post('/ordenes-delete-one','Orden\OrdenDetailController@deleteOneDetailOrder');
 Route::post('/ordenes-delete-all','Orden\OrdenDetailController@deleteAllOrderDetail');
 Route::post('/ordenes-modify-state','Orden\OrdenDetailController@modifyStateAllOrderDetail');
+Route::post('/ordenes-modify-state-by-waiter','Orden\OrdenDetailController@modifyStateWaiterOrderDetail');
 
 Route::post('/reporte-restaurante-caja','Reporte\CajaController@getSalesAmountReportByDate');
 Route::get('/reporte-restaurante-venta','Reporte\VentaController@getListOfSales');

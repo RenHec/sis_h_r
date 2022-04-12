@@ -10,6 +10,9 @@ class OrdenDetailService {
   modifyStateOrderDetail (data) {
     return this.axios.post(`${this.baseUrl}ordenes-modify-state`, data)
   }
+  modifyStateWaiterOrderDetail (data) {
+    return this.axios.post(`${this.baseUrl}ordenes-modify-state-by-waiter`, data)
+  }
   getOrderDetail (orderId) {
     return this.axios.get(`${this.baseUrl}ordenes-edit-list/${orderId}`)
   }
