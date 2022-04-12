@@ -20,6 +20,7 @@ Route::resource('clientes','Miscelaneo\ClienteController',['only'=>['store','sho
 
 Route::resource('/mesas','Mesa\MesaController', ['except' => ['create','edit']]);
 Route::get('/mesas-list','Mesa\MesaController@listTables');
+Route::get('/mesas-busy','Mesa\MesaController@checkIfTableIsBusy');
 
 Route::resource('/menus','Menu\MenuController');
 

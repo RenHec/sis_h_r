@@ -149,4 +149,15 @@ class MesaController extends ApiController
 
         return response()->json(['data' => $tables],200);
     }
+
+    public function checkIfTableIsBusy()
+    {
+        $tables = DB::table('r_mesa as m')
+                    ->join('r_orden as o','o.mesa_id','m.id')
+                    ->select('m.id')
+                    ->where('o.activo',1)
+                    ->get();
+
+        return response()->json(['data' => $tables],200);
+    }
 }

@@ -37,6 +37,7 @@ import Mesa from '@/components/restaurante/mesa/IndexComponent'
 import ReporteCaja from '@/components/restaurante/reportes/ReporteCajaComponent'
 import InventarioRestaurante from '@/components/restaurante/reportes/InventarioComponent'
 import VentaRestaurante from '@/components/restaurante/reportes/VentaComponent'
+import CajaRestaurante from '@/components/restaurante/caja/CajaComponent'
 /*
 |--------------------------------------------------------------------------
 | Hotel Components
@@ -255,19 +256,25 @@ const routes = [
     beforeEnter: multiguard([isLoggedIn])
   },
   {
-    path: '/caja',
+    path: '/restaurante-caja',
+    name: 'CajaRestaurante',
+    component: CajaRestaurante,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/reporte-restaurante-caja',
     name: 'Caja',
     component: ReporteCaja,
     beforeEnter: multiguard([isLoggedIn])
   },
   {
-    path: '/inventario',
+    path: '/reporte-restaurante-inventario',
     name: 'Inventario',
     component: InventarioRestaurante,
     beforeEnter: multiguard([isLoggedIn])
   },
   {
-    path: '/ventas-restaurante',
+    path: '/reporte-restaurante-venta',
     name: 'VentaRestaurante',
     component: VentaRestaurante,
     beforeEnter: multiguard([isLoggedIn])

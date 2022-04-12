@@ -30,6 +30,10 @@ class MesaService {
   deleteTables (data) {
     return this.axios.delete(`${this.baseUrl}/${data.id}`)
   }
+
+  getListTablesIsBusy () {
+    return this.axios.get(`${this.baseUrl}-busy`)
+  }
 }
 
 export default MesaService
