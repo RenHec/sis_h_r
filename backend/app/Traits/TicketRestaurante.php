@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use Carbon\Carbon;
 use Codedge\Fpdf\Fpdf\Fpdf;
+use Illuminate\Support\Facades\Storage;
 
 final class TicketRestaurante extends Fpdf
 {
@@ -35,9 +36,6 @@ final class TicketRestaurante extends Fpdf
         $this->setX($this->getCenterPositionX());
         $this->Cell(5,$this->getHeightCell(),strtoupper($this->direccionEmpresa),0,0,'C');
 
-        $texto = 'NIT.: '.$nit;
-        $this->setX($this->getCenterPositionX());
-        $this->Cell(5,$this->getHeightCell(),$texto,0,0,'C');
         $this->setX($this->getCenterPositionX());
         $this->Cell(5,$this->getHeightCell(),'-----------------------------------------------',0,0,'C');
 
@@ -82,7 +80,7 @@ final class TicketRestaurante extends Fpdf
             $this->setX($this->getInitialPositionX());
             $this->Cell(5,$celda+ 6,$product->cantidad);
             $this->setX($this->getInitialPositionX()+7);
-            $this->Cell(5,$celda+ 6,substr($product->nombre, 0,20));
+            $this->Cell(5,$celda+ 6,utf8_decode(substr($product->nombre, 0,20)));
             $this->setX($this->getInitialPositionX()+48);
             $this->Cell(5,$celda+ 6,number_format($product->precio,2),'0','0','R');
             $this->setX($this->getInitialPositionX()+68);
