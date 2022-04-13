@@ -27,7 +27,7 @@ final class TicketCajaRestaurante extends Fpdf
 
     public function setHeader()
     {
-        $this->SetFont('Courier','I',8);
+        $this->SetFont('Helvetica','',8);
         $this->setY(2);
         $this->setX($this->getCenterPositionX());
         $this->Cell(5,$this->getHeightCell(),strtoupper($this->nombreEmpresa),0,0,'C');
@@ -42,7 +42,7 @@ final class TicketCajaRestaurante extends Fpdf
     public function setBody($cash)
     {
         $this->ln(6);
-        $this->SetFont('Courier','I',8);
+        $this->SetFont('Helvetica','',8);
         $this->setX($this->getCenterPositionX() + 5);
         $this->Cell(5,$this->getHeightCell(),'SALDO INICIAL: Q. '.number_format($cash->saldo_inicial,2),0,0,'R');
         $this->setX($this->getCenterPositionX() + 5);
@@ -50,14 +50,14 @@ final class TicketCajaRestaurante extends Fpdf
         $this->setX($this->getCenterPositionX() + 5);
         $this->Cell(5,$this->getHeightCell(),'GASTOS: Q. '.number_format($cash->egresos,2),0,0,'R');
         $this->setX($this->getCenterPositionX() + 5);
-        $this->SetFont('Courier','B',8);
+        $this->SetFont('Helvetica','B',8);
         $this->Cell(5,$this->getHeightCell(),'TOTAL: Q. '.number_format(($cash->saldo_inicial + ($cash->ingresos - $cash->egresos)),2),0,0,'R');
     }
 
     public function setFooter($cash)
     {
         $this->ln(4);
-        $this->SetFont('Courier','I',8);
+        $this->SetFont('Helvetica','',8);
         $this->setX($this->getCenterPositionX());
         $this->Cell(5,$this->getHeightCell(),'APERTURA '.$cash->fecha_apertura.' '.$cash->hora_apertura,0,0,'C');
         $this->setX($this->getCenterPositionX());

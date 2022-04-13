@@ -7,6 +7,9 @@ class ReporteCajaService {
     this.baseUrl = baseUrl + urlRestaurant
   }
 
+  getListPurchases (data) {
+    return this.axios.get(`${this.baseUrl}reporte-restaurante-gastos?sortBy=${data.sortBy}&sortDesc=${data.sortDesc}&perPage=${data.perPage}&page=${data.page}&search=${data.search}`)
+  }
   closeCash (data) {
     return this.axios.post(`${this.baseUrl}cierre-restaurante-caja`, data)
   }

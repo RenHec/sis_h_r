@@ -64,5 +64,6 @@ Route::get('/ticket-restaurante-caja/{id}','Ticket\TicketController@getVoucherCa
 
 Route::post('/reporte-restaurante-caja','Reporte\CajaController@getSalesAmountReportByDate');
 Route::get('/reporte-restaurante-venta','Reporte\VentaController@getListOfSales');
+Route::get('/reporte-restaurante-gastos','Reporte\VentaController@getListPurchases');
 
 Route::get('/ticket-restaurante-pago/{id}','Ticket\TicketController@getTicketPayment');

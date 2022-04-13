@@ -27,7 +27,7 @@ final class TicketRestaurante extends Fpdf
 
     public function setHeader($tipoComprobante, $nit, $noComprobante, $created_at, $logo)
     {
-        $this->SetFont('Courier', 'I', 8);
+        $this->SetFont('Helvetica', '', 8);
         $this->setY(20);
         $this->setX($this->getCenterPositionX());
         $this->Cell(5, $this->getHeightCell(), strtoupper($this->nombreEmpresa), 0, 0, 'C');
@@ -38,7 +38,7 @@ final class TicketRestaurante extends Fpdf
         $this->setX($this->getCenterPositionX());
         $this->Cell(5, $this->getHeightCell(), '-----------------------------------------------', 0, 0, 'C');
 
-        $this->SetFont('Courier', 'B', 8);
+        $this->SetFont('Helvetica', 'B', 8);
         $this->setX($this->getInitialPositionX());
         $this->Cell(5, $this->getHeightCell(), strtoupper($tipoComprobante) . ': ' . $noComprobante);
         $this->setX($this->getInitialPositionX());
@@ -48,7 +48,7 @@ final class TicketRestaurante extends Fpdf
     public function setCustomer($customer)
     {
         $this->ln(2);
-        $this->SetFont('Courier', 'I', 8);
+        $this->SetFont('Helvetica', '', 8);
         $this->setX($this->getInitialPositionX());
         $this->Cell(5, $this->getHeightCell(), 'CLIENTE: ' . utf8_decode($customer->cliente));
         $this->setX($this->getInitialPositionX());
@@ -60,13 +60,13 @@ final class TicketRestaurante extends Fpdf
     public function setBody($products)
     {
         $this->ln(2);
-        $this->SetFont('Courier', 'I', 8);
+        $this->SetFont('Helvetica', '', 8);
         $this->setX($this->getCenterPositionX());
         $this->Cell(5, $this->getHeightCell(), '-------------------------------------------------', 0, 0, 'C');
-        $this->SetFont('Courier', 'B', 8);
+        $this->SetFont('Helvetica', 'B', 8);
         $this->setX($this->getInitialPositionX() - 1);
         $this->Cell(5, $this->getHeightCell(), 'CANT.    PRODUCTO         PRECIO    SUBTOTAL');
-        $this->SetFont('Courier', 'I', 8);
+        $this->SetFont('Helvetica', '', 8);
         $this->setX($this->getCenterPositionX());
         $this->Cell(5, $this->getHeightCell(), '-------------------------------------------------', 0, 0, 'C');
 
@@ -89,7 +89,7 @@ final class TicketRestaurante extends Fpdf
     public function setTotal()
     {
         $this->ln(6);
-        $this->SetFont('Courier', 'B', 12);
+        $this->SetFont('Helvetica', 'B', 12);
         $this->setX($this->getCenterPositionX() + 17);
         $this->Cell(5, $this->getHeightCell(), 'TOTAL: Q. ' . number_format($this->total, 2), 0, 0, 'R');
     }
@@ -97,10 +97,10 @@ final class TicketRestaurante extends Fpdf
     public function setFooter()
     {
         $this->ln(4);
-        $this->SetFont('Courier', 'B', 8);
+        $this->SetFont('Helvetica', 'B', 8);
         $this->setX($this->getCenterPositionX());
         $this->Cell(5, $this->getHeightCell(), 'GRACIAS POR SU COMPRA', 0, 0, 'C');
-        $this->SetFont('Courier', 'I', 8);
+        $this->SetFont('Helvetica', '', 8);
         $this->setX($this->getCenterPositionX());
         $this->Cell(5, $this->getHeightCell(), $this->fecha, 0, 0, 'C');
         $this->Close();

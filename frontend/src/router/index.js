@@ -38,7 +38,7 @@ import ReporteCaja from '@/components/restaurante/reportes/ReporteCajaComponent'
 import InventarioRestaurante from '@/components/restaurante/reportes/InventarioComponent'
 import VentaRestaurante from '@/components/restaurante/reportes/VentaComponent'
 import CajaRestaurante from '@/components/restaurante/caja/CajaComponent'
-import AperturarCajaRestaurante from '@/components/restaurante/caja/AperturarCajaComponent'
+import GastosRestaurante from '@/components/restaurante/reportes/GastosComponent'
 /*
 |--------------------------------------------------------------------------
 | Hotel Components
@@ -260,6 +260,12 @@ const routes = [
     path: '/restaurante_caja',
     name: 'CajaRestaurante',
     component: CajaRestaurante,
+    beforeEnter: multiguard([isLoggedIn])
+  },
+  {
+    path: '/reporte_restaurante_gastos',
+    name: 'GastosRestaurante',
+    component: GastosRestaurante,
     beforeEnter: multiguard([isLoggedIn])
   },
   {

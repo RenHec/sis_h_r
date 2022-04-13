@@ -9,6 +9,47 @@ use App\Http\Controllers\ApiController;
 
 class VentaController extends ApiController
 {
+    public function getListPurchases(Request $request)
+    {
+        $columna    = $request['sortBy'] ? $request['sortBy'] : "saldo_inicial";
+        $criterio   = $request['search'];
+        $orden      = $request['sortDesc'] ? 'desc' : 'asc';
+        $filas      = $request['perPage'];
+        $pagina     = $request['page'];
+
+        $ventas = DB::table('r_caja as c')
+                ->select('c.id','c.saldo_inicial','c.ingresos','c.egresos',DB::raw('DATE_FORMAT(c.fecha_apertura,"%d-%m-%Y") as fecha_apertura'))
+                ->where('c.'.$columna, 'LIKE', '%' . $criterio . '%')
+                ->orderBy($columna, $orden)
+                ->skip($pagina)
+                ->take($filas)
+                ->get();
+
+        $count = DB::table('r_caja as c')
+                ->where('c.'.$columna, 'LIKE', '%' . $criterio . '%')
+                ->count();
+
+        $datos = array();
+
+        foreach ($ventas as $key => $value)
+        {
+            $detalle = DB::table('r_caja_egreso')
+                        ->select('id','descripcion','comprobante','monto')
+                        ->where('caja_id',$value->id)
+                        ->get();
+
+            $datos[$key]            = (array)$value;
+            $datos[$key]['detalle'] = $detalle;
+        }
+
+
+        $data = array(
+            'total' => $count,
+            'data' => $datos,
+        );
+
+        return response()->json($data, 200);
+    }
     /**
      * Display a listing of the resource.
      *
