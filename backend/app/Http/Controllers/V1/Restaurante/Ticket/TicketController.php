@@ -14,15 +14,23 @@ class TicketController extends ApiController
 {
     public function getVoucherCash($cashId)
     {
-        $cashRecord = Caja::findOrFail($cashId);
+        try
+        {
+            $cashRecord = Caja::findOrFail($cashId);
 
-        $pdf = new TicketCajaRestaurante('P', 'mm', array(80, 200));
+            $pdf = new TicketCajaRestaurante('P', 'mm', array(80, 200));
 
-        $pdf->setHeader();
-        $pdf->setBody($cashRecord);
-        $pdf->setFooter($cashRecord);
+            $pdf->AddPage();
+            $pdf->setHeader();
+            $pdf->setBody($cashRecord);
+            $pdf->setFooter($cashRecord);
 
-        return $pdf->Output('D');
+            return $pdf->Output('D');
+        }
+        catch (\Exception $e)
+        {
+            return $this->errorResponse($e, 422);
+        }
     }
     public function getTicketPayment($id)
     {
@@ -41,7 +49,7 @@ class TicketController extends ApiController
                 ->where('id', $saleRecord->cliente_id)
                 ->first();
 
-            $logo = Storage::disk('logo')->path("logo_ticket.png");
+            $logo = Storage::disk('logo')->path("logo_empresa.png");
             $pdf = new TicketRestaurante('P', 'mm', array(80, 200));
 
             $pdf->AddPage();

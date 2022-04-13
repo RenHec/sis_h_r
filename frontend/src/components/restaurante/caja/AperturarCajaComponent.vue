@@ -17,7 +17,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn rounded block color="primary" class="float: bottom" @click="validateForm()">
+            <v-btn v-show="aperturarCaja()" rounded block color="primary" class="float: bottom" @click="validateForm()">
               Aperturar caja
             </v-btn>
           </v-card-actions>
@@ -58,6 +58,10 @@ export default{
       'UPDATE_CASH_OPENING',
       'UPDATE_CAJA_ID'
     ]),
+    aperturarCaja() {
+      var permissions = this.$store.state.permissions
+      return _.includes(permissions, 'apertura_caja_restaurante')
+    },
     validateForm(){
       this.$validator.validateAll().then((result) => {
         if (result) {

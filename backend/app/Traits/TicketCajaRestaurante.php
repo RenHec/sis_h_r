@@ -27,7 +27,6 @@ final class TicketCajaRestaurante extends Fpdf
 
     public function setHeader()
     {
-        $this->AddPage();
         $this->SetFont('Courier','I',8);
         $this->setY(2);
         $this->setX($this->getCenterPositionX());
