@@ -23,8 +23,8 @@ class InsumoController extends ApiController
     public function index()
     {
         try {
-            $no_anulados = HInsumo::with('proveedor.municipio', 'detalle', 'usuario')->where('anulado', false)->get();
-            $anulados = HInsumo::with('proveedor', 'detalle', 'usuario')->where('anulado', true)->get();
+            $no_anulados = HInsumo::with('proveedor.municipio', 'detalle', 'usuario')->where('anulado', false)->orderByDesc('id')->get();
+            $anulados = HInsumo::with('proveedor', 'detalle', 'usuario')->where('anulado', true)->orderByDesc('id')->get();
             return $this->successResponse(['no_anulados' => $no_anulados, 'anulados' => $anulados]);
         } catch (\Exception $e) {
             $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@index");

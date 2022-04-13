@@ -21,7 +21,7 @@ class TipoCamaController extends ApiController
     public function index()
     {
         try {
-            return $this->successResponse(HTipoCama::get());
+            return $this->successResponse(HTipoCama::orderByDesc('id')->get());
         } catch (\Throwable $e) {
             $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@index");
             return $this->errorResponse('Error en el controlador');

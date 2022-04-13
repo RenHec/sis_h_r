@@ -30,7 +30,7 @@ class HabitacionController extends ApiController
     public function index()
     {
         try {
-            return $this->successResponse(HHabitacion::with('estado', 'precios.tipo_cama', 'imagenes')->get());
+            return $this->successResponse(HHabitacion::with('estado', 'precios.tipo_cama', 'imagenes')->orderByDesc('id')->get());
         } catch (\Exception $e) {
             $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@index");
             return $this->errorResponse('Error en el controlador');

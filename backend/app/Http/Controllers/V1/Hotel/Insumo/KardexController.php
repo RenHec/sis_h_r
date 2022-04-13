@@ -22,7 +22,7 @@ class KardexController extends ApiController
     public function index()
     {
         try {
-            return $this->successResponse(HKardex::with('historial', 'producto', 'usuario')->get());
+            return $this->successResponse(HKardex::with('historial', 'producto', 'usuario')->orderByDesc('id')->get());
         } catch (\Exception $e) {
             $this->grabarLog($e->getMessage(), "{$this->controlador_principal}@index");
             return $this->errorResponse('Error en el controlador');
