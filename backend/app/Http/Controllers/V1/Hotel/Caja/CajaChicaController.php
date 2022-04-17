@@ -5,9 +5,10 @@ namespace App\Http\Controllers\V1\Hotel\Caja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\V1\Hotel\HCajaChica;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ApiController;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Auth;
+use App\Models\V1\Hotel\HCajaChicaMovimiento;
 
 class CajaChicaController extends ApiController
 {
@@ -121,7 +122,17 @@ class CajaChicaController extends ApiController
 
             $this->bitacora_general($hotel_caja->getTable(), $this->acciones(8), $hotel_caja, "{$this->controlador_principal}@show");
 
-            $this->registrar_historia_caja("Cierre de la caja #{$hotel_caja->id}", $hotel_caja->cierre_caja, "EFECTIVO", null, "{$this->controlador_principal}@show");
+            HCajaChicaMovimiento::create([
+                'descripcion' => "Cierre de la caja #{$hotel_caja->id}",
+                'monto_total' => $hotel_caja->cierre_caja,
+                'tipo_pago' => "EFECTIVO",
+                'comprobante' => null,
+                'usuarios_id' => Auth::user()->id,
+                'h_caja_chica_id' => $hotel_caja->id,
+                'resta' => false,
+                'registro_manual' => false,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
 
             DB::commit();
 
@@ -133,7 +144,7 @@ class CajaChicaController extends ApiController
             if ($e instanceof QueryException) {
                 return $this->errorResponse('Ocurrio un problema al guardar la información de la caja chica');
             }
-            return $this->errorResponse('Error en el controlador');
+            return $this->errorResponse($e->getMessage());
         }
     }
 }
