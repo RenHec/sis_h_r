@@ -251,6 +251,7 @@ trait ApiResponser
 		$persona->departamentos_id = Municipio::find($request->municipios_id['id'])->departamento_id;
 		$persona->municipios_id = $request->municipios_id['id'];
 		$persona->usuarios_id = Auth::user()->id;
+		$persona->updated_at = date('Y-m-d H:i:s');
 		$persona->save();
 
 		return $persona;

@@ -23,6 +23,7 @@ class CreateHCajaChicaMovimientoTable extends Migration
             $table->string('comprobante', 15)->nullable();
             $table->boolean('resta')->default(false);
             $table->boolean('registro_manual')->default(false);
+            $table->boolean('eliminado')->default(false);
 
             $table->foreignId('usuarios_id')->constrained('usuarios');
             $table->foreignId('h_caja_chica_id')->constrained('h_caja_chica');

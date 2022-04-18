@@ -14,7 +14,7 @@ class HKardexHistorial extends Model
 
     protected $table = 'h_kardex_historial';
 
-    protected $fillable = ['documento', 'stock_anterior', 'signo', 'stock_nuevo', 'descripcion', 'tabla_id', 'h_kardex_id', 'usuarios_id', 'tabla', 'eliminado'];
+    protected $fillable = ['documento', 'stock_anterior', 'signo', 'stock_nuevo', 'descripcion', 'tabla_id', 'h_kardex_id', 'usuarios_id', 'tabla', 'eliminado', 'created_at'];
 
     /**
      * The attributes that should be cast to native types.

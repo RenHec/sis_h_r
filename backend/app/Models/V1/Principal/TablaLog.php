@@ -25,7 +25,8 @@ class TablaLog extends Model
     protected $fillable = [
         'descripcion',
         'controlador',
-        'usuarios_id'
+        'usuarios_id',
+        'created_at'
     ];
 
     /**

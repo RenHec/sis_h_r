@@ -28,7 +28,8 @@ class Bitacora extends Model
         'descripcion',
         'controlador',
         'usuario',
-        'usuarios_id'
+        'usuarios_id',
+        'created_at'
     ];
 
     /**

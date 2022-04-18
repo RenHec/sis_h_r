@@ -65,6 +65,8 @@ class CajaChicaMovimientoController extends ApiController
                 throw new \Exception("NO existe apertura de caja para hoy {$hoy}.", 1);
             }
 
+            $hotel_caja_movimiento->eliminado = true;
+            $hotel_caja_movimiento->save();
             $this->registrar_historia_caja("Anulación de movimiento de compra", $hotel_caja_movimiento->monto_total, $hotel_caja_movimiento->tipo_pago, $hotel_caja_movimiento->comprobante, "{$this->controlador_principal}@destroy");
 
             DB::commit();

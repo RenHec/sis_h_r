@@ -18,7 +18,8 @@ class HCajaChicaMovimiento extends Model
 
     protected $fillable = [
         'descripcion', 'monto_total', 'tipo_pago', 'comprobante',
-        'usuarios_id', 'h_caja_chica_id', 'resta', 'registro_manual'
+        'usuarios_id', 'h_caja_chica_id', 'resta', 'registro_manual',
+        'eliminado', 'created_at'
     ];
 
     /**
@@ -30,7 +31,8 @@ class HCajaChicaMovimiento extends Model
         'created_at' => 'datetime:d/m/Y h:i:s a',
         'monto_total' => 'float',
         'resta' => 'boolean',
-        'registro_manual' => 'boolean'
+        'registro_manual' => 'boolean',
+        'eliminado' => 'boolean'
     ];
 
     /**
