@@ -29,6 +29,8 @@ class HReservacion extends Model
      * @var array
      */
     protected $casts = [
+        'created_at' => 'datetime:d-m-Y H:i:s',
+        'updated_at' => 'datetime:d-m-Y H:i:s',
         'sub_total' => 'float',
         'extra' => 'float',
         'total' => 'float',
@@ -38,6 +40,13 @@ class HReservacion extends Model
         'pagado' => 'boolean',
         'anulado' => 'boolean'
     ];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['created_at', 'updated_at'];
 
     /**
      * The accessors to append to the model's array form.
