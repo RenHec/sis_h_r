@@ -46,9 +46,9 @@ class Bitacora extends Model
      *
      * @var array
      */
-    protected $appends = ['created_at'];
+    protected $appends = ['fecha_ingreso'];
 
-    public function getCreatedAttAttribute()
+    public function getFechaIngresotAttribute()
     {
         return date('d-m-Y H:i:s', strtotime($this->created_at));
     }
