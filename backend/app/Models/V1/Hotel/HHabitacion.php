@@ -23,8 +23,8 @@ class HHabitacion extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime:d/m/Y h:i:s a',
-        'updated_at' => 'datetime:d/m/Y h:i:s a'
+        'created_at' => 'datetime:d-m-Y h:i:s a',
+        'updated_at' => 'datetime:d-m-Y h:i:s a'
     ];
 
     /**

@@ -24,7 +24,7 @@ class HKardexHistorial extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime:d/m/Y h:i:s a',
+        'created_at' => 'datetime:d-m-Y h:i:s a',
         'stock_anterior' => 'integer',
         'stock_nuevo' => 'integer',
         'eliminado' => 'boolean'

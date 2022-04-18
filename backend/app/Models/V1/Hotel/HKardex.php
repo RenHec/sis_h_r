@@ -21,8 +21,8 @@ class HKardex extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime:d/m/Y h:i:s a',
-        'updated_at' => 'datetime:d/m/Y h:i:s a',
+        'created_at' => 'datetime:d-m-Y h:i:s a',
+        'updated_at' => 'datetime:d-m-Y h:i:s a',
         'stock_actual' => 'integer',
         'stock_inicial' => 'integer',
         'stock_consumido' => 'integer',

@@ -25,8 +25,8 @@ class HCajaChica extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime:d/m/Y h:i:s a',
-        'updated_at' => 'datetime:d/m/Y h:i:s a',
+        'created_at' => 'datetime:d-m-Y h:i:s a',
+        'updated_at' => 'datetime:d-m-Y h:i:s a',
         'inicio' => 'datetime:d/m/Y h:i:s a',
         'finalizo' => 'datetime:d/m/Y h:i:s a',
         'inicia_caja' => 'float',

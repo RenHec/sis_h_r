@@ -269,7 +269,8 @@ trait ApiResponser
 				'descripcion' => $instance,
 				'controlador' => $controlador,
 				'usuario' => "{$user->primer_nombre} {$user->primer_apellido}",
-				'usuarios_id' => $user->id
+				'usuarios_id' => $user->id,
+				'created_at' => date('Y-m-d H:i:s')
 			]
 		);
 	}

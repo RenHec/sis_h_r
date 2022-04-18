@@ -24,7 +24,7 @@ class HHabitacionPrecio extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime:d/m/Y h:i:s a',
+        'created_at' => 'datetime:d-m-Y h:i:s a',
         'activo' => 'boolean',
         'precio_desayuno' => 'float',
         'precio_habitacion' => 'float',

@@ -24,8 +24,8 @@ class HReservacionDetalle extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime:d/m/Y h:i:s a',
-        'updated_at' => 'datetime:d/m/Y h:i:s a',
+        'created_at' => 'datetime:d-m-Y h:i:s a',
+        'updated_at' => 'datetime:d-m-Y h:i:s a',
         'inicio' => 'datetime:d/m/Y h:i:s a',
         'fin' => 'datetime:d/m/Y h:i:s a',
         'sub_total' => 'float',
