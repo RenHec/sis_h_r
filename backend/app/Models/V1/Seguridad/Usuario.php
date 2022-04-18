@@ -53,10 +53,10 @@ class Usuario extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime:d-m-Y h:i:s a',
-        'created_at' => 'datetime:d-m-Y h:i:s a',
-        'updated_at' => 'datetime:d-m-Y h:i:s a',
-        'deleted_at' => 'datetime:d-m-Y h:i:s a'
+        'email_verified_at' => 'datetime:d-m-Y',
+        'created_at' => 'datetime:d-m-Y',
+        'updated_at' => 'datetime:d-m-Y',
+        'deleted_at' => 'datetime:d-m-Y'
     ];
 
     /**
