@@ -47,8 +47,8 @@ class Bitacora extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime:d-m-Y G:i:s',
-        'updated_at' => 'datetime:d-m-Y G:i:s'
+        'created_at' => 'datetime:d-m-Y i:s',
+        'updated_at' => 'datetime:d-m-Y i:s'
     ];
 
     /**
