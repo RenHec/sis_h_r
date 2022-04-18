@@ -323,7 +323,7 @@
     </v-col>
 
     <v-col cols="12" md="12">
-      <v-dialog v-model="dialog" color="primary" width="50%">
+      <v-dialog v-model="dialog" color="primary" width="80%">
         <v-card v-if="item_reservacion">
           <v-overlay :value="loading">
             <v-progress-circular indeterminate size="64"></v-progress-circular>

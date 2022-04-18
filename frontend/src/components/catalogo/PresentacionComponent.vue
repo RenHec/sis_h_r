@@ -27,7 +27,7 @@
             ></v-text-field>
             <v-spacer></v-spacer>
 
-            <v-dialog v-model="dialog" color="primary" width="50%">
+            <v-dialog v-model="dialog" color="primary" width="80%">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   :loading="dialog"

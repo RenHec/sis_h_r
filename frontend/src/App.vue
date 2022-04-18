@@ -121,18 +121,6 @@
                     CAJA DEL HOTEL
                   </v-btn>
                 </div>
-                <div class="my-2">
-                  <v-btn
-                    small
-                    fab
-                    outlined
-                    color="primary"
-                    @click="redirect('/ayuda')"
-                    link
-                  >
-                    <v-icon>info</v-icon>
-                  </v-btn>
-                </div>
               </div>
               <v-divider class="my-3"></v-divider>
               <v-btn small fab outlined color="red" @click="logout">
@@ -377,7 +365,7 @@
                                 fab
                                 small
                                 @click="anular_movimiento(mov)"
-                                v-if="mov.registro_manual"
+                                v-if="mov.registro_manual && !mov.eliminado"
                               >
                                 <v-icon>close</v-icon>
                               </v-btn>

@@ -33,7 +33,7 @@
             <v-dialog
               v-model="dialog"
               color="primary"
-              width="50%"
+              width="80%"
               hide-overlay
               persistent
               transition="dialog-bottom-transition"
