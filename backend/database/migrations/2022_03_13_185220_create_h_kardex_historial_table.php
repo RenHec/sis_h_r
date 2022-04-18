@@ -25,6 +25,7 @@ class CreateHKardexHistorialTable extends Migration
             $table->unsignedBigInteger('tabla_id')->nullable();
             $table->foreignId('h_kardex_id')->constrained('h_kardex');
             $table->foreignId('usuarios_id')->constrained('usuarios');
+            $table->unsignedBigInteger('h_habitaciones_id')->default(0);
             $table->timestamps();
         });
     }

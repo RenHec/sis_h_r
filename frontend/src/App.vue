@@ -415,7 +415,7 @@ export default {
       loading: false,
       dialog_password: false,
       dialog_caja: false,
-      drawer: false,
+      drawer: true,
       menu: false,
       form: {
         id: 0,

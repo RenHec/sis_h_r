@@ -27,7 +27,7 @@ class SelectController extends ApiController
 {
     public function bitacora()
     {
-        return $this->showAll(Bitacora::orderBy('created_at')->get());
+        return $this->showAll(Bitacora::orderByDesc('created_at')->get());
     }
 
     public function departamento()
