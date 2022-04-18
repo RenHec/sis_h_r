@@ -42,26 +42,14 @@ class Bitacora extends Model
     ];
 
     /**
-     * The attributes that should be mutated to dates.
+     * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $dates = [
-        'created_at',
-        'updated_at'
+    protected $casts = [
+        'created_at' => 'datetime:d-m-Y',
+        'updated_at' => 'datetime:d-m-Y'
     ];
-
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array
-     */
-    protected $appends = ['ingreso'];
-
-    public function getIngresotAttribute()
-    {
-        return date('d-m-Y H:i:s', strtotime($this->created_at));
-    }
 
     /**
      * Get the usuarios associated with the configuracion.
