@@ -47,16 +47,9 @@ class Bitacora extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime:d M Y H:i:s',
-        'updated_at' => 'datetime:d M Y H:i:s'
+        'created_at' => 'datetime:d m Y H:i:s',
+        'updated_at' => 'datetime:d m Y H:i:s'
     ];
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['created_at', 'updated_at'];
 
     /**
      * Get the usuarios associated with the configuracion.
