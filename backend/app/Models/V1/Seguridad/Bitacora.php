@@ -41,15 +41,10 @@ class Bitacora extends Model
         'controlador'
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'created_at' => 'datetime:d m Y H:i:s',
-        'updated_at' => 'datetime:d m Y H:i:s'
-    ];
+    public function getCreatedAttAttribute()
+    {
+        return date('d-m-Y H:i:s', strtotime($this->created_at));
+    }
 
     /**
      * Get the usuarios associated with the configuracion.
