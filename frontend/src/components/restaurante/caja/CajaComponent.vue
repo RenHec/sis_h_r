@@ -29,7 +29,7 @@
                 Registrar gastos
               </v-btn>
               <v-spacer></v-spacer>
-              <v-btn v-show="aperturarCaja()" class="error" @click="closeCash()">
+              <v-btn v-show="cerrarCaja()" class="error" @click="closeCash()">
                 Cerrar caja
               </v-btn>
             <v-spacer></v-spacer>
@@ -117,6 +117,10 @@ export default{
     aperturarCaja() {
       var permissions = this.$store.state.permissions
       return _.includes(permissions, 'apertura_caja_restaurante')
+    },
+    cerrarCaja() {
+      var permissions = this.$store.state.permissions
+      return _.includes(permissions, 'cerrar_caja_restaurante')
     },
     getFormaHour(){
       return moment().format('h:mm:ss a')
