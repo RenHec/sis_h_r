@@ -17,6 +17,7 @@ class HReservacion extends Model
     use HasFactory;
 
     protected $table = 'h_reservaciones';
+    public $timestamps = true;
 
     protected $fillable = [
         'codigo', 'nombre', 'sub_total', 'extra', 'total', 'reservacion',
