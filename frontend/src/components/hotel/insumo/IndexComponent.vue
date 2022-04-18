@@ -240,7 +240,7 @@
                       </v-row>
                     </v-col>
                     <!-- DATOS DEL INSUMO DETALLE -->
-                    <v-col cols="12" md="9">
+                    <v-col cols="12" md="12">
                       <v-card
                         elevation="24"
                         :loading="loading"
@@ -454,7 +454,7 @@
                   <v-dialog
                     v-model="form_producto.dialog"
                     persistent
-                    max-width="50%"
+                    max-width="80%"
                   >
                     <v-card>
                       <v-card-title>
@@ -605,6 +605,7 @@
                 dark
                 v-bind="attrs"
                 v-on="on"
+                v-show="item.anula"
               >
                 <v-icon>block</v-icon>
               </v-btn>
@@ -643,7 +644,7 @@
       </v-data-table>
     </v-col>
 
-    <v-col cols="12" md="4">
+    <v-col cols="12" md="12">
       <v-data-table
         :headers="anulados_headers"
         :items="anulados"

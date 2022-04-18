@@ -31,6 +31,25 @@ class HInsumo extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['anula'];
+
+    /**
+     * Get the eliminar pago.
+     *
+     * @return bool
+     */
+    public function getAnulaAttribute()
+    {
+        $fecha_hoy = date('d-m-Y');
+        $created_at = date('d-m-Y', strtotime($this->created_at));
+        return strtotime($created_at) == strtotime($fecha_hoy);
+    }
+
+    /**
      * Get the proveedor associated.
      *
      * @return object

@@ -61,8 +61,8 @@ class HPago extends Model
      */
     public function getAnulaAttribute()
     {
-        $fecha_hoy = date('d/m/Y');
-        $created_at = date('d/m/Y', strtotime($this->created_at));
+        $fecha_hoy = date('d-m-Y');
+        $created_at = date('d-m-Y', strtotime($this->created_at));
         return strtotime($created_at) == strtotime($fecha_hoy);
     }
 
