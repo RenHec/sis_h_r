@@ -17,7 +17,6 @@ class HReservacion extends Model
     use HasFactory;
 
     protected $table = 'h_reservaciones';
-    public $timestamps = true;
 
     protected $fillable = [
         'codigo', 'nombre', 'sub_total', 'extra', 'total', 'reservacion',
@@ -30,8 +29,6 @@ class HReservacion extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime:d-m-Y H:i:s',
-        'updated_at' => 'datetime:d-m-Y H:i:s',
         'sub_total' => 'float',
         'extra' => 'float',
         'total' => 'float',
