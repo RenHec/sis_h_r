@@ -17,6 +17,7 @@ class HReservacion extends Model
     use HasFactory;
 
     protected $table = 'h_reservaciones';
+    protected $dateFormat = 'U';
 
     protected $fillable = [
         'codigo', 'nombre', 'sub_total', 'extra', 'total', 'reservacion',
@@ -29,8 +30,6 @@ class HReservacion extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
         'sub_total' => 'float',
         'extra' => 'float',
         'total' => 'float',
@@ -40,6 +39,13 @@ class HReservacion extends Model
         'pagado' => 'boolean',
         'anulado' => 'boolean'
     ];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['created_at', 'updated_at'];
 
     /**
      * The accessors to append to the model's array form.
