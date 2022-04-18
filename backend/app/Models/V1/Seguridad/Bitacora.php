@@ -41,6 +41,13 @@ class Bitacora extends Model
         'controlador'
     ];
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['created_at'];
+
     public function getCreatedAttAttribute()
     {
         return date('d-m-Y H:i:s', strtotime($this->created_at));
