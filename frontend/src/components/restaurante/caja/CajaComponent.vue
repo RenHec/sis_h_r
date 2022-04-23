@@ -125,14 +125,6 @@ export default {
   },
   methods: {
     ...restaurantMapActions(['UPDATE_CASH_OPENING']),
-    aperturarCaja() {
-      var permissions = this.$store.state.permissions
-      return _.includes(permissions, 'apertura_caja_restaurante')
-    },
-    cerrarCaja() {
-      var permissions = this.$store.state.permissions
-      return _.includes(permissions, 'cerrar_caja_restaurante')
-    },
     getFormaHour() {
       return moment().format('h:mm:ss a')
     },
@@ -254,6 +246,14 @@ export default {
       return this.paymentScreen
     },
     ...restaurantMapGetter(['cashOpened']),
+    aperturarCaja() {
+      var permissions = this.$store.state.permissions
+      return _.includes(permissions, 'apertura_caja_restaurante')
+    },
+    cerrarCaja() {
+      var permissions = this.$store.state.permissions
+      return _.includes(permissions, 'cerrar_caja_restaurante')
+    },
   },
 }
 </script>
