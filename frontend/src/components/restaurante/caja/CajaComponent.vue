@@ -26,7 +26,7 @@
             Registrar gastos
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn v-show="cerrarCaja()" class="error" @click="closeCash()">
+          <v-btn v-show="cerrarCaja" class="error" @click="closeCash()">
             Cerrar caja
           </v-btn>
           <v-spacer></v-spacer>
@@ -240,19 +240,20 @@ export default {
     getAmountTitle(item) {
       return 'Q. ' + item
     },
+
+    aperturarCaja() {
+      var permissions = this.$store.state.permissions
+      return _.includes(permissions, 'apertura_caja_restaurante')
+    },
   },
   computed: {
     showPaymentScreen() {
       return this.paymentScreen
     },
     ...restaurantMapGetter(['cashOpened']),
-    aperturarCaja() {
-      var permissions = this.$store.state.permissions
-      return _.includes(permissions, 'apertura_caja_restaurante')
-    },
     cerrarCaja() {
       var permissions = this.$store.state.permissions
-      return _.includes(permissions, 'cerrar_caja_restaurante')
+      return _.includes(permissions, 'cierre_caja_restaurante')
     },
   },
 }

@@ -116,15 +116,13 @@ class ReservacionController extends ApiController
                 // h_reservaciones_detalles, en este valor viene el ID del precio de la habitación
                 if (is_null($horas) && $value['h_reservaciones_detalles']['seleccionado'] == 1) {
                     $reservado = HReservacionDetalle::where('h_habitaciones_precios_id', $value['h_reservaciones_detalles']['id'])
-                        ->where('disponible', false)
                         ->whereBetween(DB::RAW('inicio'), [DB::RAW("'$inicio'"), DB::RAW("'$fin'")])
                         ->whereBetween(DB::RAW('fin'), [DB::RAW("'$inicio'"), DB::RAW("'$fin'")])
                         ->first();
                 } else if (!is_null($horas) && $value['h_reservaciones_detalles']['seleccionado'] == 1) {
                     $reservado = HReservacionDetalle::where('h_habitaciones_precios_id', $value['h_reservaciones_detalles']['id'])
-                        ->where('disponible', false)
-                        ->whereBetween(DB::RAW("'$inicio'"), [DB::RAW('inicio'), DB::RAW('fin')])
-                        ->whereBetween(DB::RAW("'$fin'"), [DB::RAW('inicio'), DB::RAW('fin')])
+                        ->whereBetween(DB::RAW("{$request->inicio} 12:00:01"), [DB::RAW('inicio'), DB::RAW('fin')])
+                        ->whereBetween(DB::RAW("{$request->fin} 11:59:59"), [DB::RAW('inicio'), DB::RAW('fin')])
                         ->first();
                 }
 
