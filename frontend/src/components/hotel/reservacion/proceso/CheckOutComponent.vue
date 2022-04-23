@@ -447,11 +447,17 @@ export default {
             let objeto = new Object()
             objeto.id = ele.id
             objeto.codigo = ele.codigo
-            objeto.nit = ele.cliente.nit
-            objeto.nombre = ele.cliente.nombre
-            objeto.direccion = `${ele.cliente.municipio.full_name}, ${ele.cliente.direcciones}`
-              .toLowerCase()
-              .replace(', null', '')
+            if (ele.cliente.nit.replace(' ', '').toUpperCase() !== 'CF') {
+              objeto.nit = ele.cliente.nit
+              objeto.nombre = ele.cliente.nombre
+              objeto.direccion = `${ele.cliente.municipio.full_name}, ${ele.cliente.direcciones}`
+                .toLowerCase()
+                .replace(', null', '')
+            } else {
+              objeto.nit = 'CF'
+              objeto.nombre = ele.nombre
+              objeto.direccion = `Ciudad`
+            }
             objeto.tipos_pagos_id = null
             objeto.vaucher_pago = null
             objeto.factura = false

@@ -142,10 +142,10 @@ class SelectController extends ApiController
             $horas = null;
 
             if ($this->traInformacion($request->inicio)) {
-                $inicio = date('Y-m-d H:i:s', strtotime("{$request->inicio} 12:00:00"));
+                $inicio = date('Y-m-d H:i:s', strtotime("{$request->inicio} 12:00:01"));
             }
             if ($this->traInformacion($request->fin)) {
-                $fin = date('Y-m-d H:i:s', strtotime("{$request->fin} 12:00:00"));
+                $fin = date('Y-m-d H:i:s', strtotime("{$request->fin} 11:59:59"));
             }
             if ($this->traInformacion($request->horas)) {
                 $horas = intval($request->horas);
@@ -193,14 +193,12 @@ class SelectController extends ApiController
                         ->whereNotExists(function ($subquery) use ($inicio, $fin) {
                             $subquery->select(DB::raw(1))
                                 ->from('h_reservaciones_detalles')
-                                ->where('h_reservaciones_detalles.disponible', false)
                                 ->whereBetween(DB::RAW('inicio'), [DB::RAW("'$inicio'"), DB::RAW("'$fin'")])
                                 ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
                         })
                         ->whereNotExists(function ($subquery) use ($inicio, $fin) {
                             $subquery->select(DB::raw(1))
                                 ->from('h_reservaciones_detalles')
-                                ->where('h_reservaciones_detalles.disponible', false)
                                 ->whereBetween(DB::RAW('fin'), [DB::RAW("'$inicio'"), DB::RAW("'$fin'")])
                                 ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
                         });
