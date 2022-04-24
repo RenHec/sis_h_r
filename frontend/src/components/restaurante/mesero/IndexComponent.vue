@@ -1,12 +1,12 @@
 <template>
   <div>
-    <Mesero v-if="isTableSelected" />
+    <Mesero v-if="getMesasView" />
     <v-row>
       <v-overlay :value="loading">
         <v-progress-circular indeterminate size="64"></v-progress-circular>
       </v-overlay>
-      <v-col cols="12" md="12" sm="12" v-if="!isTableSelected">
-        <v-card>
+      <v-col cols="12" v-if="!getMesasView">
+        <v-card style="background-color: #e3f2fd;">
           <v-toolbar>
             <v-toolbar-title>Seleccionar mesa</v-toolbar-title>
             <v-spacer></v-spacer>
@@ -14,19 +14,32 @@
               <v-icon>replay</v-icon>
             </v-btn>
           </v-toolbar>
-          <div
-            style="background-color: #e3f2fd; height: 85vh; overflow-y: scroll;"
-          >
-            <v-row>
-              <template v-for="item in items">
-                <v-col v-bind:key="item.id" lg="3" md="4" sm="6" xs="12">
-                  <v-card :color="verifyIfBusy(item.id)" class="mt-3 mx-2 eicon-table eicon-2x d-flex justify-center card-table-restaurant" @click="checkTable(item)">
-                    <span class="text-table-restaurant">{{ item.nombre }}</span>
-                  </v-card>
-                </v-col>
-              </template>
-            </v-row>
-          </div>
+
+          <v-card-text>
+            <v-container style="overflow-y: scroll;">
+              <v-row>
+                <template v-for="item in items">
+                  <v-col v-bind:key="item.id" md="3" cols="12">
+                    <v-card
+                      light
+                      :img="logo"
+                      class="mx-auto text-center"
+                      @click="checkTable(item)"
+                      :color="verifyIfBusy(item.id)"
+                      min-height="350"
+                      max-height="400"
+                      shaped
+                    >
+                      <v-card-title
+                        class="text-lg-h4 font-weight-bold"
+                        v-text="item.nombre"
+                      ></v-card-title>
+                    </v-card>
+                  </v-col>
+                </template>
+              </v-row>
+            </v-container>
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -52,7 +65,7 @@ export default {
       loading: false,
       items: [],
 
-      tableBusy:[],
+      tableBusy: [],
     }
   },
   mounted() {
@@ -73,27 +86,26 @@ export default {
         selected: true,
       })
     },
-    recharge(){
+    recharge() {
       this.getData()
     },
-    getData(){
+    getData() {
       this.loading = true
 
       Promise.all([this.getListTables(), this.getTableIsBusy()])
-        .then((r)=>{})
-        .catch((e)=>{
-          this.$toastr.error(e.response.data.error,'Error');
+        .then((r) => {})
+        .catch((e) => {
+          this.$toastr.error(e.response.data.error, 'Error')
         })
-        .finally(()=>{
+        .finally(() => {
           this.loading = false
         })
     },
-    verifyIfBusy(mesaId){
-      let busy = ''
+    verifyIfBusy(mesaId) {
+      let busy = 'success lighten-4'
 
       for (let index = 0; index < this.tableBusy.length; index++) {
-        if(this.tableBusy[index].id === mesaId)
-        {
+        if (this.tableBusy[index].id === mesaId) {
           busy = 'pink lighten-4'
           break
         }
@@ -101,36 +113,44 @@ export default {
 
       return busy
     },
-    getTableIsBusy(){
-      return new Promise((resolve,reject)=>{
+    getTableIsBusy() {
+      return new Promise((resolve, reject) => {
         this.$store.state.services.tableService
-        .getListTablesIsBusy()
-        .then((r) => {
-          this.tableBusy = r.data.data
-          resolve()
-        })
-        .catch((e) => {
-          reject(e)
-        })
+          .getListTablesIsBusy()
+          .then((r) => {
+            this.tableBusy = r.data.data
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
       })
     },
     getListTables() {
-
-      return new Promise((resolve, reject)=>{
+      return new Promise((resolve, reject) => {
         this.$store.state.services.tableService
-        .getListTables()
-        .then((r) => {
-          this.items = r.data.data
-          resolve()
-        })
-        .catch((e) => {
-          reject(e)
-        })
+          .getListTables()
+          .then((r) => {
+            this.items = r.data.data
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
       })
     },
   },
   computed: {
-    ...restaurantMapGetter(['selectedTable', 'isTableSelected']),
+    ...restaurantMapGetter(['selectedTable']),
+
+    getMesasView() {
+      this.recharge()
+      return this.$store.getters['restaurant/isTableSelected']
+    },
+
+    logo() {
+      return `${this.$store.state.base_url}img/logo_empresa.png`
+    },
   },
 }
 </script>

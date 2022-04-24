@@ -3,7 +3,6 @@
     <v-overlay :value="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-
     <v-col cols="12" md="12">
       <v-data-table
         :headers="headers"
@@ -528,7 +527,7 @@
       <v-dialog
         v-model="form_precio.dialog"
         color="primary"
-        width="30%"
+        width="60%"
         persistent
       >
         <v-card>
@@ -582,7 +581,7 @@
                     :errors_form="errors"
                   ></FormError>
                 </v-col>
-                <v-col cols="12" md="4" v-if="form.incluye_desayuno">
+                <v-col cols="12" md="4" v-if="form_precio.incluye_desayuno">
                   <v-text-field
                     class="mx-2"
                     prepend-icon="fiber_new"

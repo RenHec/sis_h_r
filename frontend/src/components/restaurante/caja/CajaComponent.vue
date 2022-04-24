@@ -7,39 +7,45 @@
       <v-dialog persistent v-model="dialog" max-width="80%">
         <v-card>
           <v-toolbar>
-            <v-toolbar-title>Registrar gasto de caja</v-toolbar-title>
+            <v-btn class="success" text @click="showEgresosForm()">
+              Registrar gastos
+            </v-btn>
             <v-spacer></v-spacer>
-            <v-btn icon @click="closeEgresosForm()">
-              <v-icon dark>close</v-icon>
+            <v-btn v-show="cerrarCaja" dark color="red" @click="closeCash()">
+              Cerrar caja
             </v-btn>
           </v-toolbar>
           <CajaEgresosComponent v-if="dialog" />
         </v-card>
       </v-dialog>
     </v-col>
-    <v-col md="12" sm="12" v-if="!paymentScreen && cashOpened">
-      <v-card>
-        <v-toolbar>
+    <v-col cols="12" v-if="!paymentScreen && cashOpened">
+      <v-toolbar color="primary" dark extended flat>
+        <v-btn class="success" text @click="showEgresosForm()">
+          Registrar gastos
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn v-show="cerrarCaja" dark color="red" @click="closeCash()">
+          Cerrar caja
+        </v-btn>
+      </v-toolbar>
+
+      <v-card class="mx-auto" max-width="90%" style="margin-top: -30px;">
+        <v-toolbar flat>
           <v-toolbar-title>Registrar pago</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn class="success" @click="showEgresosForm()">
-            Registrar gastos
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn v-show="cerrarCaja" class="error" @click="closeCash()">
-            Cerrar caja
-          </v-btn>
-          <v-spacer></v-spacer>
+          <v-divider class="mx-4" inset vertical></v-divider>
           <v-btn icon @click="recharge()">
             <v-icon>replay</v-icon>
           </v-btn>
         </v-toolbar>
-        <div
-          style="background-color: #e3f2fd; height: 85vh; overflow-y: scroll;"
-        >
+
+        <v-divider></v-divider>
+
+        <div style="background-color: #e3f2fd;">
           <v-row>
             <template v-for="item in recordList">
-              <v-col v-bind:key="item.id" md="4" lg="3" sm="12" xs="12">
+              <v-col v-bind:key="item.id" md="4" cols="12">
                 <v-card class="mt-3 mx-2" :color="item.color" dark>
                   <div @click="checkTable(item)">
                     <v-card-title class="justify-center text-h4" bold>

@@ -6,11 +6,21 @@
     <v-col cols="12" md="8">
       <v-card>
         <Categoria :categories="categories" />
-        <v-container
-          style="background-color: #e3f2fd; height: 85vh; overflow-y: scroll;"
-        >
+        <v-container style="background-color: #e3f2fd; overflow-y: scroll;">
           <v-row>
-            <template v-for="menu in menus">
+            <v-col v-if="categorySelect" class="text-center" cols="12">
+              <h1 class="font-italic">{{ categorySelect.nombre }}</h1>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                v-model="search"
+                append-icon="search"
+                label="Buscar"
+                single-line
+                hide-details
+              ></v-text-field>
+            </v-col>
+            <template v-for="menu in filtrarMenu">
               <Platillo v-bind:key="menu.id" :platillo="menu" />
             </template>
           </v-row>
@@ -61,6 +71,8 @@ export default {
       categories: [],
       menus: [],
       auxiliaryMenu: [],
+      categorySelect: null,
+      search: null,
     }
   },
   mounted() {
@@ -83,9 +95,11 @@ export default {
     },
     eventFilterMenusList(categoryFilter) {
       this.menus = []
+      this.categorySelect = categoryFilter
+      this.search = null
       this.auxiliaryMenu.forEach((item) => {
         if (
-          this.isMenuCategory(item.producto_categoria_comida, categoryFilter)
+          this.isMenuCategory(item.producto_categoria_comida, categoryFilter.id)
         ) {
           this.menus.push(item)
         }
@@ -138,6 +152,18 @@ export default {
   },
   computed: {
     ...restaurantMapGetter(['selectedTable', 'isTableSelected', 'tableName']),
+    filtrarMenu() {
+      let filtro = this.menus
+      if (this.search) {
+        filtro = this.menus.filter((element) => {
+          return element.nombre
+            .toUpperCase()
+            .includes(this.search.toUpperCase())
+        })
+      }
+
+      return filtro
+    },
   },
 }
 </script>

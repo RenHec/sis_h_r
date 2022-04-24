@@ -16,16 +16,16 @@ export default {
   },
 
   actions: {
-    UPDATE_CAJA_ID ({commit}, id) {
+    UPDATE_CAJA_ID({ commit }, id) {
       commit('SET_CAJA_ID', id)
     },
-    UPDATE_CASH_OPENING ({commit}, flag) {
+    UPDATE_CASH_OPENING({ commit }, flag) {
       commit('SET_CASH_OPENING', flag)
     },
-    UPDATE_AMOUNT_ORDER ({commit}, amount) {
+    UPDATE_AMOUNT_ORDER({ commit }, amount) {
       commit('SET_AMOUNT_ORDER', amount)
     },
-    UPDATE_SELECTED_TABLE ({commit}, item) {
+    UPDATE_SELECTED_TABLE({ commit }, item) {
       commit('SET_SELECTED_TABLE', item.id)
       commit('SET_IS_TABLE_SELECTED', item.selected)
       commit('SET_TABLE_NAME', item.name)
@@ -33,28 +33,28 @@ export default {
   },
 
   mutations: {
-    SET_ORDER_ITEM (state, item) {
+    SET_ORDER_ITEM(state, item) {
       state.ordersRestaurant.push(item)
     },
-    SET_AMOUNT_ORDER (state, amount) {
+    SET_AMOUNT_ORDER(state, amount) {
       state.totalAmountOrdersRestaurant = parseFloat(amount)
     },
-    SET_LIST_ITEMS (state, list) {
+    SET_LIST_ITEMS(state, list) {
       state.ordersRestaurant = list
     },
-    SET_SELECTED_TABLE (state, table) {
+    SET_SELECTED_TABLE(state, table) {
       state.selectedTable = table
     },
-    SET_IS_TABLE_SELECTED (state, selected) {
+    SET_IS_TABLE_SELECTED(state, selected) {
       state.isTableSelected = selected
     },
-    SET_TABLE_NAME (state, tableName) {
+    SET_TABLE_NAME(state, tableName) {
       state.tableName = tableName
     },
-    SET_CASH_OPENING (state, flag) {
+    SET_CASH_OPENING(state, flag) {
       state.cashOpened = flag
     },
-    SET_CAJA_ID (state, id) {
+    SET_CAJA_ID(state, id) {
       state.caja = id
     }
   },

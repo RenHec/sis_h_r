@@ -1,23 +1,21 @@
 <template>
   <v-toolbar>
-    <v-sheet
-      class="mx-auto"
-      max-width="100%"
-    >
+    <v-sheet class="mx-auto" max-width="100%">
       <v-slide-group show-arrows>
         <v-slide-item
           v-for="category in categories"
           :key="category.id"
-          v-slot="{ active, toggle }"
+          v-slot="{ active }"
         >
           <v-btn
             class="mx-2"
             :input-value="active"
-            :color="active ? 'red darken-1' : undefined"
+            active-class="purple white--text"
             depressed
             rounded
             outlined
-            @click="categoryFilter(category.id)"
+            small
+            @click="categoryFilter(category)"
           >
             {{ category.nombre }}
           </v-btn>
@@ -28,29 +26,20 @@
 </template>
 
 <script>
-
-export default{
-  components:{
+export default {
+  components: {},
+  props: {
+    categories: {},
   },
-  props:{
-    categories:{}
+  data() {
+    return {}
   },
-  data(){
-    return{
-
-    }
-  },
-  mounted(){
-
-  },
-  created(){
-
-  },
-  methods:{
-    categoryFilter(item)
-    {
-      events.$emit("filter_menus",item)
-    }
+  mounted() {},
+  created() {},
+  methods: {
+    categoryFilter(item) {
+      events.$emit('filter_menus', item)
+    },
   },
 }
 </script>

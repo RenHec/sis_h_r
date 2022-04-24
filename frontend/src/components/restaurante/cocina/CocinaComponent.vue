@@ -1,25 +1,33 @@
 <template>
   <v-row>
-    <v-col md='12'>
+    <v-col md="12">
       <v-card>
         <v-overlay :value="loading">
           <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
-          <v-toolbar>
-            <v-toolbar-title style="padding:2px;" v-text="'Listado de órdenes para preparar'"></v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="recharge()">
-              <v-icon>replay</v-icon>
-            </v-btn>
-          </v-toolbar>
-          <div style="background-color:#e3f2fd; height:85vh; overflow-y:scroll">
-              <v-row>
-                <template v-for="order in orders">
-                  <OrdenComponent v-bind:key="order.id" :item="order" :listStatus="listStatus" v-if="order.finaliza !== 1 && order.detalle.length > 0"/>
-                </template>
-              </v-row>
-          </div>
-        </v-card>
+        <v-toolbar>
+          <v-toolbar-title
+            style="padding: 2px;"
+            v-text="'Listado de órdenes para preparar'"
+          ></v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="recharge()">
+            <v-icon>replay</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <div style="background-color: #e3f2fd;">
+          <v-row>
+            <template v-for="order in orders">
+              <OrdenComponent
+                v-bind:key="order.id"
+                :item="order"
+                :listStatus="listStatus"
+                v-if="order.finaliza !== 1 && order.detalle.length > 0"
+              />
+            </template>
+          </v-row>
+        </div>
+      </v-card>
     </v-col>
   </v-row>
 </template>
@@ -27,89 +35,84 @@
 <script>
 import OrdenComponent from './OrdenComponent.vue'
 
-export default{
-  components:{
+export default {
+  components: {
     OrdenComponent,
   },
-  data(){
-    return{
+  data() {
+    return {
       loading: false,
-      orders:[],
-      listStatus:[],
+      orders: [],
+      listStatus: [],
     }
   },
-  mounted(){
-    this.getRecords()
+  mounted() {
+    setInterval(this.getRecords(), 1000)
   },
-  created(){
-    events.$on('update_order_state',this.eventUpdateOrderState)
+  created() {
+    events.$on('update_order_state', this.eventUpdateOrderState)
   },
-  beforeDestroy(){
+  beforeDestroy() {
     events.$off('update_order_state')
   },
-  methods:{
-    eventUpdateOrderState(data){
+  methods: {
+    eventUpdateOrderState(data) {
       this.loading = true
 
       this.$store.state.services.waiterService
         .updateWaiterOrderStatus(data)
-        .then((r)=>{
+        .then((r) => {
           this.getRecords()
         })
-        .catch((e)=>{
-          this.$toastr.error(e,'Error')
+        .catch((e) => {
+          this.$toastr.error(e, 'Error')
         })
-        .finally(()=>{
+        .finally(() => {
           this.loading = false
         })
     },
-    recharge(){
+    recharge() {
       this.getRecords()
     },
-    getRecords(){
-
+    getRecords() {
       this.loading = true
 
       Promise.all([this.getOrderStatus(), this.getListOrders()])
-        .then((r)=>{
-
+        .then((r) => {
+          console.log('recarga')
         })
-        .catch((e)=>{
-          this.$toastr.error(e,'Error')
+        .catch((e) => {
+          this.$toastr.error(e, 'Error')
         })
-        .finally(()=>{
+        .finally(() => {
           this.loading = false
         })
     },
-    getOrderStatus()
-    {
+    getOrderStatus() {
       return new Promise((resolve, reject) => {
-
         this.$store.state.services.statusOrderService
-        .getListOrderStatus()
-        .then((r)=>{
-          this.listStatus = r.data.data
-          resolve()
-        })
-        .catch((e) => {
-          reject(e)
-        })
-       })
+          .getListOrderStatus()
+          .then((r) => {
+            this.listStatus = r.data.data
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
     },
-    getListOrders()
-    {
+    getListOrders() {
       return new Promise((resolve, reject) => {
-
         this.$store.state.services.waiterService
-        .getAllWaitersOrder()
-        .then((r)=>{
-          this.orders = r.data.data
-          resolve()
-        })
-        .catch((e)=>{
-          reject(e)
-        })
-       })
+          .getAllWaitersOrder()
+          .then((r) => {
+            this.orders = r.data.data
+            resolve()
+          })
+          .catch((e) => {
+            reject(e)
+          })
+      })
     },
   },
 }

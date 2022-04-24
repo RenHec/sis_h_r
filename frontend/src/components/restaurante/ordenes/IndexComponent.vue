@@ -1,69 +1,92 @@
 <template>
-    <v-row>
-      <v-overlay :value="loading">
-        <v-progress-circular indeterminate size="64"></v-progress-circular>
-      </v-overlay>
-      <v-col md='12' sm='12' v-if="!showUpdateOrderScreen && !showDetailOrderScreen">
-        <v-card>
-          <v-toolbar>
-            <v-toolbar-title>Listado de órdenes</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="recharge()">
-              <v-icon>replay</v-icon>
-            </v-btn>
-          </v-toolbar>
-          <div style="background-color:#e3f2fd; height:85vh; overflow-y:scroll">
-              <v-row>
-                <template v-for="item in recordList">
-                    <v-col v-bind:key="item.id" md="4" lg="3" sm='12' xs='12'>
-                      <v-card class="mt-3 mx-2" :color="item.color" dark>
-                        <div class="justify-center" v-if="checkStatusOrder(item)">
-                          <v-btn
-                            class="ma-1 float-right"
-                            fab
-                            small
-                            dark
-                            color="white"
-                            @click="deleteOrder(item)"
-                          >
-                            <v-icon dark color="red">
-                              delete
-                            </v-icon>
-                          </v-btn>
-                        </div>
-                        <div class="justify-center" v-if="checkStatusOrder(item)">
-                          <v-btn
-                            class="ma-1 float-left"
-                            small
-                            fab
-                            dark
-                            color="white"
-                            @click="finishOrder(item)"
-                          >
-                            <v-icon dark color="green">
-                              check
-                            </v-icon>
-                          </v-btn>
-                        </div>
-                        <div @click="checkTable(item)">
-                          <v-card-title class="justify-center text-h4" bold>{{ item.mesa }}</v-card-title>
-                        <div>
-                          <p class="text-center" dark><v-icon>{{ item.icono }}</v-icon>&nbsp;{{ item.estado_orden }}</p>
-                          <p class="text-center" dark>{{ setFormatDate(item.fecha) }} {{ item.hora }}</p>
-                          <p class="text-center text-h6 mb-0" >{{ item.tipo_orden }}</p>
-                        </div>
-                        <v-card-title class="justify-center text-h4" >{{ getAmountTitle(item.monto) }}</v-card-title>
-                        </div>
-                      </v-card>
-                    </v-col>
-                </template>
-              </v-row>
-            </div>
-        </v-card>
-      </v-col>
-      <UpdateOrderComponent v-if="showUpdateOrderScreen" :tableName="tableName" :orderId="orderId"></UpdateOrderComponent>
-      <DetailOrderComponent v-if="showDetailOrderScreen" :tableName="tableName" :orderId="orderId"></DetailOrderComponent>
-    </v-row>
+  <v-row>
+    <v-overlay :value="loading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+    <v-col
+      md="12"
+      sm="12"
+      v-if="!showUpdateOrderScreen && !showDetailOrderScreen"
+    >
+      <v-card>
+        <v-toolbar>
+          <v-toolbar-title>Listado de órdenes</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="recharge()">
+            <v-icon>replay</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <div style="background-color: #e3f2fd;">
+          <v-row>
+            <template v-for="item in recordList">
+              <v-col v-bind:key="item.id" md="4" cols="12">
+                <v-card class="mt-3 mx-2" :color="item.color" dark>
+                  <div class="justify-center" v-if="checkStatusOrder(item)">
+                    <v-btn
+                      class="ma-1 float-right"
+                      fab
+                      small
+                      dark
+                      color="white"
+                      @click="deleteOrder(item)"
+                    >
+                      <v-icon dark color="red">
+                        delete
+                      </v-icon>
+                    </v-btn>
+                  </div>
+                  <div class="justify-center" v-if="checkStatusOrder(item)">
+                    <v-btn
+                      class="ma-1 float-left"
+                      small
+                      fab
+                      dark
+                      color="white"
+                      @click="finishOrder(item)"
+                    >
+                      <v-icon dark color="green">
+                        check
+                      </v-icon>
+                    </v-btn>
+                  </div>
+                  <div @click="checkTable(item)">
+                    <v-card-title class="justify-center text-h4" bold>
+                      {{ item.mesa }}
+                    </v-card-title>
+                    <div>
+                      <p class="text-center" dark>
+                        <v-icon>{{ item.icono }}</v-icon>
+                        &nbsp;{{ item.estado_orden }}
+                      </p>
+                      <p class="text-center" dark>
+                        {{ setFormatDate(item.fecha) }} {{ item.hora }}
+                      </p>
+                      <p class="text-center text-h6 mb-0">
+                        {{ item.tipo_orden }}
+                      </p>
+                    </div>
+                    <v-card-title class="justify-center text-h4">
+                      {{ getAmountTitle(item.monto) }}
+                    </v-card-title>
+                  </div>
+                </v-card>
+              </v-col>
+            </template>
+          </v-row>
+        </div>
+      </v-card>
+    </v-col>
+    <UpdateOrderComponent
+      v-if="showUpdateOrderScreen"
+      :tableName="tableName"
+      :orderId="orderId"
+    ></UpdateOrderComponent>
+    <DetailOrderComponent
+      v-if="showDetailOrderScreen"
+      :tableName="tableName"
+      :orderId="orderId"
+    ></DetailOrderComponent>
+  </v-row>
 </template>
 
 <script>
@@ -71,55 +94,55 @@ import moment from 'moment'
 import UpdateOrderComponent from './UpdateOrderComponent.vue'
 import DetailOrderComponent from './DetailOrdenComponent.vue'
 
-export default{
-  components:{
+export default {
+  components: {
     UpdateOrderComponent,
-    DetailOrderComponent
+    DetailOrderComponent,
   },
-  data(){
-    return{
+  data() {
+    return {
       loading: false,
 
-      recordList:[],
-      itemUpdate:{},
+      recordList: [],
+      itemUpdate: {},
 
-      mainTable:true,
-      formNewRecord:false,
-      formUpdateRecord:false,
+      mainTable: true,
+      formNewRecord: false,
+      formUpdateRecord: false,
 
-      updateOrderScreen:false,
-      detailOrderScreen:false,
-      orderId:0,
-      tableName:'',
+      updateOrderScreen: false,
+      detailOrderScreen: false,
+      orderId: 0,
+      tableName: '',
     }
   },
-  mounted(){
+  mounted() {
     this.getAllFoodCategory()
   },
-  created(){
-    events.$on('close_update_order',this.eventCloseUpdateOrder)
-    events.$on('close_detail_order',this.eventCloseDetailOrder)
+  created() {
+    events.$on('close_update_order', this.eventCloseUpdateOrder)
+    events.$on('close_detail_order', this.eventCloseDetailOrder)
   },
-  beforeDestroy(){
+  beforeDestroy() {
     events.$off('close_update_order')
     events.$off('close_detail_order')
   },
-  methods:{
-    eventCloseUpdateOrder(){
+  methods: {
+    eventCloseUpdateOrder() {
       this.orderId = 0
       this.updateOrderScreen = false
       this.tableName = ''
       this.getAllFoodCategory()
     },
-    eventCloseDetailOrder(){
+    eventCloseDetailOrder() {
       this.orderId = 0
       this.detailOrderScreen = false
       this.tableName = ''
       this.getAllFoodCategory()
     },
-    finishOrder(item){
+    finishOrder(item) {
       let data = {
-        'orden':item.id
+        orden: item.id,
       }
       this.$swal({
         title: 'Modificar estado',
@@ -127,29 +150,31 @@ export default{
         type: 'question',
         showCancelButton: true,
       }).then((r) => {
-        if(!r.value){
+        if (!r.value) {
           this.close
           return
         }
         this.loading = true
         this.$store.state.services.orderDetailService
-        .modifyStateWaiterOrderDetail(data)
-        .then((r) =>{
-          this.getAllFoodCategory()
-          this.$toastr.success('Los productos asociados fueron actualizados con éxito','Mensaje')
-        })
-        .catch((e) =>{
-          this.$toastr.error(e,'Error')
-        })
-        .finally(()=>{
-          this.loading = false
-        })
+          .modifyStateWaiterOrderDetail(data)
+          .then((r) => {
+            this.getAllFoodCategory()
+            this.$toastr.success(
+              'Los productos asociados fueron actualizados con éxito',
+              'Mensaje',
+            )
+          })
+          .catch((e) => {
+            this.$toastr.error(e, 'Error')
+          })
+          .finally(() => {
+            this.loading = false
+          })
       })
     },
-    deleteOrder(item){
-
+    deleteOrder(item) {
       let data = {
-        'orden':item.id
+        orden: item.id,
       }
       this.$swal({
         title: 'Eliminar',
@@ -157,40 +182,39 @@ export default{
         type: 'question',
         showCancelButton: true,
       }).then((r) => {
-        if(!r.value){
+        if (!r.value) {
           this.close
           return
         }
         this.loading = true
         this.$store.state.services.orderDetailService
-        .deleteAllOrderDetail(data)
-        .then((r) =>{
-          this.getAllFoodCategory()
-        })
-        .catch((e) =>{
-          this.$toastr.error(e,'Error')
-        })
-        .finally(()=>{
-          this.loading = false
-        })
+          .deleteAllOrderDetail(data)
+          .then((r) => {
+            this.getAllFoodCategory()
+          })
+          .catch((e) => {
+            this.$toastr.error(e, 'Error')
+          })
+          .finally(() => {
+            this.loading = false
+          })
       })
-
     },
-    checkStatusOrder(item){
+    checkStatusOrder(item) {
       return item.inicia === 1
     },
-    checkTable(item){
-      if(item.inicia === 1 ){
+    checkTable(item) {
+      if (item.inicia === 1) {
         this.updateOrderScreen = true
         this.orderId = item.id
         this.tableName = item.mesa
-      }else if(item.finaliza === 0 ){
+      } else if (item.finaliza === 0) {
         this.detailOrderScreen = true
         this.tableName = item.mesa
         this.orderId = item.id
       }
     },
-    initializeView(){
+    initializeView() {
       this.formNewRecord = false
       this.formUpdateRecord = false
       this.mainTable = true
@@ -212,24 +236,24 @@ export default{
         .catch((e) => {
           this.$toastr.error(e, 'Error')
         })
-        .finally(()=>{
+        .finally(() => {
           this.loading = false
         })
     },
-    setFormatDate(data){
+    setFormatDate(data) {
       return moment(data).format('D-MM-YYYY')
     },
-    getAmountTitle (item){
+    getAmountTitle(item) {
       return 'Q. ' + item
     },
   },
-  computed:{
-    showUpdateOrderScreen(){
+  computed: {
+    showUpdateOrderScreen() {
       return this.updateOrderScreen
     },
-    showDetailOrderScreen(){
+    showDetailOrderScreen() {
       return this.detailOrderScreen
-    }
-  }
+    },
+  },
 }
 </script>
