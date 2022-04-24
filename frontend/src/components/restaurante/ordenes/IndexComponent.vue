@@ -10,7 +10,9 @@
     >
       <v-card>
         <v-toolbar>
-          <v-toolbar-title>Listado de órdenes</v-toolbar-title>
+          <v-toolbar-title>
+            Listado de órdenes, última actualización {{ updateDate }}
+          </v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="recharge()">
             <v-icon>replay</v-icon>
@@ -114,10 +116,11 @@ export default {
       detailOrderScreen: false,
       orderId: 0,
       tableName: '',
+      updateDate: null,
     }
   },
   mounted() {
-    this.getAllFoodCategory()
+    this.getAllFoodCategory(), this.rechargeAutomatic()
   },
   created() {
     events.$on('close_update_order', this.eventCloseUpdateOrder)
@@ -220,6 +223,12 @@ export default {
       this.mainTable = true
     },
 
+    rechargeAutomatic: function () {
+      setInterval(() => {
+        this.getAllFoodCategory()
+      }, 120000)
+    },
+
     recharge() {
       this.getAllFoodCategory()
     },
@@ -232,6 +241,9 @@ export default {
         .then((r) => {
           this.recordList = []
           this.recordList = r.data.data
+          let fecha = new Date().toLocaleDateString()
+          let tiempo = new Date().toLocaleTimeString()
+          this.updateDate = `${fecha} ${tiempo}`
         })
         .catch((e) => {
           this.$toastr.error(e, 'Error')

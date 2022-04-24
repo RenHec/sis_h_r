@@ -90,7 +90,7 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('restaurante', function (Request $request) {
-            return Limit::perMinute(120)->by(optional($request->user())->id ?: $request->ip());
+            return Limit::perMinute(800)->by(optional($request->user())->id ?: $request->ip());
         });
     }
 }

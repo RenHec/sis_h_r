@@ -8,7 +8,9 @@
         <v-toolbar>
           <v-toolbar-title
             style="padding: 2px;"
-            v-text="'Listado de órdenes para preparar'"
+            v-text="
+              `Listado de órdenes para preparar, última actualización ${updateDate}`
+            "
           ></v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="recharge()">
@@ -44,10 +46,11 @@ export default {
       loading: false,
       orders: [],
       listStatus: [],
+      updateDate: null,
     }
   },
   mounted() {
-    setInterval(this.getRecords(), 1000)
+    this.recharge(), this.rechargeAutomatic()
   },
   created() {
     events.$on('update_order_state', this.eventUpdateOrderState)
@@ -71,6 +74,11 @@ export default {
           this.loading = false
         })
     },
+    rechargeAutomatic: function () {
+      setInterval(() => {
+        this.getRecords()
+      }, 120000)
+    },
     recharge() {
       this.getRecords()
     },
@@ -79,7 +87,9 @@ export default {
 
       Promise.all([this.getOrderStatus(), this.getListOrders()])
         .then((r) => {
-          console.log('recarga')
+          let fecha = new Date().toLocaleDateString()
+          let tiempo = new Date().toLocaleTimeString()
+          this.updateDate = `${fecha} ${tiempo}`
         })
         .catch((e) => {
           this.$toastr.error(e, 'Error')
