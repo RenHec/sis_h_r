@@ -115,18 +115,22 @@ class ReservacionController extends ApiController
             foreach ($request->h_reservaciones_detalles as $value) {
                 // h_reservaciones_detalles, en este valor viene el ID del precio de la habitación
                 if (is_null($horas) && $value['h_reservaciones_detalles']['seleccionado'] == 1) {
-                    $reservado = HReservacionDetalle::where('h_habitaciones_precios_id', $value['h_reservaciones_detalles']['id'])
+                    $reservado = HReservacionDetalle::join('h_reservaciones', 'h_reservaciones_detalles.h_reservaciones_id', 'h_reservaciones.id')
+                        ->where('h_habitaciones_precios_id', $value['h_reservaciones_detalles']['id'])
                         ->whereBetween(DB::RAW('inicio'), [DB::RAW("'$inicio'"), DB::RAW("'$fin'")])
                         ->whereBetween(DB::RAW('fin'), [DB::RAW("'$inicio'"), DB::RAW("'$fin'")])
+                        ->where('h_reservaciones.anulado', false)
                         ->first();
                 } else if (!is_null($horas) && $value['h_reservaciones_detalles']['seleccionado'] == 1) {
-                    $reservado = HReservacionDetalle::where('h_habitaciones_precios_id', $value['h_reservaciones_detalles']['id'])
+                    $reservado = HReservacionDetalle::join('h_reservaciones', 'h_reservaciones_detalles.h_reservaciones_id', 'h_reservaciones.id')
+                        ->where('h_habitaciones_precios_id', $value['h_reservaciones_detalles']['id'])
                         ->whereBetween(DB::RAW("{$request->inicio} 12:00:01"), [DB::RAW('inicio'), DB::RAW('fin')])
                         ->whereBetween(DB::RAW("{$request->fin} 11:59:59"), [DB::RAW('inicio'), DB::RAW('fin')])
+                        ->where('h_reservaciones.anulado', false)
                         ->first();
                 }
 
-                if (!is_null($reservado) && !$reservado->anulado) {
+                if (!is_null($reservado)) {
                     throw new \Exception("La habitación {$value['h_reservaciones_detalles']['habitacion']} ya se encuentra reservada.", 1);
                 }
 
