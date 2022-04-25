@@ -3,6 +3,7 @@
 namespace App\Models\V1\Hotel;
 
 use App\Models\V1\Hotel\HHabitacion;
+use App\Models\V1\Hotel\HReservacion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -46,5 +47,15 @@ class HReservacionDetalle extends Model
     public function habitacion()
     {
         return $this->hasOne(HHabitacion::class, 'id', 'h_habitaciones_id');
+    }
+
+    /**
+     * Get the reservacion associated.
+     *
+     * @return object
+     */
+    public function reservacion()
+    {
+        return $this->hasOne(HReservacion::class, 'id', 'h_reservaciones_id');
     }
 }

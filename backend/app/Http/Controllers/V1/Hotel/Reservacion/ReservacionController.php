@@ -126,7 +126,7 @@ class ReservacionController extends ApiController
                         ->first();
                 }
 
-                if (!is_null($reservado)) {
+                if (!is_null($reservado) && !$reservacion->reservacion) {
                     throw new \Exception("La habitación {$value['h_reservaciones_detalles']['habitacion']} ya se encuentra reservada.", 1);
                 }
 
