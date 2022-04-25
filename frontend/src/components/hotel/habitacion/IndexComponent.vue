@@ -25,7 +25,7 @@
               hide-details
             ></v-text-field>
             <v-divider class="mx-4" inset vertical></v-divider>
-            <v-dialog v-model="dialog" color="primary" width="80%" persistent>
+            <v-dialog v-model="dialog" color="primary" width="85%" persistent>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   :loading="dialog"

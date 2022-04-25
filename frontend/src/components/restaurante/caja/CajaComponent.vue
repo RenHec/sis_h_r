@@ -4,17 +4,8 @@
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <v-col md="12" sm="12">
-      <v-dialog persistent v-model="dialog" max-width="80%">
+      <v-dialog persistent v-model="dialog" max-width="85%">
         <v-card>
-          <v-toolbar>
-            <v-btn class="success" text @click="showEgresosForm()">
-              Registrar gastos
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn v-show="cerrarCaja" dark color="red" @click="closeCash()">
-              Cerrar caja
-            </v-btn>
-          </v-toolbar>
           <CajaEgresosComponent v-if="dialog" />
         </v-card>
       </v-dialog>

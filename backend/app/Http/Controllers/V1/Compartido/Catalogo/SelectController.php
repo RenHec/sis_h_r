@@ -176,14 +176,18 @@ class SelectController extends ApiController
                         ->whereNotExists(function ($subquery) use ($inicio) {
                             $subquery->select(DB::raw(1))
                                 ->from('h_reservaciones_detalles')
+                                ->join('h_reservaciones', 'h_reservaciones_detalles.h_reservaciones_id', 'h_reservaciones.id')
                                 ->whereBetween(DB::RAW("'$inicio'"), [DB::RAW('inicio'), DB::RAW('fin')])
-                                ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
+                                ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id')
+                                ->where('h_reservaciones.anulado', false);
                         })
                         ->whereNotExists(function ($subquery) use ($fin) {
                             $subquery->select(DB::raw(1))
                                 ->from('h_reservaciones_detalles')
+                                ->join('h_reservaciones', 'h_reservaciones_detalles.h_reservaciones_id', 'h_reservaciones.id')
                                 ->whereBetween(DB::RAW("'$fin'"), [DB::RAW('inicio'), DB::RAW('fin')])
-                                ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
+                                ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id')
+                                ->where('h_reservaciones.anulado', false);
                         });
                 })
                 ->when(is_null($horas), function ($query) use ($inicio, $fin) {
@@ -191,14 +195,18 @@ class SelectController extends ApiController
                         ->whereNotExists(function ($subquery) use ($inicio) {
                             $subquery->select(DB::raw(1))
                                 ->from('h_reservaciones_detalles')
+                                ->join('h_reservaciones', 'h_reservaciones_detalles.h_reservaciones_id', 'h_reservaciones.id')
                                 ->whereBetween(DB::RAW("'$inicio'"), [DB::RAW('inicio'), DB::RAW('fin')])
-                                ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
+                                ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id')
+                                ->where('h_reservaciones.anulado', false);
                         })
                         ->whereNotExists(function ($subquery) use ($fin) {
                             $subquery->select(DB::raw(1))
                                 ->from('h_reservaciones_detalles')
+                                ->join('h_reservaciones', 'h_reservaciones_detalles.h_reservaciones_id', 'h_reservaciones.id')
                                 ->whereBetween(DB::RAW("'$fin'"), [DB::RAW('inicio'), DB::RAW('fin')])
-                                ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id');
+                                ->whereRaw('h_reservaciones_detalles.h_habitaciones_id = h_habitaciones.id')
+                                ->where('h_reservaciones.anulado', false);
                         });
                 })
                 ->where('h_habitaciones.h_estados_id', HEstado::DISPONIBLE)

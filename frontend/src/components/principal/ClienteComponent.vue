@@ -30,7 +30,7 @@
               <v-icon :color="'success'">sync</v-icon>
             </v-btn>
             <v-divider class="mx-4" inset vertical></v-divider>
-            <v-dialog v-model="dialog" color="primary" width="80%">
+            <v-dialog v-model="dialog" color="primary" width="85%">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   :loading="dialog"

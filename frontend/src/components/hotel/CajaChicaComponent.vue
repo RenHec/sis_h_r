@@ -128,7 +128,7 @@
     </v-col>
 
     <v-col cols="12" md="12">
-      <v-dialog v-model="dialog" width="80%">
+      <v-dialog v-model="dialog" width="85%">
         <v-data-table
           :headers="headers_caja"
           :items="caja.movimientos"

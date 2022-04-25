@@ -4,7 +4,7 @@
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <v-col md="12" sm="12">
-      <v-dialog persistent v-model="dialog" max-width="80%">
+      <v-dialog persistent v-model="dialog" max-width="85%">
         <v-card>
           <v-toolbar>
             <v-toolbar-title>Detalle de gastos</v-toolbar-title>

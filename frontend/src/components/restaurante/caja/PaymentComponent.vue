@@ -1,7 +1,7 @@
 <template>
   <v-row class="justify-center">
     <v-col md="12" sm="12">
-      <v-dialog persistent v-model="dialog" max-width="80%">
+      <v-dialog persistent v-model="dialog" max-width="85%">
         <v-card>
           <v-toolbar>
             <v-toolbar-title>Registrar nuevo cliente</v-toolbar-title>
@@ -27,7 +27,7 @@
           </v-btn>
         </v-toolbar>
         <!-- Detalle -->
-        <div style="background-color: #e3f2fd; height: 85vh;">
+        <div style="background-color: #e3f2fd;">
           <v-row>
             <v-col md="7" sm="12">
               <div style="height: 80vh; overflow-y: scroll;">
