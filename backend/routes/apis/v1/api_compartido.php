@@ -52,6 +52,7 @@ Route::name('select.precios')->get('select/precios/{habitacion}', 'Catalogo\Sele
 Route::name('select.buscar_habitaciones')->get('select/buscar_habitaciones', 'Catalogo\SelectController@buscar_habitaciones');
 Route::name('select.buscar_nit')->get('select/buscar_nit/{token}', 'Catalogo\SelectController@buscar_nit');
 Route::name('select.empleado')->get('select/empleado', 'Catalogo\SelectController@empleado');
+Route::name('select.habitaciones_agendadas')->get('select/habitaciones_agendadas', 'Catalogo\SelectController@habitaciones_agendadas');
 
 //rutas para PresentacionController
 Route::resource('presentacion', 'Catalogo\PresentacionController')->only(['index', 'store', 'update', 'destroy']);

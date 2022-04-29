@@ -88,6 +88,11 @@ class SelectControllerService {
         let self = this;
         return self.axios.get(`${self.baseUrl}/empleado`);
     }
+
+    habitaciones_agendadas() {
+        let self = this;
+        return self.axios.get(`${self.baseUrl}/habitaciones_agendadas`);
+    }
 }
 
 export default SelectControllerService

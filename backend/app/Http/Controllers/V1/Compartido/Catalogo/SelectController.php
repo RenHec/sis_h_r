@@ -372,4 +372,28 @@ class SelectController extends ApiController
     {
         return $this->showAll(Empleado::orderBy('primer_nombre')->get());
     }
+
+    public function habitaciones_agendadas()
+    {
+        $data = DB::table("h_reservaciones_detalles")
+            ->join("h_reservaciones", "h_reservaciones.id", "h_reservaciones_detalles.h_reservaciones_id")
+            ->join("h_habitaciones_precios", "h_habitaciones_precios.id", "h_reservaciones_detalles.h_habitaciones_precios_id")
+            ->join("h_habitaciones", "h_habitaciones.id", "h_habitaciones_precios.h_habitaciones_id")
+            ->select(
+                "h_habitaciones.numero as numero",
+                "h_reservaciones_detalles.inicio",
+                "h_reservaciones_detalles.fin",
+                "h_reservaciones_detalles.descripcion",
+                DB::RAW("FORMAT('h_reservaciones_detalles.sub_total', 2) as sub_total"),
+                "h_reservaciones.codigo",
+                "h_reservaciones.nombre"
+            )
+            ->where("h_reservaciones.check_out", false)
+            ->where("h_reservaciones.anulado", false)
+            ->whereDate("h_reservaciones_detalles.inicio", ">=", date("Y-m-d"))
+            ->orderBy("h_reservaciones_detalles.inicio")
+            ->get();
+
+        return $this->successResponse($data);
+    }
 }
