@@ -375,10 +375,9 @@ class SelectController extends ApiController
 
     public function habitaciones_agendadas()
     {
-        $data = DB::table("h_reservaciones_detalles")
+        $agendadas = DB::table("h_reservaciones_detalles")
             ->join("h_reservaciones", "h_reservaciones.id", "h_reservaciones_detalles.h_reservaciones_id")
-            ->join("h_habitaciones_precios", "h_habitaciones_precios.id", "h_reservaciones_detalles.h_habitaciones_precios_id")
-            ->join("h_habitaciones", "h_habitaciones.id", "h_habitaciones_precios.h_habitaciones_id")
+            ->join("h_habitaciones", "h_habitaciones.id", "h_reservaciones_detalles.h_habitaciones_id")
             ->select(
                 "h_habitaciones.numero as numero",
                 "h_reservaciones_detalles.inicio",
@@ -394,6 +393,20 @@ class SelectController extends ApiController
             ->orderBy("h_reservaciones_detalles.inicio")
             ->get();
 
-        return $this->successResponse($data);
+        $habitaciones = DB::table("h_reservaciones_detalles")
+            ->join("h_reservaciones", "h_reservaciones.id", "h_reservaciones_detalles.h_reservaciones_id")
+            ->join("h_habitaciones", "h_habitaciones.id", "h_reservaciones_detalles.h_habitaciones_id")
+            ->select(
+                "h_habitaciones.numero as numero",
+                DB::RAW("CONCAT('Habitación #',h_habitaciones.numero,' | ',h_reservaciones.nombre) as nombre")
+            )
+            ->where("h_reservaciones.check_out", false)
+            ->where("h_reservaciones.anulado", false)
+            ->whereDate("h_reservaciones_detalles.inicio", ">=", date("Y-m-d"))
+            ->groupBy(["h_habitaciones.numero", "h_reservaciones.nombre"])
+            ->orderBy("h_habitaciones.numero")
+            ->get();
+
+        return $this->successResponse(['agendadas' => $agendadas, 'habitaciones' => $habitaciones]);
     }
 }

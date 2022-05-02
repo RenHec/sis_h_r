@@ -8,6 +8,7 @@
       <v-sheet tile dark class="d-flex">
         <v-row>
           <v-col cols="12" class="text-center" v-if="$refs.calendar">
+            <br />
             <h3>{{ $refs.calendar.title }}</h3>
           </v-col>
           <v-col cols="12" md="1" class="text-center">
@@ -36,11 +37,25 @@
               dense
               outlined
               hide-details
-              label="weekdays"
+              label="Consulta por"
               class="ma-2"
             ></v-select>
           </v-col>
-          <v-col cols="12" md="4"></v-col>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="room"
+              :items="rooms"
+              item-text="nombre"
+              item-value="numero"
+              return-object
+              dense
+              outlined
+              clearable
+              hide-details
+              label="Habitación"
+              class="ma-2"
+            ></v-select>
+          </v-col>
           <v-col cols="12" md="1" class="text-center">
             <v-btn icon class="ma-2" @click="$refs.calendar.next()">
               <v-icon>mdi-chevron-right</v-icon>
@@ -102,6 +117,8 @@ export default {
       ],
       value: '',
       events: [],
+      rooms: [],
+      room: null,
     }
   },
 
@@ -136,15 +153,17 @@ export default {
       this.$store.state.services.selectController
         .habitaciones_agendadas()
         .then((r) => {
-          console.log(r.data)
-          r.data.forEach((element) => {
+          r.data.agendadas.forEach((element) => {
             events.push({
               name: `Habitación #${element.numero} | ${element.codigo} - ${element.nombre}`,
               start: element.inicio,
               end: element.fin,
               color: 'blue',
+              number: element.numero,
             })
           })
+
+          this.rooms = r.data.habitaciones
         })
         .catch((e) => {
           this.errorResponse(e)
@@ -170,6 +189,18 @@ export default {
     mostrarCalendario() {
       var permissions = this.$store.state.permissions
       return _.includes(permissions, 'reservaciones')
+    },
+
+    filtrarAgenda() {
+      let filtro = this.events
+
+      if (this.room) {
+        filtro = this.events.filter((element) => {
+          return element.number.includes(this.room.numero)
+        })
+      }
+
+      return filtro
     },
   },
 }
