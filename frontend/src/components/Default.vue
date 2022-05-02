@@ -72,7 +72,7 @@
           v-model="value"
           :weekdays="weekday"
           :type="type.type"
-          :events="events"
+          :events="filtrarAgenda"
           :event-overlap-mode="mode"
           :event-overlap-threshold="30"
           :event-color="getEventColor"

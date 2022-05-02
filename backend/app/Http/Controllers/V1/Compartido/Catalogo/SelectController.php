@@ -398,12 +398,12 @@ class SelectController extends ApiController
             ->join("h_habitaciones", "h_habitaciones.id", "h_reservaciones_detalles.h_habitaciones_id")
             ->select(
                 "h_habitaciones.numero as numero",
-                DB::RAW("CONCAT('Habitación #',h_habitaciones.numero,' | ',h_reservaciones.nombre) as nombre")
+                DB::RAW("CONCAT('Habitación #',h_habitaciones.numero,' | ',h_habitaciones.descripcion) as nombre")
             )
             ->where("h_reservaciones.check_out", false)
             ->where("h_reservaciones.anulado", false)
             ->whereDate("h_reservaciones_detalles.inicio", ">=", date("Y-m-d"))
-            ->groupBy(["h_habitaciones.numero", "h_reservaciones.nombre"])
+            ->groupBy(["h_habitaciones.numero", "h_habitaciones.descripcion"])
             ->orderBy("h_habitaciones.numero")
             ->get();
 
