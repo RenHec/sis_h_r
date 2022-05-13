@@ -120,6 +120,7 @@ class ReservacionController extends ApiController
                         ->whereBetween(DB::RAW('inicio'), [DB::RAW("'$inicio'"), DB::RAW("'$fin'")])
                         ->whereBetween(DB::RAW('fin'), [DB::RAW("'$inicio'"), DB::RAW("'$fin'")])
                         ->where('h_reservaciones.anulado', false)
+                        ->where('h_reservaciones.check_out', false)
                         ->first();
                 } else if (!is_null($horas) && $value['h_reservaciones_detalles']['seleccionado'] == 1) {
                     $reservado = HReservacionDetalle::join('h_reservaciones', 'h_reservaciones_detalles.h_reservaciones_id', 'h_reservaciones.id')
@@ -127,6 +128,7 @@ class ReservacionController extends ApiController
                         ->whereBetween(DB::RAW("{$request->inicio} 12:00:01"), [DB::RAW('inicio'), DB::RAW('fin')])
                         ->whereBetween(DB::RAW("{$request->fin} 11:59:59"), [DB::RAW('inicio'), DB::RAW('fin')])
                         ->where('h_reservaciones.anulado', false)
+                        ->where('h_reservaciones.check_out', false)
                         ->first();
                 }
 

@@ -1,5 +1,5 @@
 <template>
-  <v-col md="4" cols="12">
+  <v-col md="4" cols="6">
     <v-card style="padding: 15px;">
       <v-badge
         v-if="platillo.promocion == 1"

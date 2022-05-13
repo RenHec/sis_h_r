@@ -159,7 +159,7 @@ export default {
               start: element.inicio,
               end: element.fin,
               color: 'blue',
-              number: element.numero,
+              numero: element.numero,
             })
           })
 
@@ -196,7 +196,7 @@ export default {
 
       if (this.room) {
         filtro = this.events.filter((element) => {
-          return element.number.includes(this.room.numero)
+          return element.numero == this.room.numero
         })
       }
 

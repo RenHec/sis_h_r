@@ -19,15 +19,15 @@
             <v-container style="overflow-y: scroll;">
               <v-row>
                 <template v-for="item in items">
-                  <v-col v-bind:key="item.id" md="3" cols="12">
+                  <v-col v-bind:key="item.id" md="3" cols="6">
                     <v-card
                       light
                       :img="logo"
                       class="mx-auto text-center"
                       @click="checkTable(item)"
                       :color="verifyIfBusy(item.id)"
-                      min-height="350"
-                      max-height="400"
+                      min-height="125"
+                      max-height="200"
                       shaped
                     >
                       <v-card-title
