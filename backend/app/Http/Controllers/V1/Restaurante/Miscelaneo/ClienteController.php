@@ -29,7 +29,7 @@ class ClienteController extends ApiController
                 $persona->usuarios_id = Auth::user()->id;            
             */
 
-            $this->cliente_proveedor($request);
+            $this->cliente_proveedorR($request);
 
             return $this->showMessage('', 201);
         } catch (\Throwable $th) {

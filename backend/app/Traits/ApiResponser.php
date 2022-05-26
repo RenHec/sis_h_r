@@ -257,6 +257,34 @@ trait ApiResponser
 		return $persona;
 	}
 
+	protected function cliente_proveedorR(Request $request, bool $cliente = true, string $controlador = null)
+	{
+		if ($cliente) {
+			$persona = Cliente::where('nit', $request->nit)->first();
+			if (is_null($persona)) {
+				$persona = new Cliente();
+			}
+		} else {
+			$persona = Proveedor::where('nit', $request->nit)->first();
+			if (is_null($persona)) {
+				$persona = new Proveedor();
+			}
+		}
+
+		$persona->nit = $request->nit;
+		$persona->nombre = $request->nombre;
+		$persona->telefonos = $request->telefonos;
+		$persona->emails = $request->emails;
+		$persona->direcciones = $request->direcciones;
+		$persona->departamentos_id = $request->departamentos_id;
+		$persona->municipios_id = $request->municipios_id;
+		$persona->usuarios_id = Auth::user()->id;
+		$persona->updated_at = date('Y-m-d H:i:s');
+		$persona->save();
+
+		return $persona;
+	}
+
 	protected function bitacora_general($tabla, $accion, $instance, $controlador, $user = null)
 	{
 		$user = Auth::user();
