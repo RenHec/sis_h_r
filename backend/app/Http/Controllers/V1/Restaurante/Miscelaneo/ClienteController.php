@@ -18,30 +18,29 @@ class ClienteController extends ApiController
      */
     public function store(Request $request)
     {
-        $rules = [
-            'nit'           => 'required',
-            'nombre'        => 'required',
-            'telefono'      => 'nullable|numeric',
-            'correo'        => 'nullable|email',
-            'direccion'     => 'required',
-            'departamento'  => 'required|numeric',
-            'municipio'     => 'required|numeric'
-        ];
+        try {
+            /*
+                $persona->nit = $request->nit;
+                $persona->nombre = $request->nombre;
+                $persona->telefonos = $request->telefonos;
+                $persona->emails = $request->emails;
+                $persona->direcciones = $request->direcciones;
+                $persona->municipios_id = $request->municipios_id['id];
+                $persona->usuarios_id = Auth::user()->id;            
+            */
 
-        $this->validate($request, $rules);
+            $request['telefonos'] = $request->get('telefono');
+            $request['emails'] = $request->get('correo');
+            $request['direcciones'] = $request->get('direccion');
+            $request['departamentos_id'] = $request->get('departamento');
+            $request['municipios_id'] = $request->get('municipio');
 
-        $registro                   = new Cliente();
-        $registro->nit              = $request->get('nit');
-        $registro->nombre           = $request->get('nombre');
-        $registro->telefonos        = $request->get('telefono');
-        $registro->emails           = $request->get('correo');
-        $registro->direcciones      = $request->get('direccion');
-        $registro->departamentos_id = $request->get('departamento');
-        $registro->municipios_id    = $request->get('municipio');
-        $registro->usuarios_id      = $request->user()->id;
-        $registro->save();
+            $this->cliente_proveedor($request);
 
-        return $this->showMessage('', 201);
+            return $this->showMessage('', 201);
+        } catch (\Throwable $th) {
+            return $this->errorResponse('Error en el controlador');
+        }
     }
 
     /**
