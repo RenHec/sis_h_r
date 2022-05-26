@@ -29,6 +29,12 @@ class ClienteController extends ApiController
                 $persona->usuarios_id = Auth::user()->id;            
             */
 
+            $request['telefonos'] = $request->get('telefono');
+            $request['emails'] = $request->get('correo');
+            $request['direcciones'] = $request->get('direccion');
+            $request['departamentos_id'] = $request->get('departamento');
+            $request['municipios_id'] = $request->get('municipio');
+
             $this->cliente_proveedorR($request);
 
             return $this->showMessage('', 201);
