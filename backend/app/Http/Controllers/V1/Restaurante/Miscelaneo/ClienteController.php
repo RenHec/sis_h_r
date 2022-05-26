@@ -19,7 +19,7 @@ class ClienteController extends ApiController
     public function store(Request $request)
     {
         $rules = [
-            'nit'           => 'required|unique:clientes,nit',
+            'nit'           => 'required',
             'nombre'        => 'required',
             'telefono'      => 'nullable|numeric',
             'correo'        => 'nullable|email',
@@ -41,7 +41,7 @@ class ClienteController extends ApiController
         $registro->usuarios_id      = $request->user()->id;
         $registro->save();
 
-        return $this->showMessage('',201);
+        return $this->showMessage('', 201);
     }
 
     /**
@@ -53,10 +53,10 @@ class ClienteController extends ApiController
     public function show($id)
     {
         $clientes = DB::table('clientes')
-            ->select('id','nombre','nit','direcciones')
+            ->select('id', 'nombre', 'nit', 'direcciones')
             ->where('nit', 'LIKE', '%' . $id . '%')
             ->get();
 
-        return response()->json(['data' => $clientes],200);
+        return response()->json(['data' => $clientes], 200);
     }
 }
